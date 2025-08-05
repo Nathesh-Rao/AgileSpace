@@ -1,0 +1,101 @@
+name: axpert_space
+description: A new Flutter project.
+publish_to: 'none' # This project is private; remove to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  ############################################################
+  # 🧱 UI / DESIGN
+  ############################################################
+  cupertino_icons: ^1.0.8
+  animate_do: ^4.2.0
+  google_fonts: ^6.2.1
+  flutter_screenutil: ^5.9.3
+  icons_plus: ^5.0.0
+  pinput: ^5.0.1
+  skeletonizer:
+  animated_toggle_switch: ^0.8.5
+  load_switch: ^2.2.0
+  ############################################################
+  # ⚙️ STATE MANAGEMENT
+  ############################################################
+  get: ^4.7.2
+
+
+  ############################################################
+  # 🌐 NETWORK / API
+  ############################################################
+  # dio: ^5.4.0
+  http: ^1.2.1
+  connectivity_plus: ^6.1.4
+
+  ############################################################
+  # 💾 LOCAL STORAGE / PERSISTENCE
+  ############################################################
+#  shared_preferences: ^2.2.2
+  get_storage: ^2.1.1
+  # hive_flutter: ^1.1.0
+  # sqflite: ^2.3.2
+
+  ############################################################
+  # 🧰 UTILITIES & HELPERS
+  ############################################################
+  intl: ^0.20.2
+  uuid: ^4.5.1
+  crypto: ^3.0.6
+  platform_device_id_plus: ^1.0.7
+  # logger: ^2.0.2+1
+#  platform_device_id:
+#    git:
+#      url: https://github.com/faridfedora/platform_device_id_kotlin_updated.git
+#      ref: master
+
+dev_dependencies:
+  ############################################################
+  # 🧪 TESTING & LINTING
+  ############################################################
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+  ############################################################
+  # 🧪 MOCKING & CODE GENERATION
+  ############################################################
+  # mockito: ^5.4.4
+  # build_runner: ^2.4.8
+  # freezed: ^2.5.0
+  # json_serializable: ^6.7.1
+
+flutter:
+  uses-material-design: true
+
+  ############################################################
+  # 🖼️ ASSETS
+  ############################################################
+  assets:
+    - assets/images/
+    - assets/images/onboarding/
+    - assets/images/auth/
+    - assets/images/task/
+    - assets/images/common/
+    - assets/icons/
+    - assets/icons/bottom_nav/
+    - assets/icons/action/
+    - assets/icons/common/
+
+  ############################################################
+  # 🔤 FONTS
+  ############################################################
+  # fonts:
+  #   - family: Manrope
+  #     fonts:
+  #       - asset: assets/fonts/Manrope-Regular.ttf
+  #       - asset: assets/fonts/Manrope-Bold.ttf
+  #         weight: 700
