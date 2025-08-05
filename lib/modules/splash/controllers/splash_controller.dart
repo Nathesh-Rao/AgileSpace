@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/routes/app_routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/core.dart';
 
@@ -29,10 +30,17 @@ class SplashController extends GetxController {
     }
 
     await Future.delayed(Duration(seconds: 3));
-    _startNavigation();
+    await _startNavigation();
   }
 
-  _startNavigation() {
-    Get.toNamed(AppRoutes.welcome);
+  _startNavigation() async {
+    final prefs = await SharedPreferences.getInstance();
+    var isFirstTime = prefs.getBool(AppStorage.IS_FIRST_TIME) ?? true;
+    // AppSnackBar.showSuccess("isFirstTime", isFirstTime.toString());
+    if (isFirstTime) {
+      Get.toNamed(AppRoutes.welcome);
+    } else {
+      Get.offAllNamed(AppRoutes.login);
+    }
   }
 }

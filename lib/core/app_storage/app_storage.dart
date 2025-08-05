@@ -13,6 +13,7 @@ class AppStorage {
   static const String USER_GROUP = "UserGroup";
   static const String USER_CHANGE_PASSWORD = "ChangePassword";
   static const String LAST_LOGIN_DATA = "LastLoginDataMap";
+  static const String IS_FIRST_TIME = "IsFirstTime";
   late final box;
 
   AppStorage() {

@@ -7,6 +7,7 @@ import 'package:axpert_space/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platform_device_id_plus/platform_device_id.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/core.dart';
 import '../../../core/utils/server_connections/server_connections.dart';
@@ -246,9 +247,7 @@ class AuthController extends GetxController {
     await appStorage.storeValue(AppStorage.TOKEN, json["token"].toString());
     await appStorage.storeValue(AppStorage.SESSIONID, json["ARMSessionId"].toString());
     await appStorage.storeValue(AppStorage.USER_NAME, userNameController.text.trim());
-    //await appStorage.storeValue(AppStorage.USER_CHANGE_PASSWORD, json["result"]["ChangePassword"].toString());
     await appStorage.storeValue(AppStorage.NICK_NAME, json["nickname"].toString() ?? userNameController.text.trim());
-
     //Save Data
     if (rememberMe.value) {
       rememberCredentials();
@@ -301,7 +300,11 @@ class AuthController extends GetxController {
     await _callApiForMobileNotification();
     //connect to Axpert
     await _callApiForConnectToAxpert();
+    final prefs = await SharedPreferences.getInstance();
 
+    if (prefs.getBool(AppStorage.IS_FIRST_TIME) ?? true) {
+      await prefs.setBool(AppStorage.IS_FIRST_TIME, false);
+    }
     Get.offAllNamed(AppRoutes.landing);
   }
 

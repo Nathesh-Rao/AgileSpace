@@ -13,7 +13,13 @@ class TaskSearchActionWidget extends GetView<TaskController> {
     return Row(
       children: [
         PrimarySearchFieldWidget(),
-        IconButton(onPressed: () {}, icon: Icon(Icons.settings_input_composite_outlined)),
+        10.horizontalSpace,
+        IconButton(
+            onPressed: () {},
+            icon: Image.asset(
+              "assets/icons/common/filters-2.png",
+              width: 24.w,
+            )),
         TaskListSwitchWidget(),
         10.horizontalSpace,
       ],
