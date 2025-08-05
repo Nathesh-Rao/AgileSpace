@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:axpert_space/modules/auth/controllers/auth_controller.dart';
 import '../../../../common/common.dart';
+import '../../../../core/core.dart';
 
 class AuthLoginFooterButtonsWidget extends GetView<AuthController> {
   const AuthLoginFooterButtonsWidget({super.key});
@@ -11,10 +12,29 @@ class AuthLoginFooterButtonsWidget extends GetView<AuthController> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Obx(() => PrimaryButtonWidget(
-              onPressed: controller.onLoginContinueButtonClick,
-              label: "Continue",
-              isLoading: controller.isLoginLoading.value,
+        Obx(() => AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeIn,
+              transitionBuilder: (child, animation) {
+                final fade = FadeTransition(opacity: animation, child: child);
+                return SizeTransition(
+                  sizeFactor: animation,
+                  axis: Axis.vertical,
+                  child: fade,
+                );
+              },
+              child: !controller.isPWD_auth.value
+                  ? PrimaryButtonWidget(
+                      onPressed: controller.startLoginProcess,
+                      label: "Continue",
+                      isLoading: controller.isLoginLoading.value,
+                    )
+                  : PrimaryButtonWidget(
+                      onPressed: controller.callSignInAPI,
+                      label: _getLoginButtonLabel(),
+                      isLoading: controller.isLoginLoading.value,
+                    ),
             )),
         20.verticalSpace,
         Row(
@@ -29,5 +49,11 @@ class AuthLoginFooterButtonsWidget extends GetView<AuthController> {
         ),
       ],
     );
+  }
+
+  _getLoginButtonLabel() {
+    if (controller.authType.value == AuthType.passwordOnly) return "Login";
+    if (controller.authType.value == AuthType.both) return "Get OTP";
+    return "Login";
   }
 }

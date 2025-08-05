@@ -13,14 +13,28 @@ class AuthLoginTextFieldsWidget extends GetView<AuthController> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        AuthTextFieldWidget(
-          controller: controller.userNameController,
-          label: "Email",
-          hintText: "demo@email.com",
-          prefixIcon: Icon(
-            CupertinoIcons.mail,
-            color: AppColors.primaryTitleTextColorBlueGrey,
-            size: 20.w,
+        Obx(
+          () => AuthTextFieldWidget(
+            readOnly: controller.isPWD_auth.value,
+            errorText: controller.errUserName.value,
+            controller: controller.userNameController,
+            label: "Username",
+            hintText: "john doe",
+            prefixIcon: Icon(
+              CupertinoIcons.profile_circled,
+              color: AppColors.primaryTitleTextColorBlueGrey,
+              size: 20.w,
+            ),
+            suffixIcon: controller.isPWD_auth.value
+                ? GestureDetector(
+                    onTap: controller.toggleUserNameVisibility,
+                    child: Icon(
+                      Icons.lock,
+                      color: AppColors.primaryTitleTextColorBlueGrey,
+                      size: 20.w,
+                    ),
+                  )
+                : null,
           ),
         ),
         25.verticalSpace,
@@ -39,14 +53,34 @@ class AuthLoginTextFieldsWidget extends GetView<AuthController> {
             },
             child: controller.isPWD_auth.value
                 ? AuthTextFieldWidget(
+                    errorText: controller.errPassword.value,
                     controller: controller.userPasswordController,
                     focusNode: controller.passwordFocus,
+                    obscureText: controller.showPassword.value,
                     label: "Password",
                     hintText: "enter your password",
                     prefixIcon: Icon(
                       AntDesign.key_outline,
                       color: AppColors.primaryTitleTextColorBlueGrey,
                       size: 20.w,
+                    ),
+
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        controller.showPassword.toggle();
+                      },
+                      child: FlipInY(
+                        duration: Duration(milliseconds: 500),
+                        curve: Curves.decelerate,
+                        key: ValueKey(controller.showPassword.value),
+                        child: Icon(
+                          !controller.showPassword.value ? Icons.visibility : Icons.visibility_off,
+                          color: !controller.showPassword.value
+                              ? AppColors.chipCardWidgetColorRed
+                              : AppColors.chipCardWidgetColorGreen,
+                          size: 20.w,
+                        ),
+                      ),
                     ),
                     // focusNode: loginController.passwordFocus,
                     // obscureText: loginController.showPassword.value,

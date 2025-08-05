@@ -17,6 +17,7 @@ class AuthTextFieldWidget extends StatelessWidget {
     this.obscureText = false,
     this.validator,
     this.focusNode,
+    this.errorText = '',
   });
   final String label;
   final Widget? prefixIcon;
@@ -27,6 +28,7 @@ class AuthTextFieldWidget extends StatelessWidget {
   final bool obscureText;
   final String? Function(String?)? validator;
   final FocusNode? focusNode;
+  final String errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -43,68 +45,89 @@ class AuthTextFieldWidget extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
+            10.horizontalSpace,
+            errorText.isEmpty
+                ? SizedBox.shrink()
+                : ShakeX(
+                    duration: Duration(milliseconds: 500),
+                    child: ChipCardWidget(borderRadius: 2, label: "*$errorText", color: AppColors.chipCardWidgetColorRed)),
+            Spacer(),
           ],
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25),
-          child: TextFormField(
-            controller: controller,
-            focusNode: focusNode,
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w500,
+          child: ShakeX(
+            duration: Duration(milliseconds: 500),
+            key: ValueKey(errorText),
+            animate: errorText.isNotEmpty,
+            child: TextFormField(
+              readOnly: readOnly,
+              controller: controller,
+              focusNode: focusNode,
+              obscureText: obscureText,
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w500,
+              ),
+              decoration: InputDecoration(
+                prefixIcon: Padding(
+                  padding: EdgeInsets.only(right: 12.w),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      errorText.isNotEmpty
+                          ? Icon(
+                              Clarity.error_line,
+                              color: AppColors.chipCardWidgetColorRed,
+                              size: 20.w,
+                            )
+                          : prefixIcon ??
+                              Icon(
+                                Bootstrap.app,
+                                color: AppColors.primaryTitleTextColorBlueGrey,
+                                size: 20.w,
+                              ),
+                      5.horizontalSpace,
+                      Text(
+                        '|',
+                        style:
+                            TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: AppColors.primaryTitleTextColorBlueGrey),
+                      )
+                    ],
+                  ),
+                ),
+                suffixIcon: suffixIcon,
+                prefixIconConstraints: BoxConstraints(
+                  minWidth: 40.w,
+                  minHeight: 24.h,
+                ),
+                hintText: hintText,
+                hintStyle: GoogleFonts.poppins(
+                  fontSize: 12.sp,
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 1.5.h,
+                    color: errorText.isEmpty ? AppColors.primarySubTitleTextColorBlueGreyLight : AppColors.chipCardWidgetColorRed,
+                  ),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 1.5.h,
+                    color: errorText.isEmpty ? AppColors.primaryTitleTextColorBlueGrey : AppColors.chipCardWidgetColorRed,
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 1.5.h,
+                    color: errorText.isEmpty ? Colors.black : AppColors.chipCardWidgetColorRed,
+                  ),
+                ),
+                errorBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(width: 1.5.h),
+                ),
+              ),
+              validator: validator,
             ),
-            decoration: InputDecoration(
-              prefixIcon: Padding(
-                padding: EdgeInsets.only(right: 12.w),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    prefixIcon ??
-                        Icon(
-                          Bootstrap.app,
-                          color: AppColors.primaryTitleTextColorBlueGrey,
-                          size: 20.w,
-                        ),
-                    5.horizontalSpace,
-                    Text(
-                      '|',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: AppColors.primaryTitleTextColorBlueGrey),
-                    )
-                  ],
-                ),
-              ),
-              suffixIcon: suffixIcon,
-              prefixIconConstraints: BoxConstraints(
-                minWidth: 40.w,
-                minHeight: 24.h,
-              ),
-              hintText: hintText,
-              hintStyle: GoogleFonts.poppins(
-                fontSize: 12.sp,
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1.5.h,
-                  color: AppColors.primarySubTitleTextColorBlueGreyLight,
-                ),
-              ),
-              border: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1.5.h,
-                  color: AppColors.primaryTitleTextColorBlueGrey,
-                ),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1.5.h,
-                  color: Colors.black,
-                ),
-              ),
-              errorBorder: UnderlineInputBorder(
-                borderSide: BorderSide(width: 1.5.h),
-              ),
-            ),
-            validator: validator,
           ),
         ),
       ],

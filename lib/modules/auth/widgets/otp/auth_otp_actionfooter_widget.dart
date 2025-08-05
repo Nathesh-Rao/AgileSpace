@@ -20,15 +20,23 @@ class AuthOTPActionFooterWidget extends GetView<AuthController> {
                 CupertinoIcons.time_solid,
                 color: Color(0xff5BBBA9),
               )),
-          Text(
-            "00:05 sec",
-            style: AppStyles.actionButtonStyle,
+          Obx(
+            () => Text(
+              "${controller.timeLeft.value} min",
+              style: AppStyles.actionButtonStyle,
+            ),
           ),
           Spacer(),
-          Text(
-            "Resend OTP",
-            style: AppStyles.actionButtonStyle,
-          ),
+          Obx(
+            () => TextButton(
+                onPressed: controller.isTimerActive.value ? null : controller.callResendOTP,
+                style: TextButton.styleFrom(
+                  textStyle: AppStyles.actionButtonStyle,
+                ),
+                child: Text(
+                  "Resend OTP",
+                )),
+          )
         ],
       ),
     );

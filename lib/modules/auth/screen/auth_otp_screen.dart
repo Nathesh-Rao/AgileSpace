@@ -10,6 +10,10 @@ class AuthOtpScreen extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.onOtpScreenLoad();
+    });
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: SafeArea(
@@ -29,16 +33,20 @@ class AuthOtpScreen extends GetView<AuthController> {
                     "OTP",
                     style: AppStyles.onboardingTitleTextStyle,
                   ),
-                  Text(
-                    "Enter the otp that sent to your\nregistered number",
-                    textAlign: TextAlign.center,
-                    style: AppStyles.onboardingSubTitleTextStyle,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 25.w),
+                    child: Text(
+                      controller.otpMsg.value,
+                      textAlign: TextAlign.center,
+                      style: AppStyles.onboardingSubTitleTextStyle,
+                    ),
                   ),
                 ],
               ),
               20.verticalSpace,
-              Image.asset(controller.otpHeaderImage, width: 300.w),
-              50.verticalSpace,
+              Image.asset(controller.otpHeaderImage, width: 280.w),
+              45.verticalSpace,
+
               AuthOtpTextFieldWidget(),
               15.verticalSpace,
 

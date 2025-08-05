@@ -653,6 +653,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
+  zo_animated_border:
+    dependency: "direct main"
+    description:
+      name: zo_animated_border
+      sha256: fc811abdd75fb569864ae7eb5a0fcd3a2f91e2eea61769ffa422494943dc776e
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
 sdks:
   dart: ">=3.6.1 <4.0.0"
   flutter: ">=3.27.0"

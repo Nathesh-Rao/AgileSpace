@@ -23,6 +23,7 @@ dependencies:
   skeletonizer:
   animated_toggle_switch: ^0.8.5
   load_switch: ^2.2.0
+  zo_animated_border: ^1.0.0
   ############################################################
   # ⚙️ STATE MANAGEMENT
   ############################################################

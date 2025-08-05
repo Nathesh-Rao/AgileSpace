@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:axpert_space/common/common.dart';
@@ -13,6 +14,7 @@ import '../auth.dart';
 
 class AuthController extends GetxController {
   //Login =============>
+  GlobalVariableController globalVariableController = Get.find();
   var loginHeaderImage = "assets/images/auth/login_header.png";
   AppStorage appStorage = AppStorage();
   ServerConnections serverConnections = ServerConnections();
@@ -34,24 +36,34 @@ class AuthController extends GetxController {
   var isUserDataLoading = false.obs;
   var otpChars = '4'.obs;
   var otpExpiryTime = '2'.obs;
+  var timeLeft = '00:00'.obs;
+  var isTimerActive = false.obs;
+  Timer? otpTimer;
   var authType = AuthType.none.obs;
   var otpMsg = ''.obs;
   var otpLoginKey = ''.obs;
   var otpErrorText = ''.obs;
   //-------------------------------------------------------------------------------
-  onLoginContinueButtonClick() async {
-    isLoginLoading.value = true;
-    await Future.delayed(Duration(seconds: 3));
-    isLoginLoading.value = false;
-    if (isPWD_auth.value) {
-      AppSnackBar.showSuccess("OTP Sent", "We've sent an OTP to your registered number.");
-      isPWD_auth.toggle();
-      Get.toNamed(AppRoutes.otp);
-    } else {
-      isPWD_auth.toggle();
-      AppSnackBar.showSuccess("Password required", "Enter your password to login");
+
+  validate() {
+    if (userNameController.text.trim().isEmpty) {
+      errUserName.value = "Invalid username";
     }
   }
+
+  // onLoginContinueButtonClick() async {
+  //   isLoginLoading.value = true;
+  //   await Future.delayed(Duration(seconds: 3));
+  //   isLoginLoading.value = false;
+  //   if (isPWD_auth.value) {
+  //     AppSnackBar.showSuccess("OTP Sent", "We've sent an OTP to your registered number.");
+  //     isPWD_auth.toggle();
+  //     Get.toNamed(AppRoutes.otp);
+  //   } else {
+  //     isPWD_auth.toggle();
+  //     AppSnackBar.showSuccess("Password required", "Enter your password to login");
+  //   }
+  // }
 
 //OTP =============>
 
@@ -62,14 +74,11 @@ class AuthController extends GetxController {
   var isOTP_auth = false.obs;
   TextEditingController otpFieldController = TextEditingController();
 
-  onOtpLoginButtonClick() async {
-    isOtpLoading.value = true;
-    await Future.delayed(Duration(seconds: 3));
-    isOtpLoading.value = false;
-    AppSnackBar.showSuccess("Welcome Back!", "You've successfully logged in.");
-    Get.toNamed(AppRoutes.landing);
-
-    // Get.toNamed(AppRoutes.otp);
+  onOtpLoginButtonClick() {
+    print("onOtpLoginButtonClick()");
+    if (validateOTPField()) {
+      callVerifyOTP();
+    }
   }
 
   onLoad() async {
@@ -77,6 +86,9 @@ class AuthController extends GetxController {
   }
 
   startLoginProcess() async {
+    if (!validateUserName()) return;
+    showPassword.value = true;
+    isLoginLoading.value = true;
     authType.value = await getLoginUserDetailsAndAuthType();
 
     if (authType.value == AuthType.otpOnly) {
@@ -86,6 +98,7 @@ class AuthController extends GetxController {
     if (isPWD_auth.value) {
       FocusScope.of(Get.context!).requestFocus(passwordFocus);
     }
+    isLoginLoading.value = false;
 
     switch (authType.value) {
       case AuthType.both:
@@ -129,8 +142,7 @@ class AuthController extends GetxController {
         if (isPWD_auth.value) return AuthType.passwordOnly;
         if (isOTP_auth.value) return AuthType.otpOnly;
       } else {
-        Get.snackbar("Error ", json["result"]["message"],
-            snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.redAccent, colorText: Colors.white);
+        AppSnackBar.showError("Error ", json["result"]["message"]);
       }
     }
 
@@ -139,6 +151,7 @@ class AuthController extends GetxController {
 
   callSignInAPI() async {
     if (validateForm()) {
+      isLoginLoading.value = true;
       var signInBody = {
         "appname": globalVariableController.PROJECT_NAME.value,
         "username": userNameController.text.toString().trim(),
@@ -166,21 +179,46 @@ class AuthController extends GetxController {
             otpMsg.value = json["result"]["message"].toString();
             otpLoginKey.value = json["result"]["OTPLoginKey"].toString();
             print("Otpmsg: ${otpMsg.value} \nOtpkey: ${otpLoginKey.value}");
+            AppSnackBar.showSuccess("OTP Sent", otpMsg.value);
+            startOTPTimer();
             Get.toNamed(AppRoutes.otp);
           }
         } else {
-          Get.snackbar("Error ", json["result"]["message"],
-              snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.redAccent, colorText: Colors.white);
+          AppSnackBar.showError("Error ", json["result"]["message"]);
         }
+        isLoginLoading.value = false;
       }
       // LoadingScreen.dismiss();
     }
+  }
+
+  void startOTPTimer() {
+    var mins = int.parse(otpExpiryTime.value);
+    var totalSeconds = mins * 60;
+
+    otpTimer?.cancel(); // Cancel any existing timer
+    isTimerActive.value = true;
+
+    otpTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (totalSeconds <= 0) {
+        timer.cancel();
+        timeLeft.value = "00:00";
+        isTimerActive.value = false; // mark timer as inactive
+      } else {
+        totalSeconds--;
+
+        final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
+        final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
+        timeLeft.value = "$minutes:$seconds";
+      }
+    });
   }
 
   callVerifyOTP() async {
     if (validateOTPField()) {
       // LoadingScreen.show();
       isOtpLoading.value = true;
+
       var _url = Const.getFullARMUrl(ServerConnections.API_VALIDATE_OTP);
       var body = {
         "OtpLoginKey": otpLoginKey.value,
@@ -188,7 +226,6 @@ class AuthController extends GetxController {
       };
 
       var response = await serverConnections.postToServer(url: _url, body: jsonEncode(body));
-      isOtpLoading.value = false;
       if (response != "") {
         var json = jsonDecode(response);
         if (json["result"]["success"].toString().toLowerCase() == "true") {
@@ -200,6 +237,8 @@ class AuthController extends GetxController {
         }
       }
     }
+    isOtpLoading.value = false;
+
     // LoadingScreen.dismiss();
   }
 
@@ -216,6 +255,7 @@ class AuthController extends GetxController {
     } else {
       dontRememberCredentials();
     }
+
     await _processLoginAndGoToHomePage();
   }
 
@@ -308,11 +348,11 @@ class AuthController extends GetxController {
 
     var response = await serverConnections.postToServer(url: _url, body: jsonEncode(body));
     isOtpLoading.value = false;
+    startOTPTimer();
     if (response != "") {
       var json = jsonDecode(response);
       if (json["result"]["success"].toString().toLowerCase() == "true") {
-        Get.snackbar("Success", json["result"]["message"],
-            snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        AppSnackBar.showSuccess("Success", json["result"]["message"]);
       } else {
         otpErrorText.value = json["result"]["message"].toString();
         /* Get.snackbar("Error ", json["result"]["message"],
@@ -324,14 +364,23 @@ class AuthController extends GetxController {
   bool validateForm() {
     errPassword.value = errUserName.value = "";
     if (userNameController.text.toString().trim() == "") {
-      errUserName.value = "Enter User Name";
+      errUserName.value = "Username is required";
       return false;
     }
     if (isPWD_auth.value) {
       if (userPasswordController.text.toString().trim() == "") {
-        errPassword.value = "Enter Password";
+        errPassword.value = "Password is required";
         return false;
       }
+    }
+    return true;
+  }
+
+  bool validateUserName() {
+    errUserName.value = "";
+    if (userNameController.text.toString().trim() == "") {
+      errUserName.value = "Username is required";
+      return false;
     }
     return true;
   }
@@ -353,5 +402,15 @@ class AuthController extends GetxController {
     userPasswordController.dispose();
     otpFieldController.dispose();
     super.dispose();
+  }
+
+  void toggleUserNameVisibility() {
+    errUserName.value = errPassword.value = '';
+    isPWD_auth.value = false;
+  }
+
+  void onOtpScreenLoad() {
+    if (otpErrorText.value.isEmpty && otpFieldController.text.isEmpty) return;
+    otpErrorText.value = otpFieldController.text = '';
   }
 }
