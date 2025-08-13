@@ -51,6 +51,11 @@ class AppColors {
   static const flatButtonColorBlue = Color(0xff2A79E4);
   static const flatButtonColorPurple = Color(0xff8371EC);
 
+  static const leaveWidgetColorSandal = Color(0xffE0A47A);
+  static const leaveWidgetColorGreen = Color(0xff379785);
+  static const leaveWidgetColorPink = Color(0xffDA5077);
+  static const leaveWidgetColorGreenLite = Color(0xff5BBBA9);
+
   static Color getHistoryColor(String status) {
     switch (status.toLowerCase()) {
       case 'created':
@@ -88,5 +93,31 @@ class AppColors {
       default:
         return Colors.grey;
     }
+  }
+
+  static final List<Color> _colorPalette = [
+    Color(0xFF8371EC),
+    Color(0xFFFF9B00),
+    Color(0xFF0271F2),
+    Color(0xFF9764DA),
+    Color(0xFF3764FC),
+    Color(0xFF9C27B0),
+    Color(0xFF9764DA),
+    Color(0xFF0271F2),
+    Color(0xFFFF9B00),
+    Color(0xFF8371EC),
+  ];
+
+  static int _currentIndex = 0;
+
+  static Color getNextColor() {
+    if (_currentIndex >= _colorPalette.length) {
+      _currentIndex = 0;
+    }
+    return _colorPalette[_currentIndex++];
+  }
+
+  static void resetColorIndex() {
+    _currentIndex = 0;
   }
 }

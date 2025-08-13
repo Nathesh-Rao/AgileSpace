@@ -51,4 +51,9 @@ class AppStyles {
     fontSize: 11.sp,
     fontWeight: FontWeight.w600,
   );
+
+  static final leaveActivityMainStyle = GoogleFonts.poppins(
+    fontSize: 20.sp,
+    fontWeight: FontWeight.w600,
+  );
 }

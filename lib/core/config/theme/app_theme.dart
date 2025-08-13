@@ -9,6 +9,7 @@ class AppTheme {
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,
+      scrolledUnderElevation: 0,
       elevation: 0,
       centerTitle: true,
       iconTheme: const IconThemeData(color: Colors.black),

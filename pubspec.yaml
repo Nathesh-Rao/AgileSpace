@@ -24,6 +24,9 @@ dependencies:
   animated_toggle_switch: ^0.8.5
   load_switch: ^2.2.0
   zo_animated_border: ^1.0.0
+  graphic: ^2.6.0
+  fl_chart:
+  carousel_slider: ^5.1.1
   ############################################################
   # ⚙️ STATE MANAGEMENT
   ############################################################
@@ -52,6 +55,7 @@ dependencies:
   uuid: ^4.5.1
   crypto: ^3.0.6
   platform_device_id_plus: ^1.0.7
+  number_to_words:
   # logger: ^2.0.2+1
 #  platform_device_id:
 #    git:

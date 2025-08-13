@@ -1,4 +1,5 @@
 import 'package:axpert_space/modules/landing/landing.dart';
+import 'package:axpert_space/modules/leaves/screens/leave_details_screen.dart';
 import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
 import 'package:axpert_space/modules/modules.dart';
@@ -61,6 +62,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.tasDetails,
       page: () => TaskDetailsScreen(),
+      transition: Transition.rightToLeft,
+      curve: Curves.decelerate,
+    ),
+    GetPage(
+      name: AppRoutes.leaveDetails,
+      page: () => LeaveDetailsScreen(),
       transition: Transition.rightToLeft,
       curve: Curves.decelerate,
     ),
