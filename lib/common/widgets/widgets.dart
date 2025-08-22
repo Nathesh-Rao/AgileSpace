@@ -6,3 +6,4 @@ export 'primary_searchfield_widget.dart';
 export 'chip_card_widget.dart';
 export 'participant_avatar_stack_widget.dart';
 export 'icon_label_widget.dart';
+export 'readmore_tooltip_text_widget.dart';

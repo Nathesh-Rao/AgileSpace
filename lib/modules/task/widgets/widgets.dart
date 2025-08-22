@@ -12,3 +12,5 @@ export 'task_details_widgets/task_details_history_horizontal_list.dart';
 export 'task_details_widgets/task_details_attachments_widget.dart';
 export 'task_details_widgets/task_details_comments_widget.dart';
 export 'task_details_widgets/task_details_bottombar_widget.dart';
+export 'task_details_widgets/task_details_history_tooltip_widget.dart';
+export 'task_overview_count_widget.dart';

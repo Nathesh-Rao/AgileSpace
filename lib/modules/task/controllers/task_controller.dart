@@ -1,22 +1,37 @@
+import 'dart:convert';
+
+import 'package:axpert_space/common/log_service/log_services.dart';
+import 'package:axpert_space/core/app_storage/app_storage.dart';
+import 'package:axpert_space/core/utils/server_connections/server_connections.dart';
 import 'package:axpert_space/modules/task/models/models.dart';
+import 'package:axpert_space/modules/task/models/task_overview_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../core/core.dart';
 
 class TaskController extends GetxController {
   final taskListPageViewIndex = 0.obs;
   final isTaskListLoading = false.obs;
+  final isTaskOverviewLoading = false.obs;
+  final pendingTaskCount = 0.obs;
   final taskListPageViewController = PageController();
   final taskList = [].obs;
+
+  ServerConnections serverConnections = ServerConnections();
+  AppStorage appStorage = AppStorage();
 
   loadInitialData() async {
     int newPage = taskListPageViewController.page?.round() ?? 0;
     if (newPage != taskListPageViewIndex.value) {
       taskListPageViewIndex.value = newPage;
     }
-    if (taskList.isNotEmpty) return;
+    // if (taskList.isNotEmpty) return;
     isTaskListLoading.value = true;
-    taskList.value = TaskListModel.tempList;
-    await Future.delayed(Duration(seconds: 3));
+    isTaskOverviewLoading.value = true;
+    pendingTaskCount.value = await _getTaskPendingForToday();
+    isTaskOverviewLoading.value = false;
+    taskList.value = await _getAllTaskList();
     isTaskListLoading.value = false;
   }
 
@@ -36,7 +51,9 @@ class TaskController extends GetxController {
 
   //TaskDetailsPage
   var taskHistoryList = [].obs;
+  var taskAttachmentList = [].obs;
   var isTaskDetailsLoading = false.obs;
+  var isTaskAttachmentsLoading = false.obs;
   var showHistoryFlag = false.obs;
   var showHistoryContent = true.obs;
   TaskListModel? _lastLoadedTask;
@@ -51,12 +68,18 @@ class TaskController extends GetxController {
 
   void loadTaskDetails({required TaskListModel task}) async {
     if (_lastLoadedTask?.id == task.id) return;
+    taskHistoryList.clear();
+    taskAttachmentList.clear();
     _lastLoadedTask = task;
     showHistoryFlag.value = false;
     isTaskDetailsLoading.value = true;
-    await Future.delayed(Duration(seconds: 2));
-    taskHistoryList.value = TaskHistoryModel.tempData[task.id.toString()] ?? [];
+    isTaskAttachmentsLoading.value = true;
+    // await Future.delayed(Duration(seconds: 2));
+
+    taskHistoryList.value = await _getTaskHistory(task.id);
     isTaskDetailsLoading.value = false;
+    taskAttachmentList.value = await _getTaskAttachments(task.id);
+    isTaskAttachmentsLoading.value = false;
   }
 
   bool onTaskDetailsPullUpDownCallBack(ScrollNotification notification) {
@@ -78,5 +101,130 @@ class TaskController extends GetxController {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<int> _getTaskPendingForToday() async {
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_GET_HOMEPAGE_CARDSDATASOURCE);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": "DS_GETTASKSUMMARY",
+      "sqlParams": {"username": "support", "date": "20/08/2025"}
+    };
+
+    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        var dsDataList = jsonDSResp['result']['data'];
+        try {
+          var overview = TaskOverviewModel.fromJson(dsDataList);
+          return overview.data[0].pendingTodayCount;
+        } catch (e) {
+          print(e);
+        }
+      }
+    }
+
+    return 0;
+  }
+
+  Future<List<TaskListModel>> _getAllTaskList() async {
+    List<TaskListModel> taskList = [];
+
+    LogService.writeLog(message: "_getAllTaskList()");
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_GET_HOMEPAGE_CARDSDATASOURCE);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": "DS_GETALLTASKS",
+      "sqlParams": {"username": "narasimha"}
+      // "sqlParams": {"username": appStorage.retrieveValue(AppStorage.USER_NAME)}
+    };
+
+    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        var dsDataList = jsonDSResp['result']['data'];
+        for (var item in dsDataList) {
+          try {
+            if (item != null) {
+              var task = TaskListModel.fromJson(item);
+              taskList.add(task);
+            }
+          } catch (e) {
+            print("_getAllTaskList()   $e");
+          }
+        }
+      }
+    }
+
+    return taskList;
+  }
+
+  Future<List<TaskHistoryModel>> _getTaskHistory(String taskId) async {
+    List<TaskHistoryModel> taskHistoryList = [];
+    LogService.writeLog(message: "_getTaskHistory()");
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_GET_HOMEPAGE_CARDSDATASOURCE);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": "DS_GETTASKHISTORY",
+      "sqlParams": {"taskid": taskId}
+      // "sqlParams": {"username": appStorage.retrieveValue(AppStorage.USER_NAME)}
+    };
+
+    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        var dsDataList = jsonDSResp['result']['data'];
+        for (var item in dsDataList) {
+          try {
+            var task = TaskHistoryModel.fromJson(item);
+            taskHistoryList.add(task);
+          } catch (e) {
+            print(e);
+          }
+        }
+      }
+    }
+
+    return taskHistoryList;
+  }
+
+  Future<List<TaskAttachmentData>> _getTaskAttachments(String taskId) async {
+    List<TaskAttachmentData> taskAttachmentData = [];
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_GET_HOMEPAGE_CARDSDATASOURCE);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": "DS_GETTASKATTACHMENTS",
+      "sqlParams": {"taskid": taskId}
+    };
+
+    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        var dsDataList = jsonDSResp['result']['data'];
+        for (var item in dsDataList) {
+          try {
+            var data = TaskAttachmentData.fromJson(item);
+            // taskHistoryList.add(task);
+            taskAttachmentData.add(data);
+          } catch (e) {
+            print(e);
+          }
+        }
+      }
+    }
+
+    return taskAttachmentData;
   }
 }

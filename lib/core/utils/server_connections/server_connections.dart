@@ -4,6 +4,7 @@ import 'package:axpert_space/common/common.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../common/log_service/log_services.dart';
 import '../../app_storage/app_storage.dart';
 import '../../core.dart';
 import '../internet_connections/internet_connections.dart';
@@ -92,18 +93,26 @@ class ServerConnections {
         var response = await client.post(Uri.parse(url), headers: header, body: body);
 
         if (response.statusCode == 200) {
+          LogService.writeLog(
+              message:
+                  "[^] [POST] URL:$url\nAPI_NAME: $API_NAME\nBody: $body\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
           return response.body;
         }
-        ;
+
         if (response.statusCode == 404) {
           print("API_ERROR: $API_NAME: ${response.body}");
           AppSnackBar.showError("Error! ${response.statusCode.toString()}", "Something went wrong");
         } else {
           if (response.statusCode == 400) {
+            LogService.writeLog(
+                message:
+                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nBody: $body\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
             return response.body;
           } else {
             print("API_ERROR: $API_NAME: ${response.body}");
-
+            LogService.writeLog(
+                message:
+                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nBody: $body\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
             var msg = response.body.toString();
             if (response.body.toString().contains("message")) {
               try {
@@ -160,17 +169,26 @@ class ServerConnections {
 
       if (response.statusCode == 200) {
         var decodedBody = utf8.decode(response.bodyBytes);
+        LogService.writeLog(
+            message:
+                "[^] [POST] URL:$url\nAPI_NAME: $API_NAME\nBody: $decodedBody\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
         return decodedBody;
         // return response.body;
       }
 
       if (response.statusCode == 404) {
+        LogService.writeLog(
+            message:
+                "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
         if (API_NAME.toString().toLowerCase() == "ARMAppStatus".toLowerCase()) {
           AppSnackBar.showError("Error!", "Invalid ARM URL");
         } else {
           AppSnackBar.showError("Error! ${response.statusCode.toString()}", "Invalid ARM URL");
         }
       } else {
+        LogService.writeLog(
+            message:
+                "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
         AppSnackBar.showError("Error! ${response.statusCode.toString()}", "Internal server error");
       }
     } catch (e) {
@@ -188,6 +206,9 @@ class ServerConnections {
           }
 
           if (reResponse.statusCode == 404) {
+            LogService.writeLog(
+                message:
+                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nStatusCode: ${reResponse.statusCode}\nResponse: ${reResponse.body}");
             if (API_NAME.toString().toLowerCase() == "ARMAppStatus".toLowerCase()) {
               AppSnackBar.showError("Error!", "Invalid ARM URL");
             } else {
@@ -195,7 +216,9 @@ class ServerConnections {
             }
           } else {
             // LogService.writeLog(message: "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nError: ${e.toString()}");
-
+            LogService.writeLog(
+                message:
+                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nStatusCode: ${reResponse.statusCode}\nResponse: ${reResponse.body}");
             AppSnackBar.showError("Error! ${reResponse.statusCode.toString()}", "Internal server error");
           }
         } catch (err) {

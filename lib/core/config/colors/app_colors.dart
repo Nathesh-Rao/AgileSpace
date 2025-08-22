@@ -39,6 +39,9 @@ class AppColors {
   static const Color statusPending = Colors.deepOrange;
   static const Color statusInProgress = Colors.blueAccent;
   static const Color statusCompleted = Colors.green;
+  static const Color statusAccepted = Colors.indigo;
+  static const Color statusForwarded = Colors.blue;
+  static const Color statusReassigned = Colors.teal;
 
   static const Color priorityHigh = Colors.redAccent;
   static const Color priorityMedium = Colors.amber;
@@ -64,6 +67,12 @@ class AppColors {
         return historyAssigned;
       case 'completed':
         return historyCompleted;
+      case 'forwarded':
+        return historyAssigned;
+      case 'accepted':
+        return historyCompleted;
+      case 'closed':
+        return historyCompleted;
       default:
         return historyCreated;
     }
@@ -77,6 +86,12 @@ class AppColors {
         return statusInProgress;
       case 'completed':
         return statusCompleted;
+      case 'reassigned':
+        return statusReassigned;
+      case 'accepted':
+        return statusAccepted;
+      case 'forwarded':
+        return statusForwarded;
       default:
         return Colors.grey;
     }
@@ -110,6 +125,12 @@ class AppColors {
 
   static int _currentIndex = 0;
 
+  static var gradientBlue = Color(0xFF3764FC);
+
+  static var gradientViolet = Color(0xFF9764DA);
+
+  static var violetBorder = Color(0xff8371EC);
+
   static Color getNextColor() {
     if (_currentIndex >= _colorPalette.length) {
       _currentIndex = 0;
@@ -120,4 +141,23 @@ class AppColors {
   static void resetColorIndex() {
     _currentIndex = 0;
   }
+
+  static const Color baseBlue = Color(0xff3764FC);
+  static const Color baseYellow = Color(0xffF79E02);
+  static const Color baseRed = Color(0xffDD2025);
+  static const Color baseGray = Color(0xffDEDEDE);
+  static const Color text1 = Color(0xff626262);
+  static const Color text2 = Color(0xff919191);
+  static const Color blue9 = Color(0xFF0d297d);
+  static const Color blue10 = Color(0xff1F41BB);
+  static const LinearGradient subBGGradientVertical =
+      LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+    Color(0xff3764FC),
+    Color(0xff9764DA),
+  ]);
+
+  static const LinearGradient subBGGradientHorizontal = LinearGradient(colors: [
+    Color(0xff3764FC),
+    Color(0xff9764DA),
+  ]);
 }

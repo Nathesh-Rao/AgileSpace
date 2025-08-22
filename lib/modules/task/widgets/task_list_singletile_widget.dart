@@ -64,7 +64,7 @@ class TaskListSingleTileWidget extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    "Design for Dashboard Project Management",
+                    taskModel.caption,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
@@ -149,7 +149,7 @@ class TaskListSingleTileWidget extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    "Make a landing page and mobile app.Make a landing page and mobile app Make a landing page and mobile app.Make a landing page and mobile app.Make a landing page and mobile app Make a landing page and mobile app.",
+                    taskModel.description,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(

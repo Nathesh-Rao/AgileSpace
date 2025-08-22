@@ -16,8 +16,8 @@ class TaskListListviewPage extends GetView<TaskController> {
           physics: BouncingScrollPhysics(),
           padding: EdgeInsets.symmetric(horizontal: 15.w),
           itemCount: controller.taskList.length,
-          itemBuilder: (context, index) =>
-              TaskListListTileWidget(taskModel: controller.taskList[index]).skeletonLoading(controller.isTaskListLoading.value)),
+          itemBuilder: (context, index) => Obx(() =>
+              TaskListListTileWidget(taskModel: controller.taskList[index]).skeletonLoading(controller.isTaskListLoading.value))),
     );
   }
 }

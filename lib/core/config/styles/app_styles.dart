@@ -56,4 +56,6 @@ class AppStyles {
     fontSize: 20.sp,
     fontWeight: FontWeight.w600,
   );
+
+  static var attendanceLogStyle = GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w500);
 }

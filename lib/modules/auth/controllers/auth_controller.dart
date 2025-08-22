@@ -187,9 +187,9 @@ class AuthController extends GetxController {
         } else {
           AppSnackBar.showError("Error ", json["result"]["message"]);
         }
-        isLoginLoading.value = false;
       }
       // LoadingScreen.dismiss();
+      isLoginLoading.value = false;
     }
   }
 

@@ -27,7 +27,8 @@ class LeaveDetailsScreen extends GetView<LeaveController> {
         children: [
           Obx(() => (controller.leaveDetails.value == null && controller.isLeaveDetailsLoading.value) ||
                   (controller.leaveDetails.value != null)
-              ? LeaveDetailsHeaderWidget().skeletonLoading(controller.isLeaveDetailsLoading.value)
+              ? LeaveDetailsHeaderWidget()
+                  .skeletonLoading((controller.leaveDetails.value == null) ? true : controller.isLeaveDetailsLoading.value)
               : SizedBox.shrink()),
           10.verticalSpace,
           Row(

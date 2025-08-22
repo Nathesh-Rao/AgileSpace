@@ -16,6 +16,8 @@ class AppStorage {
   static const String IS_FIRST_TIME = "IsFirstTime";
   late final box;
 
+  static String isLogEnabled = "false";
+
   AppStorage() {
     box = GetStorage();
   }

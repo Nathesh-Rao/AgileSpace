@@ -15,7 +15,9 @@ class TaskSearchActionWidget extends GetView<TaskController> {
         PrimarySearchFieldWidget(),
         10.horizontalSpace,
         IconButton(
-            onPressed: () {},
+            onPressed: () {
+              controller.loadInitialData();
+            },
             icon: Image.asset(
               "assets/icons/common/filters-2.png",
               width: 24.w,

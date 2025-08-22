@@ -78,7 +78,8 @@ class TaskListGridTileWidget extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  Icons.circle,
+                  Icons.flag_circle,
+                  color: AppColors.chipCardWidgetColorRed,
                   size: 8.w,
                 ),
                 5.horizontalSpace,

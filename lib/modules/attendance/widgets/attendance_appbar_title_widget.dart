@@ -1,5 +1,6 @@
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/modules/attendance/attendance.dart';
+import 'package:axpert_space/modules/task/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -35,13 +36,7 @@ class AttendanceAppBarTitleWidget extends GetView<AttendanceController> {
           ),
         ),
         3.verticalSpace,
-        Text(
-          "There are 3 Tasks to complete today ",
-          style: GoogleFonts.poppins(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        TaskOverviewCountWidget(),
       ],
     );
   }

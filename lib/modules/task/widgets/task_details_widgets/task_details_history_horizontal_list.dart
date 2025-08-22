@@ -22,7 +22,7 @@ class TaskDetailsHistoryHorizontalListWidget extends GetView<TaskController> {
             children: [
               Image.asset(
                 "assets/icons/common/arrow_line_icon.png",
-                color: AppColors.getHistoryColor(history.actionTook),
+                color: AppColors.getHistoryColor(history.status),
                 width: 95.w,
               ),
               5.horizontalSpace,
@@ -37,7 +37,7 @@ class TaskDetailsHistoryHorizontalListWidget extends GetView<TaskController> {
             children: [
               CircleAvatar(
                 radius: 10.w,
-                backgroundColor: AppColors.getHistoryColor(history.actionTook),
+                backgroundColor: AppColors.getHistoryColor(history.status),
                 child: Text(
                   "${index + 1}",
                   style: GoogleFonts.poppins(

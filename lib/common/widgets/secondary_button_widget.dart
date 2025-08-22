@@ -37,9 +37,7 @@ class SecondaryButtonWidget extends StatelessWidget {
           backgroundColor: backgroundColor ?? AppColors.secondaryButtonBGColorWhite,
           foregroundColor: foregroundColor ?? AppColors.secondaryButtonFGColorViolet,
           shape: RoundedRectangleBorder(
-            side: BorderSide(
-              color: AppColors.secondaryButtonBorderColorGrey,
-            ),
+            side: BorderSide(color: AppColors.secondaryButtonBorderColorGrey),
             borderRadius: BorderRadius.circular(10.r),
           ),
         ),

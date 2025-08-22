@@ -1,8 +1,10 @@
 import 'package:axpert_space/modules/landing/landing.dart';
 import 'package:axpert_space/modules/leaves/screens/leave_details_screen.dart';
+import 'package:axpert_space/modules/payroll/screens/payroll_details_page.dart';
 import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
 import 'package:axpert_space/modules/modules.dart';
+import '../modules/attendance/attendance.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -68,6 +70,18 @@ class AppPages {
     GetPage(
       name: AppRoutes.leaveDetails,
       page: () => LeaveDetailsScreen(),
+      transition: Transition.rightToLeft,
+      curve: Curves.decelerate,
+    ),
+    GetPage(
+      name: AppRoutes.attendance,
+      page: () => AttendanceScreen(),
+      transition: Transition.rightToLeft,
+      curve: Curves.decelerate,
+    ),
+    GetPage(
+      name: AppRoutes.payRollDetails,
+      page: () => PayrollDetailsPage(),
       transition: Transition.rightToLeft,
       curve: Curves.decelerate,
     ),

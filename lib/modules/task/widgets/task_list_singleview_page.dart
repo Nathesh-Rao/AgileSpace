@@ -1,4 +1,5 @@
 import 'package:axpert_space/common/common.dart';
+import 'package:axpert_space/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../task.dart';
@@ -11,12 +12,13 @@ class TaskListSingleViewPage extends GetView<TaskController> {
   Widget build(BuildContext context) {
     return Obx(
       () => ListView.builder(
-          physics: BouncingScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 15.w),
-          itemCount: controller.taskList.length,
-          itemBuilder: (context, index) => Skeletonizer(
-              enabled: controller.isTaskListLoading.value,
-              child: TaskListSingleTileWidget(taskModel: controller.taskList[index]))),
+              physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              itemCount: controller.taskList.length,
+              itemBuilder: (context, index) => Skeletonizer(
+                  enabled: controller.isTaskListLoading.value,
+                  child: TaskListSingleTileWidget(taskModel: controller.taskList[index])))
+          .skeletonLoading(controller.isTaskListLoading.value),
     );
   }
 }

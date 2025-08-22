@@ -13,6 +13,10 @@ class Const {
   static String DUMMY_USER = "admin";
   static const String DUMMYUSER_PWD = "a5ca360e803b868680e2b6f7805fcb9e";
 
+  static bool isLogEnabled = false;
+
+  static var APP_VERSION = '0.01';
+
   static String getFullARMUrl(String Entrypoint) {
     print("getFullARMUrl => ${globalVariableController.ARM_URL.value}");
     if (globalVariableController.ARM_URL.value == "") {

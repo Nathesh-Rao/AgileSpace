@@ -24,7 +24,7 @@ class LandingPayAndAttendanceTab extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.w),
           child: Column(
-            spacing: 15.h,
+            spacing: 20.h,
             children: [
               PayRollDashBoardWidget(),
               AttendanceDashBoardWidget(),

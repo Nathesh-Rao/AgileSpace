@@ -88,7 +88,7 @@ class LeaveDetailsHeaderWidget extends GetView<LeaveController> {
                       child: Wrap(
                         spacing: 20.w,
                         runSpacing: 20.w,
-                        children: List.generate(controller.leaveDetails.value!.leaveBreakup.length,
+                        children: List.generate(controller.leaveDetails.value?.leaveBreakup.length ?? 0,
                             (index) => _breakTile(controller.leaveDetails.value!.leaveBreakup[index])),
                       ),
                     )),

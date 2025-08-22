@@ -45,6 +45,29 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
           Row(
             children: [
               Text(
+                "Created On : ",
+                style: AppStyles.textButtonStyle.copyWith(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Icon(
+                Icons.flag,
+                size: 12.w,
+                color: AppColors.chipCardWidgetColorGreen,
+              ),
+              5.horizontalSpace,
+              Text(
+                StringUtils.formatDate(taskModel.createdOn.toString()),
+                style: GoogleFonts.poppins(
+                    fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
+              )
+            ],
+          ),
+          10.verticalSpace,
+          Row(
+            children: [
+              Text(
                 "Due On : ",
                 style: AppStyles.textButtonStyle.copyWith(
                   fontSize: 13.sp,
