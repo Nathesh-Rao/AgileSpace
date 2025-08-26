@@ -17,6 +17,7 @@ class TaskController extends GetxController {
   final taskListPageViewController = PageController();
   final taskList = [].obs;
   final isTaskRowOptionsLoading = false.obs;
+  final isTaskDetailsRowOptionsExpanded = false.obs;
   var taskRowOptions = [].obs;
   ServerConnections serverConnections = ServerConnections();
   AppStorage appStorage = AppStorage();
@@ -76,6 +77,7 @@ class TaskController extends GetxController {
     isTaskDetailsLoading.value = true;
     isTaskAttachmentsLoading.value = true;
     isTaskRowOptionsLoading.value = true;
+    isTaskDetailsRowOptionsExpanded.value = false;
     // await Future.delayed(Duration(seconds: 2));
 
     taskHistoryList.value = await _getTaskHistory(task.id);
@@ -112,6 +114,10 @@ class TaskController extends GetxController {
 
   resetRowOptions() {
     taskRowOptions.clear();
+  }
+
+  toggleTaskDetailsRowOptions() {
+    isTaskDetailsRowOptionsExpanded.toggle();
   }
 
   Future<int> _getTaskPendingForToday() async {

@@ -2,6 +2,7 @@ import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/task/controllers/task_controller.dart';
 import 'package:axpert_space/modules/task/models/models.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -45,12 +46,33 @@ class TaskDetailsScreen extends GetView<TaskController> {
       ),
 
       bottomNavigationBar: TaskDetailsBottomBarWidget(),
-      floatingActionButton:
-          FloatingActionButton(elevation: 2, onPressed: () {}),
+      floatingActionButton: FloatingActionButton(
+        // mini: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        elevation: 0,
+        backgroundColor: Color(0xffCACED6),
+        foregroundColor: AppColors.primaryTitleTextColorBlueGrey,
+        onPressed: controller.toggleTaskDetailsRowOptions,
+        child: Obx(() => _getFloatingIcon()),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
 
       // bottomNavigationBar: Obx(() => TaskDetailsBottomBarWidget()
       //     .skeletonLoading(controller.isTaskRowOptionsLoading.value)),
     );
+  }
+
+  _getFloatingIcon() {
+    if (controller.isTaskRowOptionsLoading.value) {
+      return CupertinoActivityIndicator(
+        color: AppColors.primaryTitleTextColorBlueGrey,
+      );
+    }
+
+    return !controller.isTaskDetailsRowOptionsExpanded.value
+        ? Icon(CupertinoIcons.arrow_up_circle_fill)
+        : Icon(CupertinoIcons.arrow_down_circle_fill);
   }
 }

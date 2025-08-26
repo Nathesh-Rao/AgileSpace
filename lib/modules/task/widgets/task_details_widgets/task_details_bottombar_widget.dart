@@ -1,10 +1,10 @@
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/widgets/flat_button_widget.dart';
+import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/modules.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/core.dart';
 import '../../models/task_row_options_model.dart';
 
 class TaskDetailsBottomBarWidget extends GetView<TaskController> {
@@ -12,38 +12,39 @@ class TaskDetailsBottomBarWidget extends GetView<TaskController> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: _getHeight(),
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black12, blurRadius: 4, offset: Offset(0, -2)),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: FlatButtonWidget(
-                  label: "Completed",
-                  onTap: () {},
-                ),
-              ),
-              12.horizontalSpace,
-              Expanded(
-                child: FlatButtonWidget(
-                  color: AppColors.flatButtonColorPurple,
-                  label: "Reassign",
-                  onTap: () {},
-                ),
-              ),
-            ],
-          ),
-        ],
+    return Obx(
+      () => AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.decelerate,
+        height: controller.isTaskDetailsRowOptionsExpanded.value
+            ? _getHeight()
+            : 80.h,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black12, blurRadius: 4, offset: Offset(0, -2)),
+          ],
+        ),
+        child: Obx(
+          () {
+            var actionList = List.generate(controller.taskRowOptions.length,
+                (index) => _rowTile(controller.taskRowOptions[index]));
+
+            if (actionList.length.isOdd) {
+              actionList.add(((1.sw / 2) - 30.w).horizontalSpace);
+            }
+
+            return Wrap(
+              alignment: WrapAlignment.spaceAround,
+              runAlignment: WrapAlignment.start,
+              spacing: 10.w,
+              runSpacing: 15.h,
+              children: actionList,
+            ).skeletonLoading(controller.isTaskRowOptionsLoading.value);
+          },
+        ),
       ),
     );
   }
@@ -53,17 +54,17 @@ class TaskDetailsBottomBarWidget extends GetView<TaskController> {
 
     if (length == 0) return 50.h;
 
-    int multiplier = (length / 3).ceil();
-    return (multiplier * 50).h;
+    int multiplier = (length / 2).ceil();
+    return (multiplier * 80).h;
   }
 
   Widget _rowTile(TaskRowOptionModel taskRowOption) {
     return FlatButtonWidget(
-      width: 110.w,
+      width: (1.sw / 2) - 30.w,
       label: controller.getTaskActionName(taskRowOption.action),
       color: controller.getTaskActionColor(taskRowOption.action),
       onTap: () {},
-      isCompact: true,
+      // isCompact: true,
     );
   }
 }
