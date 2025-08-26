@@ -14,3 +14,4 @@ export 'task_details_widgets/task_details_comments_widget.dart';
 export 'task_details_widgets/task_details_bottombar_widget.dart';
 export 'task_details_widgets/task_details_history_tooltip_widget.dart';
 export 'task_overview_count_widget.dart';
+export 'task_tile_action_button_widget.dart';

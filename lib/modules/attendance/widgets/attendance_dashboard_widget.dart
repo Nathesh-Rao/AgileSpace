@@ -32,57 +32,74 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
                     border: Border.all(
                       color: AppColors.violetBorder,
                     )),
-                child: Column(
-                  children: [
-                    5.verticalSpace,
-                    Text(
-                      "You are in the Clock-Out area now , Clock-Out available from 6:30 PM",
-                      style: GoogleFonts.poppins(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
+                child: Obx(
+                  () => Column(
+                    children: [
+                      controller.isClockedIn.value
+                          ? Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                5.verticalSpace,
+                                Text(
+                                  "You are in the Clock-Out area now , Clock-Out available from ${controller.attendanceDetails.value?.actualOuttime}",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Remaining time until you can clock out is 0 min ",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 11.sp,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          : Text(
+                              "Please clock in before ${controller.attendanceDetails.value?.actualIntime}",
+                              style: GoogleFonts.poppins(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                      30.verticalSpace,
+                      Obx(
+                        () => controller.isClockedIn.value
+                            ? Expanded(
+                                flex: 2,
+                                child: Row(
+                                  children: [
+                                    _getAttendanceInfoMainWidget(),
+                                    10.horizontalSpace,
+                                    _getAttendanceInfoSecondWidget(),
+                                  ],
+                                ))
+                            : Expanded(child: _beforeClockedInWidget()),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "Remaining time until you can clock out is 30 min ",
-                          style: GoogleFonts.poppins(
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
+                      20.verticalSpace,
+                      Container(
+                        decoration: BoxDecoration(
+                            color: AppColors.violetBorder.withAlpha(50),
+                            borderRadius: BorderRadius.circular(5.r)),
+                        padding: EdgeInsets.symmetric(vertical: 5.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Update your work sheet before clock out",
+                              style: GoogleFonts.poppins(
+                                  fontSize: 11.sp, fontWeight: FontWeight.w600),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    30.verticalSpace,
-                    Obx(
-                      () => controller.attendanceAppbarSwitchValue.value
-                          ? Expanded(
-                              flex: 2,
-                              child: Row(
-                                children: [
-                                  _getAttendanceInfoMainWidget(),
-                                  10.horizontalSpace,
-                                  _getAttendanceInfoSecondWidget(),
-                                ],
-                              ))
-                          : Expanded(child: _clockedInWidget()),
-                    ),
-                    20.verticalSpace,
-                    Container(
-                      decoration:
-                          BoxDecoration(color: AppColors.violetBorder.withAlpha(50), borderRadius: BorderRadius.circular(5.r)),
-                      padding: EdgeInsets.symmetric(vertical: 5.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Update your work sheet before clock out",
-                            style: GoogleFonts.poppins(fontSize: 11.sp, fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -97,7 +114,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
         width: double.infinity,
         margin: EdgeInsets.symmetric(horizontal: 11.w),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(topRight: Radius.circular(10.r), topLeft: Radius.circular(10.r)),
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(10.r), topLeft: Radius.circular(10.r)),
           gradient: LinearGradient(
             colors: [
               AppColors.gradientBlue,
@@ -127,7 +145,9 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
       child: ZoomIn(
         duration: Duration(milliseconds: 400),
         child: Container(
-          decoration: BoxDecoration(border: Border.all(color: Colors.black26), borderRadius: BorderRadius.circular(10.r)),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black26),
+              borderRadius: BorderRadius.circular(10.r)),
           padding: EdgeInsets.all(8.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,12 +182,16 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
               Spacer(),
               RichText(
                   key: ValueKey(controller.attendanceAppbarSwitchValue.value),
-                  text: TextSpan(text: "09:16", style: AppStyles.attendanceWidgetTimeStyle, children: [
-                    TextSpan(
-                      text: "am",
-                      style: AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 12.sp),
-                    )
-                  ])),
+                  text: TextSpan(
+                      text: "${controller.attendanceDetails.value?.intime}",
+                      style: AppStyles.attendanceWidgetTimeStyle,
+                      children: [
+                        TextSpan(
+                          text: "",
+                          style: AppStyles.attendanceWidgetTimeStyle
+                              .copyWith(fontSize: 12.sp),
+                        )
+                      ])),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -188,104 +212,137 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
   }
 
   Widget _getAttendanceInfoSecondWidget() {
-    return Expanded(
-      child: ZoomIn(
-        duration: Duration(milliseconds: 400),
-        child: Container(
-          decoration: BoxDecoration(border: Border.all(color: Colors.black26), borderRadius: BorderRadius.circular(10.r)),
-          padding: EdgeInsets.all(8.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    var signInWidget = Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black26),
+          borderRadius: BorderRadius.circular(10.r)),
+      padding: EdgeInsets.all(8.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.my_location,
-                    color: AppColors.chipCardWidgetColorRed,
-                  ),
-                  Spacer(),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 5.w,
-                    children: [
-                      Icon(
-                        Icons.check_circle,
-                        size: 10.h,
-                        color: AppColors.chipCardWidgetColorGreen,
-                      ),
-                      Text(
-                        "In Office",
-                        style: GoogleFonts.poppins(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )
-                    ],
-                  )
-                ],
+              Icon(
+                Icons.my_location,
+                color: AppColors.chipCardWidgetColorRed,
               ),
               Spacer(),
-              Text(
-                "Axpert-house,\nJayanagar 8th block",
-                style: AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 10.sp),
-              ),
-              5.verticalSpace,
               Row(
                 mainAxisSize: MainAxisSize.min,
+                spacing: 5.w,
                 children: [
-                  Text(
-                    "0m distance to work",
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 9.sp,
-                    ),
+                  Icon(
+                    Icons.check_circle,
+                    size: 10.h,
+                    color: AppColors.chipCardWidgetColorGreen,
                   ),
+                  Text(
+                    "In Office",
+                    style: GoogleFonts.poppins(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
                 ],
+              )
+            ],
+          ),
+          Spacer(),
+          Text(
+            "${controller.clockInLocation.value.split("\n")[0].replaceFirst("Name:", "").trim()}\n${controller.clockInLocation.value.split("\n")[4].replaceFirst("Postal code:", "").trim()}",
+            style:
+                AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 10.sp),
+          ),
+          5.verticalSpace,
+        ],
+      ),
+    );
+
+    var signOutWidget = Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black26),
+          borderRadius: BorderRadius.circular(10.r)),
+      padding: EdgeInsets.all(8.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.access_time,
+                color: AppColors.chipCardWidgetColorGreen,
+              ),
+              Spacer(),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 5.w,
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    size: 10.h,
+                    color: AppColors.chipCardWidgetColorGreen,
+                  ),
+                  Text(
+                    "On time",
+                    style: GoogleFonts.poppins(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
+          Spacer(),
+          RichText(
+              key: ValueKey(controller.attendanceAppbarSwitchValue.value),
+              text: TextSpan(
+                  text: "${controller.attendanceDetails.value?.outtime}",
+                  style: AppStyles.attendanceWidgetTimeStyle,
+                  children: [
+                    TextSpan(
+                      text: "",
+                      style: AppStyles.attendanceWidgetTimeStyle
+                          .copyWith(fontSize: 12.sp),
+                    )
+                  ])),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Clocked Out",
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 11.sp,
+                ),
               ),
             ],
           ),
+        ],
+      ),
+    );
+
+    if (controller.isClockedOut.value) {
+      return Expanded(
+        child: ZoomIn(
+          duration: Duration(milliseconds: 400),
+          child: signOutWidget,
         ),
+      );
+    }
+
+    return Expanded(
+      child: ZoomIn(
+        duration: Duration(milliseconds: 400),
+        child: signInWidget,
       ),
     );
   }
 
-  Widget _clockedInWidget() => ZoomIn(
+  Widget _beforeClockedInWidget() => ZoomIn(
         duration: Duration(milliseconds: 400),
         child: Row(
           children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(border: Border.all(color: Colors.black26), borderRadius: BorderRadius.circular(10.r)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    RichText(
-                        key: ValueKey(controller.attendanceAppbarSwitchValue.value),
-                        text: TextSpan(text: "09:16 am", style: AppStyles.attendanceWidgetTimeStyle)),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          // CupertinoIcons.check_mark_circled_solid,
-                          Icons.check_circle,
-                          color: AppColors.otpFieldThemeColorGreen,
-                          size: 12.h,
-                        ),
-                        5.horizontalSpace,
-                        Text(
-                          "In Location",
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            10.horizontalSpace,
             Expanded(
                 child: PrimaryButtonWidget(
               height: double.infinity,

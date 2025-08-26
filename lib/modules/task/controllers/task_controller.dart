@@ -1,10 +1,9 @@
 import 'dart:convert';
 
 import 'package:axpert_space/common/log_service/log_services.dart';
-import 'package:axpert_space/core/app_storage/app_storage.dart';
 import 'package:axpert_space/core/utils/server_connections/server_connections.dart';
 import 'package:axpert_space/modules/task/models/models.dart';
-import 'package:axpert_space/modules/task/models/task_overview_model.dart';
+import 'package:axpert_space/modules/task/models/task_row_options_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,7 +16,8 @@ class TaskController extends GetxController {
   final pendingTaskCount = 0.obs;
   final taskListPageViewController = PageController();
   final taskList = [].obs;
-
+  final isTaskRowOptionsLoading = false.obs;
+  var taskRowOptions = [].obs;
   ServerConnections serverConnections = ServerConnections();
   AppStorage appStorage = AppStorage();
 
@@ -66,18 +66,21 @@ class TaskController extends GetxController {
     showHistoryContent.toggle();
   }
 
-  void loadTaskDetails({required TaskListModel task}) async {
-    if (_lastLoadedTask?.id == task.id) return;
+  Future<void> loadTaskDetails({required TaskListModel task}) async {
+    // if (_lastLoadedTask?.id == task.id) return;
+
     taskHistoryList.clear();
     taskAttachmentList.clear();
     _lastLoadedTask = task;
     showHistoryFlag.value = false;
     isTaskDetailsLoading.value = true;
     isTaskAttachmentsLoading.value = true;
+    isTaskRowOptionsLoading.value = true;
     // await Future.delayed(Duration(seconds: 2));
 
     taskHistoryList.value = await _getTaskHistory(task.id);
     isTaskDetailsLoading.value = false;
+
     taskAttachmentList.value = await _getTaskAttachments(task.id);
     isTaskAttachmentsLoading.value = false;
   }
@@ -89,7 +92,8 @@ class TaskController extends GetxController {
       if (!showHistoryFlag.value) {
         onShowHistoryIconClick();
       }
-    } else if (notification.metrics.pixels > notification.metrics.maxScrollExtent + 100) {
+    } else if (notification.metrics.pixels >
+        notification.metrics.maxScrollExtent + 100) {
       if (showHistoryFlag.value) {
         onShowHistoryIconClick();
       }
@@ -98,13 +102,20 @@ class TaskController extends GetxController {
     return true;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  getTaskRowOptions(String taskId) async {
+    isTaskRowOptionsLoading.value = true;
+    // await Future.delayed(Duration(seconds: 2));
+    taskRowOptions.value = await _getAllTaskRowList(taskId);
+
+    isTaskRowOptionsLoading.value = false;
+  }
+
+  resetRowOptions() {
+    taskRowOptions.clear();
   }
 
   Future<int> _getTaskPendingForToday() async {
-    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_GET_HOMEPAGE_CARDSDATASOURCE);
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
@@ -112,7 +123,8 @@ class TaskController extends GetxController {
       "sqlParams": {"username": "support", "date": "20/08/2025"}
     };
 
-    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
 
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);
@@ -134,7 +146,7 @@ class TaskController extends GetxController {
     List<TaskListModel> taskList = [];
 
     LogService.writeLog(message: "_getAllTaskList()");
-    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_GET_HOMEPAGE_CARDSDATASOURCE);
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
@@ -143,7 +155,8 @@ class TaskController extends GetxController {
       // "sqlParams": {"username": appStorage.retrieveValue(AppStorage.USER_NAME)}
     };
 
-    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
 
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);
@@ -165,10 +178,82 @@ class TaskController extends GetxController {
     return taskList;
   }
 
+  Future<List<TaskRowOptionModel>> _getAllTaskRowList(String taskId) async {
+    List<TaskRowOptionModel> taskRowList = [];
+
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": "DS_GETACTIONLIST",
+      "sqlParams": {"username": "narasimha", "taskid": taskId}
+    };
+
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        var dsDataList = jsonDSResp['result']['data'];
+        for (var item in dsDataList) {
+          try {
+            if (item != null) {
+              var task = TaskRowOptionModel.fromJson(item);
+              taskRowList.add(task);
+            }
+          } catch (e) {
+            debugPrint("_getAllTaskRowList()   $e");
+          }
+        }
+      }
+    }
+
+    return taskRowList;
+  }
+
+  String getTaskActionName(String action) {
+    switch (action) {
+      case "accep":
+        return "Accept";
+      case "sendtask":
+        return "Send";
+      case "return":
+        return "Return";
+      case "infor":
+        return "Reschedule";
+      case "loadhist":
+        return "History";
+      case "droptask":
+        return "Drop";
+      default:
+        return action;
+    }
+  }
+
+  Color getTaskActionColor(String action) {
+    switch (action) {
+      case "accep":
+        return AppColors.chipCardWidgetColorGreen;
+      case "sendtask":
+        return AppColors.flatButtonColorBlue;
+      case "return":
+        return AppColors.chipCardWidgetColorViolet;
+      case "infor":
+        return AppColors.statusPending;
+      case "loadhist":
+        return AppColors.baseYellow;
+      case "droptask":
+        return AppColors.blue9;
+      default:
+        return AppColors.blue9;
+    }
+  }
+
   Future<List<TaskHistoryModel>> _getTaskHistory(String taskId) async {
     List<TaskHistoryModel> taskHistoryList = [];
     LogService.writeLog(message: "_getTaskHistory()");
-    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_GET_HOMEPAGE_CARDSDATASOURCE);
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
@@ -177,7 +262,8 @@ class TaskController extends GetxController {
       // "sqlParams": {"username": appStorage.retrieveValue(AppStorage.USER_NAME)}
     };
 
-    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
 
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);
@@ -199,7 +285,7 @@ class TaskController extends GetxController {
 
   Future<List<TaskAttachmentData>> _getTaskAttachments(String taskId) async {
     List<TaskAttachmentData> taskAttachmentData = [];
-    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_GET_HOMEPAGE_CARDSDATASOURCE);
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
@@ -207,7 +293,8 @@ class TaskController extends GetxController {
       "sqlParams": {"taskid": taskId}
     };
 
-    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
 
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);

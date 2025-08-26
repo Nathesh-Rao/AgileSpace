@@ -30,13 +30,17 @@ class AttendanceAppBarSwitchWidget extends GetView<AttendanceController> {
                 return Colors.white;
               },
               thumbDecoration: (value, _) => BoxDecoration(
-                image: DecorationImage(image: AssetImage("assets/images/common/profile_temp.png")),
+                image: DecorationImage(
+                    image: AssetImage("assets/images/common/profile_temp.png")),
                 color: Colors.white,
                 shape: BoxShape.circle,
-                border: Border.all(color: !value ? AppColors.snackBarSuccessColorGreen : AppColors.snackBarErrorColorRed),
+                border: Border.all(
+                    color: !value
+                        ? AppColors.snackBarSuccessColorGreen
+                        : AppColors.snackBarErrorColorRed),
               ),
-              isLoading: controller.attendanceAppbarSwitchIsLoading.value,
-              value: !controller.attendanceAppbarSwitchValue.value,
+              isLoading: controller.isAttendanceDetailsIsLoading.value,
+              value: controller.attendanceAppbarSwitchValue.value,
               future: () async {
                 return controller.attendanceAppbarSwitchValue.value;
               },
@@ -45,7 +49,8 @@ class AttendanceAppBarSwitchWidget extends GetView<AttendanceController> {
               onChange: (_) {},
             ),
             Visibility(
-              visible: controller.attendanceAppbarSwitchValue.value && !controller.attendanceAppbarSwitchIsLoading.value,
+              visible: !controller.attendanceAppbarSwitchValue.value &&
+                  !controller.attendanceAppbarSwitchIsLoading.value,
               child: Padding(
                 padding: EdgeInsets.only(right: 15.w),
                 child: Align(

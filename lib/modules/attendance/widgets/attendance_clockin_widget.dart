@@ -11,12 +11,21 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.getInitialAttendanceDetails();
+      controller.onAttendanceClockInAnimationEnd();
+    });
+
     return Obx(
       () => AnimatedContainer(
         duration: Duration(milliseconds: 400),
         curve: Curves.decelerate,
         margin: EdgeInsets.symmetric(horizontal: 15.w),
-        height: !controller.attendanceAppbarSwitchValue.value ? 106.h : 60.h,
+        height: controller.attendanceDetails.value == null
+            ? 60.h
+            : !controller.attendanceAppbarSwitchValue.value
+                ? 106.h
+                : 60.h,
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.r),
@@ -27,25 +36,30 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(vertical: 5.h),
-              child: Row(
-                children: [
-                  20.horizontalSpace,
-                  Icon(
-                    Icons.my_location,
-                    color: Colors.white,
-                    size: 10.h,
-                  ),
-                  5.horizontalSpace,
-                  Text(
-                    "Axpert-house, Jayanagar Bangalore",
-                    style: GoogleFonts.poppins(
-                      fontSize: 8.sp,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
+              child: controller.attendanceDetails.value == null
+                  ? SizedBox.shrink()
+                  : Row(
+                      children: [
+                        20.horizontalSpace,
+                        Icon(
+                          Icons.my_location,
+                          color: Colors.white,
+                          size: 10.h,
+                        ),
+                        5.horizontalSpace,
+                        Text(
+                          controller.clockInLocation.value
+                              .split("\n")[0]
+                              .replaceFirst("Name:", "")
+                              .trim(),
+                          style: GoogleFonts.poppins(
+                            fontSize: 8.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
             Expanded(
               child: Container(
@@ -54,15 +68,18 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
                     borderRadius: BorderRadius.circular(15.r),
                     color: Colors.white,
                   ),
-                  child: !controller.attendanceClockInWidgetCallBackValue.value
-                      ? _getWidget()
-                      : SizedBox.expand(
-                          key: ValueKey(controller.attendanceClockInWidgetCallBackValue.value),
-                        )),
+                  child: controller.attendanceDetails.value == null
+                      ? _noDetailsAvailableWidget()
+                      : !controller.attendanceClockInWidgetCallBackValue.value
+                          ? _getWidget()
+                          : SizedBox.expand(
+                              key: ValueKey(controller
+                                  .attendanceClockInWidgetCallBackValue.value),
+                            )),
             ),
           ],
         ),
-      ),
+      ).skeletonLoading(controller.isAttendanceDetailsIsLoading.value),
     );
   }
 
@@ -73,7 +90,9 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
         opacity: animation,
         child: child,
       ),
-      child: !controller.attendanceAppbarSwitchValue.value ? _clockedInWidget() : _clockedOutWidget(),
+      child: !controller.attendanceAppbarSwitchValue.value
+          ? _clockedInWidget()
+          : _clockedOutWidget(),
     );
   }
 
@@ -85,19 +104,26 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
             children: [
               RichText(
                   key: ValueKey(controller.attendanceAppbarSwitchValue.value),
-                  text: TextSpan(text: "09:16 am", style: AppStyles.attendanceWidgetTimeStyle)),
+                  text: TextSpan(
+                      text: "${controller.attendanceDetails.value?.intime}",
+                      style: AppStyles.attendanceWidgetTimeStyle,
+                      children: [
+                        TextSpan(
+                            text: " am",
+                            style: AppStyles.attendanceWidgetTimeStyle
+                                .copyWith(fontSize: 12.sp))
+                      ])),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    // CupertinoIcons.check_mark_circled_solid,
                     Icons.check_circle,
                     color: AppColors.otpFieldThemeColorGreen,
                     size: 12.h,
                   ),
                   5.horizontalSpace,
                   Text(
-                    "Work Sheet Updated",
+                    "Work Sheet ${controller.attendanceDetails.value?.worksheetUpdateStatus}",
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
                       fontSize: 10.sp,
@@ -146,13 +172,13 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
           Expanded(
               child: RichText(
             text: TextSpan(
-                text: "Clocked Inn at  .  ",
+                text: "Clocked Out at  .  ",
                 style: AppStyles.onboardingSubTitleTextStyle.copyWith(
                   fontSize: 11.sp,
                 ),
                 children: [
                   TextSpan(
-                    text: "09:16 am",
+                    text: "${controller.attendanceDetails.value?.outtime}",
                     style: AppStyles.onboardingSubTitleTextStyle.copyWith(
                       color: AppColors.primaryActionColorDarkBlue,
                       fontSize: 14.sp,
@@ -163,4 +189,18 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
           ))
         ],
       );
+
+  Widget _noDetailsAvailableWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 10.w,
+      children: [
+        Icon(
+          CupertinoIcons.clear_circled_solid,
+          color: AppColors.baseRed,
+        ),
+        Text("No data found")
+      ],
+    );
+  }
 }

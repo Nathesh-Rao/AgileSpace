@@ -1,12 +1,10 @@
 import 'package:axpert_space/common/common.dart';
-import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/modules.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../widgets.dart';
-import 'task_details_history_horizontal_list.dart';
 
 class TaskDetailsHistoryWidget extends GetView<TaskController> {
   const TaskDetailsHistoryWidget({super.key});
@@ -27,14 +25,17 @@ class TaskDetailsHistoryWidget extends GetView<TaskController> {
               ? RainbowLoadingWidget()
               : AnimatedSwitcher(
                   duration: Duration(milliseconds: 300),
-                  transitionBuilder: (Widget child, Animation<double> animation) {
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
                     return controller.showHistoryFlag.value
                         ? FadeTransition(opacity: animation, child: child)
                         : FadeTransition(opacity: animation, child: child);
                   },
                   child: controller.showHistoryFlag.value
-                      ? TaskDetailsHistoryVerticalListWidget(key: ValueKey('visible'))
-                      : TaskDetailsHistoryHorizontalListWidget(key: ValueKey('invisible')),
+                      ? TaskDetailsHistoryVerticalListWidget(
+                          key: ValueKey('visible'))
+                      : TaskDetailsHistoryHorizontalListWidget(
+                          key: ValueKey('invisible')),
                 ),
           //,
         ),

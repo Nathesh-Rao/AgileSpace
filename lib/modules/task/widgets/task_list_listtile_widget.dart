@@ -1,3 +1,4 @@
+import 'package:axpert_space/modules/task/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../common/common.dart';
@@ -32,7 +33,7 @@ class TaskListListTileWidget extends StatelessWidget {
                 Flexible(
                   child: Text(
                     taskModel.caption,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
                       fontSize: 12.sp,
@@ -42,23 +43,25 @@ class TaskListListTileWidget extends StatelessWidget {
                   ),
                 ),
                 20.horizontalSpace,
-                Row(
-                  children: [
-                    Icon(
-                      Icons.flag_circle,
-                      color: AppColors.chipCardWidgetColorRed,
-                      size: 8.w,
-                    ),
-                    5.horizontalSpace,
-                    Text(
-                      StringUtils.formatDate(taskModel.dueDate.toString()),
-                      style: GoogleFonts.poppins(
-                        fontSize: 8.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  ],
+                TaskTileActionButtonWidget(task: taskModel),
+              ],
+            ),
+            5.verticalSpace,
+            Row(
+              children: [
+                Icon(
+                  Icons.flag_circle,
+                  color: AppColors.chipCardWidgetColorRed,
+                  size: 8.w,
                 ),
+                5.horizontalSpace,
+                Text(
+                  StringUtils.formatDate(taskModel.dueDate.toString()),
+                  style: GoogleFonts.poppins(
+                    fontSize: 8.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                )
               ],
             ),
             5.verticalSpace,
@@ -86,9 +89,14 @@ class TaskListListTileWidget extends StatelessWidget {
                   spacing: 10.w,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ChipCardWidget(label: "UI/UX Design", fontSize: 8.sp, color: AppColors.chipCardWidgetColorViolet),
                     ChipCardWidget(
-                        label: taskModel.priority, fontSize: 8.sp, color: AppColors.getPriorityColor(taskModel.priority)),
+                        label: "UI/UX Design",
+                        fontSize: 8.sp,
+                        color: AppColors.chipCardWidgetColorViolet),
+                    ChipCardWidget(
+                        label: taskModel.priority,
+                        fontSize: 8.sp,
+                        color: AppColors.getPriorityColor(taskModel.priority)),
                   ],
                 ),
                 Spacer(),
@@ -112,7 +120,10 @@ class TaskListListTileWidget extends StatelessWidget {
                     participantCount: taskModel.participantCount,
                   ),
                 ),
-                ChipCardWidget(label: taskModel.status, fontSize: 8.sp, color: AppColors.getStatusColor(taskModel.status)),
+                ChipCardWidget(
+                    label: taskModel.status,
+                    fontSize: 8.sp,
+                    color: AppColors.getStatusColor(taskModel.status)),
               ],
             ),
           ],

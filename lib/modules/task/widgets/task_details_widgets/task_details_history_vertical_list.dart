@@ -16,7 +16,8 @@ class TaskDetailsHistoryVerticalListWidget extends GetView<TaskController> {
         itemCount: controller.taskHistoryList.length,
         itemBuilder: (context, index) {
           var history = controller.taskHistoryList[index];
-          var hideToUser = history.status.toString().toLowerCase().contains("accepted");
+          var hideToUser =
+              history.status.toString().toLowerCase().contains("accepted");
           return _historyTile(history, hideToUser, index);
           // return Container(color: Colors.amber, height: 20.h);
         });
@@ -57,7 +58,7 @@ class TaskDetailsHistoryVerticalListWidget extends GetView<TaskController> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
                     padding: EdgeInsets.only(top: 3.h),
@@ -69,15 +70,23 @@ class TaskDetailsHistoryVerticalListWidget extends GetView<TaskController> {
                           history.fromUser,
                           style: AppStyles.taskHistoryUserNameStyle,
                         ),
-                        Image.asset(
-                          "assets/icons/common/arrow_line_icon.png",
-                          color: Colors.black,
-                          width: 60.w,
-                        ),
-                        Text(
-                          history.toUser,
-                          style: AppStyles.taskHistoryUserNameStyle,
-                        ),
+                        !hideToUser
+                            ? Row(
+                                mainAxisSize: MainAxisSize.min,
+                                spacing: 5.w,
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/common/arrow_line_icon.png",
+                                    color: Colors.black,
+                                    width: 60.w,
+                                  ),
+                                  Text(
+                                    history.toUser,
+                                    style: AppStyles.taskHistoryUserNameStyle,
+                                  ),
+                                ],
+                              )
+                            : SizedBox.shrink(),
                         Spacer(),
                         Text(
                           history.modifiedon,
@@ -87,16 +96,23 @@ class TaskDetailsHistoryVerticalListWidget extends GetView<TaskController> {
                     ),
                   ),
                   // 20.verticalSpace,
-                  ChipCardWidget(label: history.status, color: AppColors.getHistoryColor(history.status)),
+                  5.verticalSpace,
+                  ChipCardWidget(
+                      label: history.status,
+                      color: AppColors.getHistoryColor(history.status)),
+                  5.verticalSpace,
+
                   // 5.verticalSpace,
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Comments :",
-                        style: AppStyles.taskHistoryUserNameStyle,
-                      ),
+                      !history.message.isEmpty
+                          ? Text(
+                              "Comments :",
+                              style: AppStyles.taskHistoryUserNameStyle,
+                            )
+                          : SizedBox(),
                       Row(
                         children: [
                           HistoryToolTipWidget(

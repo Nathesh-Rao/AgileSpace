@@ -1,6 +1,6 @@
 name: axpert_space
 description: A new Flutter project.
-publish_to: 'none' # This project is private; remove to publish to pub.dev
+publish_to: "none" # This project is private; remove to publish to pub.dev
 
 version: 1.0.0+1
 
@@ -28,11 +28,11 @@ dependencies:
   fl_chart:
   carousel_slider: ^5.1.1
   bottom_picker: ^4.1.0
+  interactive_bottom_sheet: ^1.1.0
   ############################################################
   # ⚙️ STATE MANAGEMENT
   ############################################################
   get: ^4.7.2
-
 
   ############################################################
   # 🌐 NETWORK / API
@@ -59,6 +59,8 @@ dependencies:
   number_to_words:
   package_info_plus: ^8.1.3
   super_tooltip: ^2.1.0
+  geocoding: ^4.0.0
+  geolocator: 13.0.2
   # logger: ^2.0.2+1
 #  platform_device_id:
 #    git:

@@ -2,7 +2,6 @@ import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/task/models/models.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 
 class HistoryToolTipWidget extends StatefulWidget {
@@ -30,7 +29,8 @@ class _HistoryToolTipWidgetState extends State<HistoryToolTipWidget> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final span = TextSpan(text: _text, style: Theme.of(context).textTheme.bodyMedium);
+        final span = TextSpan(
+            text: _text, style: Theme.of(context).textTheme.bodyMedium);
         final tp = TextPainter(
           text: span,
           textDirection: TextDirection.ltr,
@@ -71,20 +71,15 @@ class _HistoryToolTipWidgetState extends State<HistoryToolTipWidget> {
                 },
                 child: SuperTooltip(
                   showBarrier: true,
-                  // shadowColor: AppColors.getHistoryColor(widget.history.status).withAlpha(100),
-                  // shadowBlurRadius: 100,
-                  // shadowSpreadRadius: 10,
                   borderColor: AppColors.getHistoryColor(widget.history.status),
                   borderWidth: 2,
                   arrowBaseWidth: 30,
-
                   constraints: BoxConstraints(
                     maxWidth: 1.sw,
                     maxHeight: 1.sh,
                   ),
                   popupDirection: TooltipDirection.right,
                   controller: _controller,
-
                   content: Material(
                     color: Colors.transparent,
                     child: Column(
@@ -102,8 +97,12 @@ class _HistoryToolTipWidgetState extends State<HistoryToolTipWidget> {
                         Row(
                           spacing: 10.w,
                           children: [
-                            ChipCardWidget(label: widget.history.status, color: AppColors.getHistoryColor(widget.history.status)),
-                            ChipCardWidget(label: "Message", color: AppColors.baseYellow),
+                            ChipCardWidget(
+                                label: widget.history.status,
+                                color: AppColors.getHistoryColor(
+                                    widget.history.status)),
+                            ChipCardWidget(
+                                label: "Message", color: AppColors.baseYellow),
                           ],
                         ),
                         10.verticalSpace,

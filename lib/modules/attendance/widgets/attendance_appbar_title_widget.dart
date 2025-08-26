@@ -11,28 +11,31 @@ class AttendanceAppBarTitleWidget extends GetView<AttendanceController> {
 
   @override
   Widget build(BuildContext context) {
+    GlobalVariableController globalVariableController = Get.find();
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         5.verticalSpace,
-        RichText(
-          text: TextSpan(
-            text: 'Hey, ',
-            style: GoogleFonts.poppins(
-              fontSize: 20.sp,
-              color: AppColors.primaryActionColorDarkBlue,
-              fontWeight: FontWeight.normal,
-            ),
-            children: [
-              TextSpan(
-                text: 'Tonald Drump 👋🏻',
-                style: AppStyles.appBarTitleTextStyle.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryActionColorDarkBlue,
-                ),
+        Obx(
+          () => RichText(
+            text: TextSpan(
+              text: 'Hey, ',
+              style: GoogleFonts.poppins(
+                fontSize: 20.sp,
+                color: AppColors.primaryActionColorDarkBlue,
+                fontWeight: FontWeight.normal,
               ),
-            ],
+              children: [
+                TextSpan(
+                  text: globalVariableController.USER_NAME.value,
+                  style: AppStyles.appBarTitleTextStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryActionColorDarkBlue,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         3.verticalSpace,

@@ -29,7 +29,7 @@ class ServerConnections {
   static const String API_CONNECTTOAXPERT = "api/v1/ARMConnectToAxpert";
   static const String API_GET_HOMEPAGE_CARDS = "api/v1/ARMGetHomePageCards";
   static const String API_GET_HOMEPAGE_CARDS_v2 = "api/v2/ARMGetHomePageCards";
-  static const String API_GET_HOMEPAGE_CARDSDATASOURCE = "api/v1/ARMGetDataResponse";
+  static const String API_DATASOURCE = "api/v1/ARMGetDataResponse";
 
   static const String API_GET_CARDS_WITH_DATA = "api/v1/GetCardsWithData";
 

@@ -1,6 +1,7 @@
 import 'package:axpert_space/core/config/colors/app_colors.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/task/models/models.dart';
+import 'package:axpert_space/modules/task/widgets/widgets.dart';
 import 'package:axpert_space/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -44,6 +45,9 @@ class TaskListGridTileWidget extends StatelessWidget {
                   ),
                 ),
                 20.horizontalSpace,
+                TaskTileActionButtonWidget(
+                  task: taskModel,
+                ),
                 // Icon(Icons.more_vert_rounded)
               ],
             ),
@@ -96,8 +100,12 @@ class TaskListGridTileWidget extends StatelessWidget {
             Wrap(
               spacing: 10.w,
               children: [
-                ChipCardWidget(label: taskModel.taskCategory, color: AppColors.chipCardWidgetColorViolet),
-                ChipCardWidget(label: taskModel.priority, color: AppColors.getPriorityColor(taskModel.priority)),
+                ChipCardWidget(
+                    label: taskModel.taskCategory,
+                    color: AppColors.chipCardWidgetColorViolet),
+                ChipCardWidget(
+                    label: taskModel.priority,
+                    color: AppColors.getPriorityColor(taskModel.priority)),
               ],
             ),
             Spacer(),
@@ -110,7 +118,9 @@ class TaskListGridTileWidget extends StatelessWidget {
                     participantCount: taskModel.participantCount,
                   ),
                 ),
-                ChipCardWidget(label: taskModel.status, color: AppColors.getStatusColor(taskModel.status)),
+                ChipCardWidget(
+                    label: taskModel.status,
+                    color: AppColors.getStatusColor(taskModel.status)),
               ],
             ),
           ],

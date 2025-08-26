@@ -14,8 +14,9 @@ class TaskDetailsScreen extends GetView<TaskController> {
   Widget build(BuildContext context) {
     final TaskListModel taskModel = Get.arguments["taskModel"];
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.loadTaskDetails(task: taskModel);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await controller.loadTaskDetails(task: taskModel);
+      await controller.getTaskRowOptions(taskModel.id);
     });
     // var max1 = 0.0;
     return Scaffold(
@@ -42,8 +43,14 @@ class TaskDetailsScreen extends GetView<TaskController> {
           ],
         ),
       ),
-      bottomNavigationBar: Obx(() => TaskDetailsBottomBarWidget()
-          .skeletonLoading(controller.isTaskDetailsLoading.value)),
+
+      bottomNavigationBar: TaskDetailsBottomBarWidget(),
+      floatingActionButton:
+          FloatingActionButton(elevation: 2, onPressed: () {}),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+
+      // bottomNavigationBar: Obx(() => TaskDetailsBottomBarWidget()
+      //     .skeletonLoading(controller.isTaskRowOptionsLoading.value)),
     );
   }
 }
