@@ -6,9 +6,15 @@ import '../../core/core.dart';
 class PrimarySearchFieldWidget extends StatelessWidget {
   final void Function(String)? onChanged;
   final void Function(String)? onSubmitted;
+  final void Function()? onSuffixTap;
   final String? placeholder;
 
-  const PrimarySearchFieldWidget({super.key, this.onChanged, this.onSubmitted, this.placeholder});
+  const PrimarySearchFieldWidget(
+      {super.key,
+      this.onChanged,
+      this.onSubmitted,
+      this.placeholder,
+      this.onSuffixTap});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +32,8 @@ class PrimarySearchFieldWidget extends StatelessWidget {
           prefixInsets: EdgeInsets.only(left: 10.w),
           suffixInsets: EdgeInsets.only(right: 10.w),
           itemColor: Colors.grey.shade800,
-          placeholderStyle: AppStyles.searchFieldTextStyle.copyWith(color: Colors.grey.shade400),
+          placeholderStyle: AppStyles.searchFieldTextStyle
+              .copyWith(color: Colors.grey.shade400),
           style: AppStyles.searchFieldTextStyle,
           decoration: BoxDecoration(
             color: AppColors.primarySearchFieldBGColorGrey,
@@ -34,6 +41,7 @@ class PrimarySearchFieldWidget extends StatelessWidget {
           ),
           onChanged: onChanged,
           onSubmitted: onSubmitted,
+          onSuffixTap: onSuffixTap,
         ),
       ),
     );

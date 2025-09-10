@@ -51,4 +51,8 @@ class DateUtilsHelper {
       return '';
     }
   }
+
+  static String getTodayFormattedDate() {
+    return DateFormat("MMM d, y").format(DateTime.now());
+  }
 }

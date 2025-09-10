@@ -1,7 +1,10 @@
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/modules/attendance/attendance.dart';
+
 import 'package:flutter/material.dart';
+
 import '../../../task/widgets/widgets.dart';
+import '../../widgets/landing_drawer_icon_widget.dart';
 
 class LandingTaskTab extends StatelessWidget {
   const LandingTaskTab({super.key});
@@ -12,6 +15,8 @@ class LandingTaskTab extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: false,
+        titleSpacing: 0,
+        leading: LandingDrawerIconWidget(),
         title: AttendanceAppBarTitleWidget(),
         actions: [
           AttendanceAppBarSwitchWidget(),
@@ -24,7 +29,7 @@ class LandingTaskTab extends StatelessWidget {
           AttendanceClockInWidget(),
           20.verticalSpace,
           TaskSearchActionWidget(),
-          20.verticalSpace,
+          TaskListFilterWidget(),
           TaskListPageBuilderWidget()
         ],
       ),

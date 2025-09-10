@@ -30,13 +30,15 @@ class TaskListModel {
   factory TaskListModel.fromJson(Map<String, dynamic> json) => TaskListModel(
         id: json["id"] ?? "",
         status: json["status"] ?? "",
-        projectName: json["project_name"] ?? "project-name",
+        projectName: json["project_name"] ?? "--",
         attachmentCount: json["attachment_count"] ?? 0,
         messageCount: json["message_count"] ?? 0,
         caption: json["caption"] ?? "",
-        description: json["description"] ?? "",
+        description:
+            json["description"].replaceAll(RegExp(r'<[^>]*>'), '').trim() ?? "",
         dueDate: DateTime.parse(json["due_date"] ?? DateTime.now().toString()),
-        createdOn: DateTime.parse(json["createdon"] ?? DateTime.now().toString()),
+        createdOn:
+            DateTime.parse(json["createdon"] ?? DateTime.now().toString()),
         priority: json["priority"] ?? "",
         taskCategory: json["taskcategory"] ?? json["task_category"] ?? "",
         participantCount: json["participant_count"] ?? 0,
@@ -57,7 +59,8 @@ class TaskListModel {
         "participant_count": participantCount,
       };
 
-  static final tempList = tempJsonList.map((e) => TaskListModel.fromJson(e)).toList();
+  static final tempList =
+      tempJsonList.map((e) => TaskListModel.fromJson(e)).toList();
 
   static var tempJsonList = [
     {

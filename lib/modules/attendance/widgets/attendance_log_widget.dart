@@ -12,6 +12,9 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
   @override
   Widget build(BuildContext context) {
     var style = AppStyles.attendanceLogStyle;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.getAttendanceLog();
+    });
 
     return Column(
       children: [
@@ -30,7 +33,9 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
             Obx(
               () => TextButton.icon(
                 onPressed: controller.switchLogExpandValue,
-                label: controller.isLogExpanded.value ? Text("See less") : Text("See more"),
+                label: controller.isLogExpanded.value
+                    ? Text("See less")
+                    : Text("See more"),
                 icon: controller.isLogExpanded.value
                     ? Icon(Icons.keyboard_arrow_down_outlined)
                     : Icon(Icons.keyboard_arrow_up_outlined),
@@ -39,7 +44,8 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
           ]),
         ),
         15.verticalSpace,
-        Obx(() => _attendanceListView(value: controller.selectedMonthIndex.value)),
+        Obx(() =>
+            _attendanceListView(value: controller.selectedMonthIndex.value)),
         10.verticalSpace,
         Expanded(
           child: Container(
@@ -62,7 +68,8 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
             child: Column(
               children: [
                 Container(
-                  decoration: BoxDecoration(gradient: AppColors.subBGGradientHorizontal),
+                  decoration: BoxDecoration(
+                      gradient: AppColors.subBGGradientHorizontal),
                   padding: EdgeInsets.symmetric(horizontal: 15),
                   height: 42,
                   child: Row(
@@ -71,14 +78,20 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
                       Expanded(
                         child: Text(
                           "Date",
-                          style: style.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
+                          style: style.copyWith(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white),
                           textAlign: TextAlign.start,
                         ),
                       ),
                       Expanded(
                         child: Text(
                           "Clock In",
-                          style: style.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
+                          style: style.copyWith(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white),
                           textAlign: TextAlign.start,
                         ),
                       ),
@@ -86,14 +99,20 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
                       Expanded(
                         child: Text(
                           "Clock Out",
-                          style: style.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
+                          style: style.copyWith(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white),
                           textAlign: TextAlign.start,
                         ),
                       ),
                       Expanded(
                         child: Text(
                           "Working Hrs",
-                          style: style.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
+                          style: style.copyWith(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white),
                           textAlign: TextAlign.end,
                         ),
                       ),
@@ -135,7 +154,10 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
                                 child: Text(
                                   "${controller.months[controller.selectedMonthIndex.value]}\n${controller.selectedYear.value}",
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w500, color: AppColors.text1),
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.text1),
                                 )
                                 // ),
                                 ),
@@ -172,8 +194,10 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
                         child: SingleChildScrollView(
                           physics: BouncingScrollPhysics(),
                           child: Column(
-                            children: List.generate(controller.attendanceReportList.length,
-                                (index) => _attendanceListTile(controller.attendanceReportList[index])),
+                            children: List.generate(
+                                controller.attendanceReportList.length,
+                                (index) => _attendanceListTile(
+                                    controller.attendanceReportList[index])),
                           ),
                         ),
                       );
@@ -189,11 +213,15 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
   }
 
   Widget _attendanceListTile(AttendanceReportModel data) {
-    var style = GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black);
+    var style = GoogleFonts.poppins(
+        fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black);
 
     return Container(
-      decoration:
-          BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: _getTileWidgetBorderColor(data.status)))),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+              bottom:
+                  BorderSide(color: _getTileWidgetBorderColor(data.status)))),
       padding: EdgeInsets.symmetric(horizontal: 15),
       height: 52,
       child: Row(
@@ -216,7 +244,10 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
                       ),
                       Text(
                         "📍Location",
-                        style: style.copyWith(fontSize: 8, fontWeight: FontWeight.w700, color: Color(0xff919191)),
+                        style: style.copyWith(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xff919191)),
                         textAlign: TextAlign.start,
                       ),
                     ],
@@ -243,7 +274,10 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
                       ),
                       Text(
                         "📍Location",
-                        style: style.copyWith(fontSize: 8, fontWeight: FontWeight.w700, color: Color(0xff919191)),
+                        style: style.copyWith(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xff919191)),
                         textAlign: TextAlign.start,
                       ),
                     ],
@@ -271,7 +305,9 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
           clipBehavior: Clip.hardEdge,
           height: 30,
           width: 30,
-          decoration: BoxDecoration(color: color.withOpacity(0.28), borderRadius: BorderRadius.circular(5)),
+          decoration: BoxDecoration(
+              color: color.withOpacity(0.28),
+              borderRadius: BorderRadius.circular(5)),
           child: Column(
             children: [
               Expanded(
@@ -306,7 +342,8 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
   }
 
   bool _statusCheck(String status) {
-    if (status.toLowerCase().contains("active") || status.toLowerCase().contains("half")) {
+    if (status.toLowerCase().contains("active") ||
+        status.toLowerCase().contains("half")) {
       return true;
     }
 
@@ -352,7 +389,8 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
               style: style.copyWith(
                 fontSize: 16.sp,
                 color: value == index ? AppColors.baseBlue : AppColors.text1,
-                fontWeight: value == index ? FontWeight.w600 : FontWeight.normal,
+                fontWeight:
+                    value == index ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
           ),

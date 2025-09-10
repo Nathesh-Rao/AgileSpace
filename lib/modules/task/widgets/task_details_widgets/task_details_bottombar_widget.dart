@@ -62,6 +62,8 @@ class TaskDetailsBottomBarWidget extends GetView<TaskController> {
     return FlatButtonWidget(
       width: (1.sw / 2) - 30.w,
       label: controller.getTaskActionName(taskRowOption.action),
+      // label: taskRowOption.url,
+
       color: controller.getTaskActionColor(taskRowOption.action),
       onTap: () {},
       // isCompact: true,

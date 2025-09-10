@@ -150,14 +150,20 @@ class AppColors {
   static const Color text2 = Color(0xff919191);
   static const Color blue9 = Color(0xFF0d297d);
   static const Color blue10 = Color(0xff1F41BB);
-  static const LinearGradient subBGGradientVertical =
-      LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-    Color(0xff3764FC),
-    Color(0xff9764DA),
-  ]);
+  static const LinearGradient subBGGradientVertical = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Color(0xff3764FC),
+        Color(0xff9764DA),
+      ]);
 
   static const LinearGradient subBGGradientHorizontal = LinearGradient(colors: [
     Color(0xff3764FC),
     Color(0xff9764DA),
   ]);
+
+  static var floatButtonBaseColorBlueGray = Color(0xffCACED6);
+
+  static var drawerPrimaryColorViolet = Color(0xff6759FF);
 }

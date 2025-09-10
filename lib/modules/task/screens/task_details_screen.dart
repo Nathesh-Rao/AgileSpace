@@ -39,8 +39,8 @@ class TaskDetailsScreen extends GetView<TaskController> {
             Obx(() => TaskDetailsAttachmentsWidget(taskModel: taskModel)
                 .skeletonLoading(controller.isTaskDetailsLoading.value)),
             13.verticalSpace,
-            Obx(() => TaskDetailsCommentsWidget()
-                .skeletonLoading(controller.isTaskDetailsLoading.value)),
+            // Obx(() => TaskDetailsCommentsWidget()
+            //     .skeletonLoading(controller.isTaskDetailsLoading.value)),
           ],
         ),
       ),
@@ -52,7 +52,7 @@ class TaskDetailsScreen extends GetView<TaskController> {
           borderRadius: BorderRadius.circular(100),
         ),
         elevation: 0,
-        backgroundColor: Color(0xffCACED6),
+        backgroundColor: AppColors.floatButtonBaseColorBlueGray,
         foregroundColor: AppColors.primaryTitleTextColorBlueGrey,
         onPressed: controller.toggleTaskDetailsRowOptions,
         child: Obx(() => _getFloatingIcon()),

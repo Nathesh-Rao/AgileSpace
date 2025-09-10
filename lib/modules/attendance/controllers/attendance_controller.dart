@@ -25,6 +25,7 @@ class AttendanceController extends GetxController {
   var attendanceReportList = [].obs;
   var isAttendanceReportLoading = false.obs;
   var isLogExpanded = false.obs;
+  var isLogExpandedAssist = false.obs;
 
   ServerConnections serverConnections = ServerConnections();
   AppStorage appStorage = AppStorage();
@@ -58,7 +59,7 @@ class AttendanceController extends GetxController {
     '2025',
   ];
 
-  var selectedMonthIndex = 11.obs;
+  var selectedMonthIndex = DateTime.now().month.obs;
   var selectedYear = DateFormat("yyyy").format(DateTime.now()).obs;
 
   updateSelectedYear(dynamic date) {
@@ -74,20 +75,49 @@ class AttendanceController extends GetxController {
   }
 
   getAttendanceLog() {
-    isLogExpanded.value = false;
+    if (isLogExpanded.value) {
+      switchLogExpandValue();
+    }
+    // isLogExpanded.value = false;
     if (attendanceReportList.isEmpty) {
       _getAttendanceReport();
     }
   }
 
   switchLogExpandValue() {
+    isLogExpandedAssist.value = true;
     isLogExpanded.toggle();
   }
 
   _getAttendanceReport() async {
     isAttendanceReportLoading.value = true;
-    await Future.delayed(Duration(seconds: 2));
-    attendanceReportList.value = AttendanceReportModel.sampleData;
+    var reportList = [];
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": "DS_GETATTENDANCELOG",
+      "sqlParams": {"username": "malakonda", "month": "2025-08"}
+    };
+
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        var dsData = jsonDSResp['result']['data'] ?? [];
+        try {
+          for (var l in dsData) {
+            var log = AttendanceReportModel.fromJson(l);
+            reportList.add(log);
+          }
+        } catch (e) {
+          LogService.writeLog(message: "$e");
+        }
+      }
+    }
+    attendanceReportList.value = reportList;
     isAttendanceReportLoading.value = false;
   }
 

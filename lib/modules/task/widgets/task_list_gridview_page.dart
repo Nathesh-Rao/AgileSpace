@@ -34,7 +34,9 @@ class TaskListGridviewPage extends GetView<TaskController> {
     );
   }
 
-  _gridViewWrapper({required int itemCount, required Widget? Function(BuildContext, int) itemBuilder}) {
+  _gridViewWrapper(
+      {required int itemCount,
+      required Widget? Function(BuildContext, int) itemBuilder}) {
     return GridView.builder(
       physics: BouncingScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -42,7 +44,7 @@ class TaskListGridviewPage extends GetView<TaskController> {
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 1,
+        childAspectRatio: 0.9,
       ),
       itemCount: itemCount,
       itemBuilder: itemBuilder,

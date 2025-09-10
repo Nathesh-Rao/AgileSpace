@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 import 'task_details_history_switch_widget.dart';
+import 'task_details_last_action_widget.dart';
 
 class TaskDetailsTaskInfoWidget extends StatelessWidget {
   const TaskDetailsTaskInfoWidget({super.key, required this.taskModel});
@@ -17,19 +18,13 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
       child: Column(
         children: [
           Row(
-            children: [
-              ChipCardWidget(onMaxSize: true, label: taskModel.status, color: AppColors.getStatusColor(taskModel.status)),
-              Spacer(),
-              TaskDetailsHistorySwitchWidget(),
-            ],
-          ),
-          10.verticalSpace,
-          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Flexible(
                 child: Text(
                   taskModel.caption,
-                  maxLines: 2,
+                  maxLines: 5,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(
                     fontSize: 20.sp,
@@ -38,9 +33,26 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              50.horizontalSpace,
+              30.horizontalSpace,
+              TaskDetailsHistorySwitchWidget(),
             ],
           ),
+          5.verticalSpace,
+          Row(
+            children: [
+              ChipCardWidget(
+                  onMaxSize: true,
+                  label: taskModel.status,
+                  color: AppColors.getStatusColor(taskModel.status)),
+              Spacer(),
+              ChipCardWidget(
+                  onMaxSize: true,
+                  label: taskModel.priority,
+                  color: AppColors.getPriorityColor(taskModel.priority)),
+            ],
+          ),
+          5.verticalSpace,
+          TaskDetailsLastActionWidget(),
           10.verticalSpace,
           Row(
             children: [
@@ -60,7 +72,9 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
               Text(
                 StringUtils.formatDate(taskModel.createdOn.toString()),
                 style: GoogleFonts.poppins(
-                    fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primarySubTitleTextColorBlueGreyLight),
               )
             ],
           ),
@@ -83,7 +97,9 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
               Text(
                 StringUtils.formatDate(taskModel.dueDate.toString()),
                 style: GoogleFonts.poppins(
-                    fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primarySubTitleTextColorBlueGreyLight),
               )
             ],
           ),
@@ -128,7 +144,9 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
                   Text(
                     "${taskModel.messageCount} Comments",
                     style: GoogleFonts.poppins(
-                        fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primarySubTitleTextColorBlueGreyLight),
                   )
                 ],
               ),
@@ -143,7 +161,9 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
                   Text(
                     "${taskModel.attachmentCount} Attachments",
                     style: GoogleFonts.poppins(
-                        fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primarySubTitleTextColorBlueGreyLight),
                   )
                 ],
               ),
@@ -174,9 +194,15 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
                 spacing: 10.w,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ChipCardWidget(onMaxSize: true, label: taskModel.taskCategory, color: AppColors.chipCardWidgetColorViolet),
                   ChipCardWidget(
-                      onMaxSize: true, label: taskModel.priority, color: AppColors.getPriorityColor(taskModel.priority)),
+                      onMaxSize: true,
+                      label: taskModel.taskCategory,
+                      color: AppColors.chipCardWidgetColorViolet),
+                  // ChipCardWidget(
+                  //   onMaxSize: true,
+                  //   label: taskModel.priority,
+                  //   color: AppColors.getPriorityColor(taskModel.priority),
+                  // ),
                 ],
               ),
               Spacer(),

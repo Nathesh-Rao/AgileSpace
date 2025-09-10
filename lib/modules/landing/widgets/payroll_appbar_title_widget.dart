@@ -20,6 +20,7 @@ class PayRollAppBarTitleWidget extends GetView<PayRollController> {
           style: AppStyles.appBarTitleTextStyle.copyWith(
             fontWeight: FontWeight.bold,
             color: AppColors.primaryActionColorDarkBlue,
+            fontSize: 16.sp,
           ),
         ),
         3.verticalSpace,

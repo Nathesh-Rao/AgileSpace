@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/core.dart';
 
 class SplashController extends GetxController {
-  var splashLogo = 'assets/images/common/app_logo.png';
+  var splashLogo = 'assets/images/common/axpert.png';
   var splashToWelcomeHeroTag = HeroTags.splashToWelcomeHeroTag;
   AppStorage appStorage = AppStorage();
 
@@ -22,14 +22,18 @@ class SplashController extends GetxController {
     // globalVariableController.WEB_URL.value = "https://agileqa.agilecloud.biz/qaaxpert11.4base";
     // globalVariableController.ARM_URL.value = "https://agileqa.agilecloud.biz/qaarm11.4base";
     // globalVariableController.PROJECT_NAME.value = "pgbase114";
-    globalVariableController.WEB_URL.value = "https://alpha.agilecloud.biz/axpert";
+    globalVariableController.WEB_URL.value =
+        "https://alpha.agilecloud.biz/axpert";
     globalVariableController.ARM_URL.value = "https://alpha.agilecloud.biz/arm";
     globalVariableController.PROJECT_NAME.value = "agilespace";
 
     if (appStorage.retrieveValue(AppStorage.ARM_URL) == null) {
-      appStorage.storeValue(AppStorage.ARM_URL, globalVariableController.ARM_URL.value);
-      appStorage.storeValue(AppStorage.PROJECT_URL, globalVariableController.WEB_URL.value);
-      appStorage.storeValue(AppStorage.PROJECT_NAME, globalVariableController.PROJECT_NAME.value);
+      appStorage.storeValue(
+          AppStorage.ARM_URL, globalVariableController.ARM_URL.value);
+      appStorage.storeValue(
+          AppStorage.PROJECT_URL, globalVariableController.WEB_URL.value);
+      appStorage.storeValue(
+          AppStorage.PROJECT_NAME, globalVariableController.PROJECT_NAME.value);
     }
 
     await Future.delayed(Duration(seconds: 3));

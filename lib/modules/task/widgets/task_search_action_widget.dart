@@ -12,11 +12,18 @@ class TaskSearchActionWidget extends GetView<TaskController> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        PrimarySearchFieldWidget(),
+        PrimarySearchFieldWidget(
+          onChanged: controller.onTaskSearch,
+          onSuffixTap: controller.onTaskSearch(""),
+        ),
         10.horizontalSpace,
         IconButton(
             onPressed: () {
-              controller.loadInitialData();
+              if (controller.taskFilterExpandController.isExpanded) {
+                controller.taskFilterExpandController.collapse();
+              } else {
+                controller.taskFilterExpandController.expand();
+              }
             },
             icon: Image.asset(
               "assets/icons/common/filters-2.png",

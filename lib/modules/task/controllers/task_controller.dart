@@ -16,8 +16,11 @@ class TaskController extends GetxController {
   final pendingTaskCount = 0.obs;
   final taskListPageViewController = PageController();
   final taskList = [].obs;
+  List<TaskListModel> mainTaskList = [];
   final isTaskRowOptionsLoading = false.obs;
   final isTaskDetailsRowOptionsExpanded = false.obs;
+
+  final taskFilterExpandController = ExpansionTileController();
   var taskRowOptions = [].obs;
   ServerConnections serverConnections = ServerConnections();
   AppStorage appStorage = AppStorage();
@@ -32,8 +35,18 @@ class TaskController extends GetxController {
     isTaskOverviewLoading.value = true;
     pendingTaskCount.value = await _getTaskPendingForToday();
     isTaskOverviewLoading.value = false;
-    taskList.value = await _getAllTaskList();
+    mainTaskList = taskList.value = await _getAllTaskList();
     isTaskListLoading.value = false;
+  }
+
+  onTaskSearch(String searchText) {
+    if (searchText.isEmpty) {
+      taskList.value = mainTaskList;
+    }
+    taskList.value = mainTaskList
+        .where((task) =>
+            task.caption.toLowerCase().contains(searchText.toLowerCase()))
+        .toList();
   }
 
   onTaskListViewSwitchButtonClick() {

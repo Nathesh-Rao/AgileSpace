@@ -5,4 +5,5 @@ class GlobalVariableController extends GetxController {
   var PROJECT_NAME = ''.obs;
   var ARM_URL = ''.obs;
   var USER_NAME = ''.obs;
+  var USER_EMAIL = ''.obs;
 }

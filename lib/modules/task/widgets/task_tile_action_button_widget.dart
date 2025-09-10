@@ -41,9 +41,37 @@ class _TaskTileActionButtonWidgetState
       content: TaskTileActionContentWidget(
           taskId: widget.task.id, sController: _controller),
       onHide: _taskController.resetRowOptions,
-      child: Icon(
-        CupertinoIcons.ellipsis_vertical_circle,
-        color: Colors.black,
+      // child: Icon(
+      //   // CupertinoIcons.flowchart,
+      //   // CupertinoIcons.list_bullet_below_rectangle,
+      //   // CupertinoIcons.rectangle_expand_vertical,
+      //   // CupertinoIcons.layers_fill,
+      //   // CupertinoIcons.ellipsis_vertical_circle,
+      //   // CupertinoIcons.square_on_circle,
+      //   // CupertinoIcons.square_stack_3d_down_right_fill,
+      //   // CupertinoIcons.square_stack_3d_up_fill,
+      //   // CupertinoIcons.rectangle_fill_on_rectangle_angled_fill,
+      //   CupertinoIcons.ellipsis_vertical,
+
+      //   color: Colors.black,
+      //   size: 20.w,
+      //   // color: AppColors.getPriorityColor(widget.task.priority),
+      // ),
+
+      child: Container(
+        height: 20.w,
+        width: 20.w,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          // color: Colors.amber,
+        ),
+        child: Center(
+          child: Icon(
+            CupertinoIcons.ellipsis_vertical,
+            size: 20.w,
+            color: Colors.black,
+          ),
+        ),
       ),
     );
   }

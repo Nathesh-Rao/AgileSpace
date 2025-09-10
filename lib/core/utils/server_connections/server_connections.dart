@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import '../../../common/log_service/log_services.dart';
 import '../../app_storage/app_storage.dart';
 import '../../core.dart';
-import '../internet_connections/internet_connections.dart';
+import '../internet_connections/internet_connectivity.dart';
 
 class ServerConnections {
   static var client = http.Client();
@@ -24,7 +24,8 @@ class ServerConnections {
   static const String API_ADDUSER = "api/v1/ARMAddUser";
   static const String API_OTP_VALIDATE_USER = "api/v1/ARMValidateAddUser";
   static const String API_FORGOTPASSWORD = "api/v1/ARMForgotPassword";
-  static const String API_VALIDATE_FORGETPASSWORD = "api/v1/ARMValidateForgotPassword";
+  static const String API_VALIDATE_FORGETPASSWORD =
+      "api/v1/ARMValidateForgotPassword";
   static const String API_GOOGLESIGNIN_SSO = "api/v1/ARMSigninSSO";
   static const String API_CONNECTTOAXPERT = "api/v1/ARMConnectToAxpert";
   static const String API_GET_HOMEPAGE_CARDS = "api/v1/ARMGetHomePageCards";
@@ -41,16 +42,24 @@ class ServerConnections {
   static const String API_GET_MENU_V2 = "api/v2/ARMGetMenu";
   static const String API_SIGNOUT = "api/v1/ARMSignOut";
 
-  static const String API_GET_PENDING_ACTIVETASK = "api/v1/ARMGetPendingActiveTasks";
-  static const String API_GET_PENDING_ACTIVETASK_COUNT = "api/v1/ARMGetPendingActiveTasksCount";
-  static const String API_GET_ACTIVETASK_DETAILS = "api/v1/ARMPEGGetTaskDetails";
-  static const String API_GET_FILTERED_PENDING_TASK = "api/v1/ARMGetFilteredActiveTasks";
-  static const String API_GET_COMPLETED_ACTIVETASK = "api/v1/ARMGetCompletedTasks";
-  static const String API_GET_COMPLETED_ACTIVETASK_COUNT = "api/v1/ARMGetCompletedTasksCount";
-  static const String API_GET_FILTERED_COMPLETED_TASK = "api/v1/ARMGetFilteredCompletedTasks";
+  static const String API_GET_PENDING_ACTIVETASK =
+      "api/v1/ARMGetPendingActiveTasks";
+  static const String API_GET_PENDING_ACTIVETASK_COUNT =
+      "api/v1/ARMGetPendingActiveTasksCount";
+  static const String API_GET_ACTIVETASK_DETAILS =
+      "api/v1/ARMPEGGetTaskDetails";
+  static const String API_GET_FILTERED_PENDING_TASK =
+      "api/v1/ARMGetFilteredActiveTasks";
+  static const String API_GET_COMPLETED_ACTIVETASK =
+      "api/v1/ARMGetCompletedTasks";
+  static const String API_GET_COMPLETED_ACTIVETASK_COUNT =
+      "api/v1/ARMGetCompletedTasksCount";
+  static const String API_GET_FILTERED_COMPLETED_TASK =
+      "api/v1/ARMGetFilteredCompletedTasks";
   static const String API_DO_TASK_ACTIONS = "api/v1/ARMDoTaskAction";
   static const String API_GET_ALL_ACTIVE_TASKS = "api/v1/ARMGetAllActiveTasks";
-  static const String API_GET_BULK_APPROVAL_COUNT = "api/v1/ARMGetBulkApprovalCount";
+  static const String API_GET_BULK_APPROVAL_COUNT =
+      "api/v1/ARMGetBulkApprovalCount";
   static const String API_GET_BULK_ACTIVETASKS = "api/v1/ARMGetBulkActiveTasks";
   static const String API_POST_BULK_DO_BULK_ACTION = "api/v1/ARMDoBulkAction";
   static const String API_GET_SENDTOUSERS = "api/v1/ARMGetSendToUsers";
@@ -65,7 +74,8 @@ class ServerConnections {
 
   var _baseBody = "";
 
-  String _baseUrl = "http://demo.agile-labs.com/axmclientidscripts/asbmenurest.dll/datasnap/rest/Tasbmenurest/getchoices";
+  final String _baseUrl =
+      "http://demo.agile-labs.com/axmclientidscripts/asbmenurest.dll/datasnap/rest/Tasbmenurest/getchoices";
 
   postToServer(
       {String url = '',
@@ -74,7 +84,7 @@ class ServerConnections {
       String ClientID = '',
       bool isBearer = false,
       var show_errorSnackbar = true}) async {
-    var API_NAME = url.substring(url.lastIndexOf("/") + 1, url.length);
+    var apiName = url.substring(url.lastIndexOf("/") + 1, url.length);
     if (await internetConnectivity.connectionStatus) {
       try {
         if (ClientID != '') _baseBody = _generateBody(ClientID.toLowerCase());
@@ -84,35 +94,38 @@ class ServerConnections {
         if (isBearer) {
           header = {
             "Content-Type": "application/json",
-            'Authorization': 'Bearer ' + appStorage.retrieveValue(AppStorage.TOKEN).toString() ?? "",
+            'Authorization':
+                'Bearer ${appStorage.retrieveValue(AppStorage.TOKEN)}' ?? "",
           };
         }
         print("API_POST_URL: $url");
         // print("Post header: $header");
-        print("API_POST_BODY:" + body);
-        var response = await client.post(Uri.parse(url), headers: header, body: body);
+        print("API_POST_BODY:$body");
+        var response =
+            await client.post(Uri.parse(url), headers: header, body: body);
 
         if (response.statusCode == 200) {
           LogService.writeLog(
               message:
-                  "[^] [POST] URL:$url\nAPI_NAME: $API_NAME\nBody: $body\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
+                  "[^] [POST] URL:$url\nAPI_NAME: $apiName\nBody: $body\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
           return response.body;
         }
 
         if (response.statusCode == 404) {
-          print("API_ERROR: $API_NAME: ${response.body}");
-          AppSnackBar.showError("Error! ${response.statusCode.toString()}", "Something went wrong");
+          print("API_ERROR: $apiName: ${response.body}");
+          AppSnackBar.showError("Error! ${response.statusCode.toString()}",
+              "Something went wrong");
         } else {
           if (response.statusCode == 400) {
             LogService.writeLog(
                 message:
-                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nBody: $body\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
+                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $apiName\nBody: $body\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
             return response.body;
           } else {
-            print("API_ERROR: $API_NAME: ${response.body}");
+            print("API_ERROR: $apiName: ${response.body}");
             LogService.writeLog(
                 message:
-                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nBody: $body\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
+                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $apiName\nBody: $body\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
             var msg = response.body.toString();
             if (response.body.toString().contains("message")) {
               try {
@@ -123,11 +136,12 @@ class ServerConnections {
                 print(e);
               }
             }
-            AppSnackBar.showError("Error! ${response.statusCode.toString()}", API_NAME + ": " + msg);
+            AppSnackBar.showError(
+                "Error! ${response.statusCode.toString()}", "$apiName: $msg");
           }
         }
       } catch (e) {
-        print("API_ERROR: $API_NAME: ${e.toString()}");
+        print("API_ERROR: $apiName: ${e.toString()}");
         AppSnackBar.showError("Error!", e.toString());
       }
     }
@@ -158,8 +172,9 @@ class ServerConnections {
   //   }
   // }
 
-  getFromServer({String url = '', var header = '', var show_errorSnackbar = true}) async {
-    var API_NAME = url.substring(url.lastIndexOf("/") + 1, url.length);
+  getFromServer(
+      {String url = '', var header = '', var show_errorSnackbar = true}) async {
+    var apiName = url.substring(url.lastIndexOf("/") + 1, url.length);
     try {
       if (url == '') url = _baseUrl;
 
@@ -171,7 +186,7 @@ class ServerConnections {
         var decodedBody = utf8.decode(response.bodyBytes);
         LogService.writeLog(
             message:
-                "[^] [POST] URL:$url\nAPI_NAME: $API_NAME\nBody: $decodedBody\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
+                "[^] [POST] URL:$url\nAPI_NAME: $apiName\nBody: $decodedBody\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
         return decodedBody;
         // return response.body;
       }
@@ -179,17 +194,19 @@ class ServerConnections {
       if (response.statusCode == 404) {
         LogService.writeLog(
             message:
-                "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
-        if (API_NAME.toString().toLowerCase() == "ARMAppStatus".toLowerCase()) {
+                "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $apiName\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
+        if (apiName.toString().toLowerCase() == "ARMAppStatus".toLowerCase()) {
           AppSnackBar.showError("Error!", "Invalid ARM URL");
         } else {
-          AppSnackBar.showError("Error! ${response.statusCode.toString()}", "Invalid ARM URL");
+          AppSnackBar.showError(
+              "Error! ${response.statusCode.toString()}", "Invalid ARM URL");
         }
       } else {
         LogService.writeLog(
             message:
-                "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
-        AppSnackBar.showError("Error! ${response.statusCode.toString()}", "Internal server error");
+                "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $apiName\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
+        AppSnackBar.showError("Error! ${response.statusCode.toString()}",
+            "Internal server error");
       }
     } catch (e) {
       // LogService.writeLog(message: "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nError: ${e.toString()}");
@@ -208,18 +225,22 @@ class ServerConnections {
           if (reResponse.statusCode == 404) {
             LogService.writeLog(
                 message:
-                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nStatusCode: ${reResponse.statusCode}\nResponse: ${reResponse.body}");
-            if (API_NAME.toString().toLowerCase() == "ARMAppStatus".toLowerCase()) {
+                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $apiName\nStatusCode: ${reResponse.statusCode}\nResponse: ${reResponse.body}");
+            if (apiName.toString().toLowerCase() ==
+                "ARMAppStatus".toLowerCase()) {
               AppSnackBar.showError("Error!", "Invalid ARM URL");
             } else {
-              AppSnackBar.showError("Error! ${reResponse.statusCode.toString()}", "Invalid ARM URL");
+              AppSnackBar.showError(
+                  "Error! ${reResponse.statusCode.toString()}",
+                  "Invalid ARM URL");
             }
           } else {
             // LogService.writeLog(message: "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nError: ${e.toString()}");
             LogService.writeLog(
                 message:
-                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $API_NAME\nStatusCode: ${reResponse.statusCode}\nResponse: ${reResponse.body}");
-            AppSnackBar.showError("Error! ${reResponse.statusCode.toString()}", "Internal server error");
+                    "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $apiName\nStatusCode: ${reResponse.statusCode}\nResponse: ${reResponse.body}");
+            AppSnackBar.showError("Error! ${reResponse.statusCode.toString()}",
+                "Internal server error");
           }
         } catch (err) {
           AppSnackBar.showError("Error! ", err.toString());

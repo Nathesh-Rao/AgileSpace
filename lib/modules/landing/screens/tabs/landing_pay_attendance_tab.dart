@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../attendance/attendance.dart';
 import '../../../leaves/leaves.dart';
 import '../../../payroll/payroll.dart';
+import '../../widgets/widgets.dart';
 
 class LandingPayAndAttendanceTab extends StatelessWidget {
   const LandingPayAndAttendanceTab({super.key});
@@ -14,6 +15,8 @@ class LandingPayAndAttendanceTab extends StatelessWidget {
         elevation: 0,
         automaticallyImplyLeading: false,
         centerTitle: false,
+        // titleSpacing: 0,
+        // leading: LandingDrawerIconWidget(),
         title: PayRollAppBarTitleWidget(),
         actions: [
           AttendanceAppBarSwitchWidget(),

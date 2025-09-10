@@ -8,6 +8,7 @@ class FlatButtonWidget extends StatelessWidget {
     super.key,
     required this.label,
     this.color,
+    this.bgColor,
     this.height,
     this.width,
     this.onTap,
@@ -15,6 +16,7 @@ class FlatButtonWidget extends StatelessWidget {
     this.isCompact = false,
   });
   final Color? color;
+  final Color? bgColor;
   final String label;
   final Function()? onTap;
   final double? height;

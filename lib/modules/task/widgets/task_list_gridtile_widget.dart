@@ -35,7 +35,7 @@ class TaskListGridTileWidget extends StatelessWidget {
                   flex: 5,
                   child: Text(
                     taskModel.caption,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
                       fontSize: 12.sp,

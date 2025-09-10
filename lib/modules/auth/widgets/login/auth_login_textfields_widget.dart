@@ -19,7 +19,7 @@ class AuthLoginTextFieldsWidget extends GetView<AuthController> {
             errorText: controller.errUserName.value,
             controller: controller.userNameController,
             label: "Username",
-            hintText: "john doe",
+            hintText: "",
             prefixIcon: Icon(
               CupertinoIcons.profile_circled,
               color: AppColors.primaryTitleTextColorBlueGrey,
@@ -74,7 +74,9 @@ class AuthLoginTextFieldsWidget extends GetView<AuthController> {
                         curve: Curves.decelerate,
                         key: ValueKey(controller.showPassword.value),
                         child: Icon(
-                          !controller.showPassword.value ? Icons.visibility : Icons.visibility_off,
+                          !controller.showPassword.value
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                           color: !controller.showPassword.value
                               ? AppColors.chipCardWidgetColorRed
                               : AppColors.chipCardWidgetColorGreen,

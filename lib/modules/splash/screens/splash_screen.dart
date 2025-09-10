@@ -19,8 +19,8 @@ class SplashScreen extends GetView<SplashController> {
             tag: controller.splashToWelcomeHeroTag,
             child: Image.asset(
               controller.splashLogo,
-              width: 120,
-              height: 120,
+              width: 180,
+              height: 180,
             ),
           ),
         ),

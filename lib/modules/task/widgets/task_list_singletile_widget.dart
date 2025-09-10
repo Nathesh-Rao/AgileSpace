@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../../core/core.dart';
 import '../../../routes/app_routes.dart';
 import '../models/models.dart';
+import 'task_tile_action_button_widget.dart';
 
 class TaskListSingleTileWidget extends StatelessWidget {
   const TaskListSingleTileWidget({super.key, required this.taskModel});
@@ -30,19 +31,28 @@ class TaskListSingleTileWidget extends StatelessWidget {
         child: Column(
           children: [
             Row(
-              spacing: 5.w,
               children: [
-                Text(
-                  taskModel.projectName,
-                  style: AppStyles.textButtonStyle.copyWith(
-                    fontSize: 13.sp,
-                  ),
+                Row(
+                  spacing: 5.w,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      taskModel.projectName,
+                      style: AppStyles.textButtonStyle.copyWith(
+                        fontSize: 13.sp,
+                      ),
+                    ),
+                    Text(
+                      "Project",
+                      style: AppStyles.textButtonStyle.copyWith(
+                        fontSize: 13.sp,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  "Project",
-                  style: AppStyles.textButtonStyle.copyWith(
-                    fontSize: 13.sp,
-                  ),
+                Spacer(),
+                TaskTileActionButtonWidget(
+                  task: taskModel,
                 ),
               ],
             ),
@@ -89,7 +99,9 @@ class TaskListSingleTileWidget extends StatelessWidget {
                 Text(
                   StringUtils.formatDate(taskModel.dueDate.toString()),
                   style: GoogleFonts.poppins(
-                      fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primarySubTitleTextColorBlueGreyLight),
                 )
               ],
             ),
@@ -100,9 +112,14 @@ class TaskListSingleTileWidget extends StatelessWidget {
                   spacing: 10.w,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ChipCardWidget(onMaxSize: true, label: taskModel.taskCategory, color: AppColors.chipCardWidgetColorViolet),
                     ChipCardWidget(
-                        onMaxSize: true, label: taskModel.priority, color: AppColors.getPriorityColor(taskModel.priority)),
+                        onMaxSize: true,
+                        label: taskModel.taskCategory,
+                        color: AppColors.chipCardWidgetColorViolet),
+                    ChipCardWidget(
+                        onMaxSize: true,
+                        label: taskModel.priority,
+                        color: AppColors.getPriorityColor(taskModel.priority)),
                   ],
                 ),
                 Spacer(),
@@ -123,7 +140,10 @@ class TaskListSingleTileWidget extends StatelessWidget {
                     Text(
                       "${taskModel.messageCount} Comments",
                       style: GoogleFonts.poppins(
-                          fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color:
+                              AppColors.primarySubTitleTextColorBlueGreyLight),
                     )
                   ],
                 ),
@@ -138,7 +158,10 @@ class TaskListSingleTileWidget extends StatelessWidget {
                     Text(
                       "${taskModel.attachmentCount} Attachments",
                       style: GoogleFonts.poppins(
-                          fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color:
+                              AppColors.primarySubTitleTextColorBlueGreyLight),
                     )
                   ],
                 ),
@@ -173,7 +196,10 @@ class TaskListSingleTileWidget extends StatelessWidget {
                     participantCount: taskModel.participantCount,
                   ),
                 ),
-                ChipCardWidget(onMaxSize: true, label: taskModel.status, color: AppColors.getStatusColor(taskModel.status)),
+                ChipCardWidget(
+                    onMaxSize: true,
+                    label: taskModel.status,
+                    color: AppColors.getStatusColor(taskModel.status)),
               ],
             ),
           ],

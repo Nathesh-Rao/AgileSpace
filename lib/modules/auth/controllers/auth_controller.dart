@@ -4,10 +4,12 @@ import 'dart:convert';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/widgets/flat_button_widget.dart';
 import 'package:axpert_space/routes/app_routes.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platform_device_id_plus/platform_device_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zo_animated_border/zo_animated_border.dart';
 import '../../../core/core.dart';
 import '../../../core/utils/server_connections/server_connections.dart';
 import '../auth.dart';
@@ -44,6 +46,7 @@ class AuthController extends GetxController {
   var otpLoginKey = ''.obs;
   var otpErrorText = ''.obs;
   bool isDuplicate_session = false;
+  bool isAxpertConnectEstablished = false;
   //-------------------------------------------------------------------------------
 
   validate() {
@@ -265,6 +268,8 @@ class AuthController extends GetxController {
 
     globalVariableController.USER_NAME.value =
         json["nickname"].toString() ?? userNameController.text.trim();
+    globalVariableController.USER_EMAIL.value =
+        json["email_id"].toString() ?? userNameController.text.trim();
     //Save Data
     if (rememberMe.value) {
       rememberCredentials();
@@ -319,7 +324,7 @@ class AuthController extends GetxController {
     //mobile Notification
     await _callApiForMobileNotification();
     //connect to Axpert
-    await _callApiForConnectToAxpert();
+    await callApiForConnectToAxpert();
     final prefs = await SharedPreferences.getInstance();
 
     if (prefs.getBool(AppStorage.IS_FIRST_TIME) ?? true) {
@@ -342,7 +347,7 @@ class AuthController extends GetxController {
     print("Mobile: " + connectResp);
   }
 
-  Future<void> _callApiForConnectToAxpert() async {
+  Future<void> callApiForConnectToAxpert() async {
     var connectBody = {
       'ARMSessionId': appStorage.retrieveValue(AppStorage.SESSIONID)
     };
@@ -355,14 +360,15 @@ class AuthController extends GetxController {
     var jsonResp = jsonDecode(connectResp);
     if (jsonResp != "") {
       if (jsonResp['result']['success'].toString() == "true") {
+        print("callApiForConnectToAxpert: ${jsonResp.toString()}");
+        isAxpertConnectEstablished = true;
         // Get.offAllNamed(Routes.LandingPage);
       } else {
         var message = jsonResp['result']['message'].toString();
         AppSnackBar.showError("Error - Connect To Axpert", message);
-        // showErrorSnack(title:, message: message);
       }
     } else {
-      AppSnackBar.showError("Error", "Error - Connect To Axpert");
+      AppSnackBar.showError("Error - Connect To Axpert", '');
     }
   }
 
@@ -475,39 +481,43 @@ class AuthController extends GetxController {
               const SizedBox(height: 24),
 
               // Buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Flexible(
-                    child: FlatButtonWidget(
-                      color: AppColors.baseRed,
-                      onTap: () {
-                        Get.offAllNamed(AppRoutes.login);
-                      },
-                      label: "NO",
-                    ),
-                  ),
-                  // Confirm button
-                  Flexible(
-                    child: FlatButtonWidget(
-                      color: AppColors.baseBlue,
-                      // style: ElevatedButton.styleFrom(
-                      //   backgroundColor: AppColors.baseBlue,
-                      //   foregroundColor: Colors.white,
-                      //   padding: const EdgeInsets.symmetric(
-                      //       horizontal: 24, vertical: 12),
-                      //   shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(12),
-                      //   ),
-                      //   elevation: 3,
-                      // ),
-                      onTap: () async {
-                        callSignInAPI();
-                      },
-                      label: "yes",
-                    ),
-                  ),
-                ],
+              Obx(
+                () => isLoginLoading.value
+                    ? CupertinoActivityIndicator()
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Flexible(
+                            child: FlatButtonWidget(
+                              color: AppColors.baseRed,
+                              onTap: () {
+                                Get.offAllNamed(AppRoutes.login);
+                              },
+                              label: "NO",
+                            ),
+                          ),
+                          // Confirm button
+                          Flexible(
+                            child: FlatButtonWidget(
+                              color: AppColors.baseBlue,
+                              // style: ElevatedButton.styleFrom(
+                              //   backgroundColor: AppColors.baseBlue,
+                              //   foregroundColor: Colors.white,
+                              //   padding: const EdgeInsets.symmetric(
+                              //       horizontal: 24, vertical: 12),
+                              //   shape: RoundedRectangleBorder(
+                              //     borderRadius: BorderRadius.circular(12),
+                              //   ),
+                              //   elevation: 3,
+                              // ),
+                              onTap: () async {
+                                callSignInAPI();
+                              },
+                              label: "yes",
+                            ),
+                          ),
+                        ],
+                      ),
               ),
             ],
           ),
