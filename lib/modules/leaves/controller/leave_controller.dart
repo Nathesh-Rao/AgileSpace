@@ -127,11 +127,11 @@ class LeaveController extends GetxController {
   IconData getIconByLeaveType(String leaveType) {
     switch (leaveType.toLowerCase()) {
       case 'annual leave':
-        return Icons.beach_access; // vacation icon
+        return Icons.beach_access;
       case 'sick leave':
-        return Icons.healing; // medical icon
+        return Icons.healing;
       case 'casual leave':
-        return Icons.weekend; // casual time off
+        return Icons.weekend;
       case 'maternity leave':
         return Icons.child_friendly;
       case 'paternity leave':

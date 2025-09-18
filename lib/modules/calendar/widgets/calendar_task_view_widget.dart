@@ -7,8 +7,7 @@ import 'package:axpert_space/modules/calendar/models/meeting_model.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
+
 import '../controller/calendar_controller.dart' as cl;
 
 class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
@@ -19,7 +18,6 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
     return Obx(
       () {
         var meetingList = controller.meetingList.value;
-        var meetingEvents = MeetingDataSource(meetingList);
         return Column(
           children: [
             15.verticalSpace,
