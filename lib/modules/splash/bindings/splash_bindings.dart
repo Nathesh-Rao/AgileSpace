@@ -7,8 +7,5 @@ class SplashBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<SplashController>(() => SplashController());
-    Get.put<GlobalVariableController>(GlobalVariableController(),
-        permanent: true);
-    Get.put<InternetConnectivity>(InternetConnectivity(), permanent: true);
   }
 }

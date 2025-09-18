@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -136,6 +137,27 @@ class AppColors {
       _currentIndex = 0;
     }
     return _colorPalette[_currentIndex++];
+  }
+
+  static Color getRandomColor() {
+    List<Color> colors = [
+      Colors.purple,
+      Colors.green,
+      Colors.amber,
+      Colors.red,
+      Colors.indigo,
+      Colors.blue,
+      Colors.orange,
+      Colors.cyan,
+      Colors.teal,
+      Colors.lime,
+      Colors.brown,
+      Colors.pink,
+      Colors.deepOrange,
+      Colors.lightGreen,
+      Colors.deepPurple,
+    ];
+    return colors[Random().nextInt(colors.length)];
   }
 
   static void resetColorIndex() {

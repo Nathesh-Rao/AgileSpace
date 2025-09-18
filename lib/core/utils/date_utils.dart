@@ -11,6 +11,17 @@ class DateUtilsHelper {
     }
   }
 
+  static String getTimeFromDate(String? dateStr) {
+    if (dateStr == null) return "";
+    try {
+      DateTime date = DateTime.parse(dateStr);
+
+      return DateFormat('h:mm a').format(date);
+    } catch (e) {
+      return '';
+    }
+  }
+
   static String getMonthName(String? dateStr) {
     if (dateStr == null) return "";
     try {
@@ -52,7 +63,21 @@ class DateUtilsHelper {
     }
   }
 
-  static String getTodayFormattedDate() {
-    return DateFormat("MMM d, y").format(DateTime.now());
+  static String getTodayFormattedDate({DateTime? date}) {
+    return DateFormat("MMM d, y").format(date ?? DateTime.now());
+  }
+
+  static String getTodayFormattedDateMD({DateTime? date}) {
+    return DateFormat("MMM d").format(date ?? DateTime.now());
+  }
+
+  static String getFormattedDateYMD(String? dateStr) {
+    if (dateStr == null) return "";
+    try {
+      DateTime date = DateTime.parse(dateStr);
+      return DateFormat('yyyy-MM-dd').format(date);
+    } catch (e) {
+      return '';
+    }
   }
 }

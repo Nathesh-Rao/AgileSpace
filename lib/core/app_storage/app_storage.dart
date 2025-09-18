@@ -14,9 +14,17 @@ class AppStorage {
   static const String USER_CHANGE_PASSWORD = "ChangePassword";
   static const String LAST_LOGIN_DATA = "LastLoginDataMap";
   static const String IS_FIRST_TIME = "IsFirstTime";
+  // static const String NOTIFICATION_LIST = "NotificationList";
+  static const String NOTIFICATION_LIST = "NewNotificationList";
+  static const String NOTIFICATION_UNREAD = "NewNotificationUnReadNo";
+  static const String CAN_AUTHENTICATE = "CanAuthenticate";
+  // static const String WILL_AUTHENTICATE = "WillAuthenticate";
+  static const String WILL_AUTHENTICATE_FOR_USER = "WillAuthenticateForUser";
+  static const String SHAREDPREF_NAME = "BackgroundMessages";
+  static const String isShowNotifyEnabled = "isShowNotifyEnabled";
+  static const String isLogEnabled = "isLogEnabled";
+  static const String DEMO_IS_FIRST_INSTALL = "demoIsFirstInstall";
   late final box;
-
-  static String isLogEnabled = "false";
 
   AppStorage() {
     box = GetStorage();

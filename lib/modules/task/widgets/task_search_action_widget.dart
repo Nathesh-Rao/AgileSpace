@@ -14,7 +14,7 @@ class TaskSearchActionWidget extends GetView<TaskController> {
       children: [
         PrimarySearchFieldWidget(
           onChanged: controller.onTaskSearch,
-          onSuffixTap: controller.onTaskSearch(""),
+          onSuffixTap: () => controller.onTaskSearch(""),
         ),
         10.horizontalSpace,
         IconButton(

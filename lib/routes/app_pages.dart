@@ -1,5 +1,6 @@
 import 'package:axpert_space/modules/landing/landing.dart';
 import 'package:axpert_space/modules/leaves/screens/leave_details_screen.dart';
+import 'package:axpert_space/modules/notifications/screen/notification_screen.dart';
 import 'package:axpert_space/modules/payroll/screens/payroll_details_page.dart';
 import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
@@ -82,6 +83,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.payRollDetails,
       page: () => PayrollDetailsPage(),
+      transition: Transition.rightToLeft,
+      curve: Curves.decelerate,
+    ),
+    GetPage(
+      name: AppRoutes.notification,
+      page: () => NotificationScreen(),
       transition: Transition.rightToLeft,
       curve: Curves.decelerate,
     ),

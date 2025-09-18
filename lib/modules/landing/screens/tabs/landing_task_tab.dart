@@ -1,7 +1,10 @@
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/modules/attendance/attendance.dart';
+import 'package:axpert_space/modules/notifications/widgets/notification_icon_widget.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_number_flow/flutter_number_flow.dart';
+import 'package:get/get.dart';
 
 import '../../../task/widgets/widgets.dart';
 import '../../widgets/landing_drawer_icon_widget.dart';
@@ -11,27 +14,38 @@ class LandingTaskTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appBar = AppBar(
+      automaticallyImplyLeading: false,
+      centerTitle: false,
+      titleSpacing: 0,
+      leading: LandingDrawerIconWidget(),
+      title: AttendanceAppBarTitleWidget(),
+      actions: [
+        AttendanceAppBarSwitchWidget(),
+        10.horizontalSpace,
+        NotificationIconWidget(),
+        15.horizontalSpace,
+      ],
+    );
+
+    final appBarHeight =
+        appBar.preferredSize.height + MediaQuery.of(context).padding.top;
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        titleSpacing: 0,
-        leading: LandingDrawerIconWidget(),
-        title: AttendanceAppBarTitleWidget(),
-        actions: [
-          AttendanceAppBarSwitchWidget(),
-          25.horizontalSpace,
-        ],
-      ),
-      body: Column(
-        children: [
-          20.verticalSpace,
-          AttendanceClockInWidget(),
-          20.verticalSpace,
-          TaskSearchActionWidget(),
-          TaskListFilterWidget(),
-          TaskListPageBuilderWidget()
-        ],
+      appBar: appBar,
+      body: SingleChildScrollView(
+        child: SizedBox(
+          height: (1.sh - appBarHeight),
+          child: Column(
+            children: [
+              20.verticalSpace,
+              AttendanceClockInWidget(),
+              20.verticalSpace,
+              TaskSearchActionWidget(),
+              TaskListFilterWidget(),
+              TaskListPageBuilderWidget()
+            ],
+          ),
+        ),
       ),
     );
   }

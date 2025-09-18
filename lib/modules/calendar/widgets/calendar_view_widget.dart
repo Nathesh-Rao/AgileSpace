@@ -1,3 +1,4 @@
+import 'package:animated_switcher_plus/animated_switcher_plus.dart';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/modules/calendar/controller/calendar_controller.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,22 +12,12 @@ class CalendarViewWidget extends GetView<CalendarController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.getAllData();
+    });
     return Obx(() => Expanded(
-            child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 500),
-          switchInCurve: Curves.easeOut,
-          switchOutCurve: Curves.easeIn,
-          transitionBuilder: (Widget child, Animation<double> anim) {
-            final slide = Tween<Offset>(
-              begin: const Offset(0, 0.1), // slightly below
-              end: Offset.zero,
-            ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOut));
-
-            return FadeTransition(
-              opacity: anim,
-              child: SlideTransition(position: slide, child: child),
-            );
-          },
+            child: AnimatedSwitcherPlus.translationLeft(
+          duration: Duration(milliseconds: 500),
           child: controller.calendarViewSwitch.value
               ? CalendarTaskViewWidget()
               : CalendarMonthViewWidget(), // give different ValueKeys to trigger animation

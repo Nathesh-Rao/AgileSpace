@@ -25,16 +25,21 @@ class LeaveDetailsScreen extends GetView<LeaveController> {
       ),
       body: Column(
         children: [
-          Obx(() => (controller.leaveDetails.value == null && controller.isLeaveDetailsLoading.value) ||
+          Obx(() => (controller.leaveDetails.value == null &&
+                      controller.isLeaveDetailsLoading.value) ||
                   (controller.leaveDetails.value != null)
-              ? LeaveDetailsHeaderWidget()
-                  .skeletonLoading((controller.leaveDetails.value == null) ? true : controller.isLeaveDetailsLoading.value)
+              ? LeaveDetailsHeaderWidget().skeletonLoading(
+                  (controller.leaveDetails.value == null)
+                      ? true
+                      : controller.isLeaveDetailsLoading.value)
               : SizedBox.shrink()),
           10.verticalSpace,
           Row(
             children: [
               23.horizontalSpace,
-              IconLabelWidget(iconColor: AppColors.snackBarNotificationColorBlue, label: "Leave History"),
+              IconLabelWidget(
+                  iconColor: AppColors.snackBarNotificationColorBlue,
+                  label: "Leave History"),
             ],
           ),
           5.verticalSpace,
@@ -43,7 +48,8 @@ class LeaveDetailsScreen extends GetView<LeaveController> {
             () => ListView.builder(
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
                     itemCount: controller.leaveHistoryList.value.length,
-                    itemBuilder: (context, index) => _historyTile(controller.leaveHistoryList[index]))
+                    itemBuilder: (context, index) =>
+                        _historyTile(controller.leaveHistoryList[index]))
                 .skeletonLoading(controller.isLeaveDetailsLoading.value),
           ))
         ],
@@ -54,7 +60,8 @@ class LeaveDetailsScreen extends GetView<LeaveController> {
   _historyTile(LeaveHistoryModel leave) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: controller.getColorByLeaveType(leave.leaveType).withAlpha(50),
+        backgroundColor:
+            controller.getColorByLeaveType(leave.leaveType).withAlpha(50),
         child: Center(
           child: Icon(
             controller.getIconByLeaveType(leave.leaveType),
@@ -63,14 +70,14 @@ class LeaveDetailsScreen extends GetView<LeaveController> {
         ),
       ),
       title: Text(
-        "${leave.leaveType} - ${leave.totalDays}days",
+        "${leave.leaveType} - ${leave.totalDays} ${leave.totalDays == 1 ? "day" : "days"}",
         style: GoogleFonts.poppins(
           fontWeight: FontWeight.w600,
           fontSize: 12.sp,
         ),
       ),
       subtitle: Text(
-        "${DateUtilsHelper.getShortDayName(leave.date)} ${DateUtilsHelper.getDateNumber(leave.date)}-${DateUtilsHelper.getShortMonthName(leave.date)}",
+        "${DateUtilsHelper.getShortDayName(leave.fromDate.toString())} ${DateUtilsHelper.getDateNumber(leave.fromDate.toString())}-${DateUtilsHelper.getShortMonthName(leave.toDate.toString())}",
         style: GoogleFonts.poppins(
           fontWeight: FontWeight.w500,
           fontSize: 10.sp,
@@ -89,16 +96,9 @@ class LeaveDetailsScreen extends GetView<LeaveController> {
             Icon(
               controller.getIconByLeaveStatus(leave.status),
               size: 13.w,
-              color: controller.getColorByLeaveStatus(leave.status).withAlpha(200),
+              color:
+                  controller.getColorByLeaveStatus(leave.status).withAlpha(200),
             ),
-            // Text(
-            //   leave.status,
-            //   style: GoogleFonts.poppins(
-            //     fontWeight: FontWeight.w500,
-            //     fontSize: 10.sp,
-            //     color: controller.getColorByLeaveStatus(leave.status),
-            //   ),
-            // )
           ],
         ),
       ),

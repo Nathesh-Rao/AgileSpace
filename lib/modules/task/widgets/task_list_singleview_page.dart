@@ -17,7 +17,8 @@ class TaskListSingleViewPage extends GetView<TaskController> {
               itemCount: controller.taskList.length,
               itemBuilder: (context, index) => Skeletonizer(
                   enabled: controller.isTaskListLoading.value,
-                  child: TaskListSingleTileWidget(taskModel: controller.taskList[index])))
+                  child: TaskListSingleTileWidget(
+                      taskModel: controller.taskList[index])))
           .skeletonLoading(controller.isTaskListLoading.value),
     );
   }

@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/core.dart';
 
 class SplashController extends GetxController {
-  var splashLogo = 'assets/images/common/axpert.png';
+  var splashLogo = 'assets/images/common/axpert_space.png';
   var splashToWelcomeHeroTag = HeroTags.splashToWelcomeHeroTag;
   AppStorage appStorage = AppStorage();
 

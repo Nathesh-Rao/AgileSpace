@@ -1,6 +1,7 @@
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/modules/landing/controllers/landing_controller.dart';
 import 'package:axpert_space/modules/modules.dart';
+import 'package:axpert_space/routes/app_routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,7 +31,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'assets/images/common/axpert.png',
+                    'assets/images/common/axpert_space.png',
                     width: 60.w,
                   ),
                   10.verticalSpace,
@@ -171,7 +172,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
                                   ),
                                 ],
                               ),
-                              showTrailingIcon: false,
+                              showTrailingIcon: true,
                               children:
                                   drawerHeadSectionListWidget(taskController),
                             ),
@@ -266,7 +267,9 @@ class LandingDrawerWidget extends GetView<LandingController> {
           trailing: "3",
           trailingBgColor: AppColors.chipCardWidgetColorRed,
           trailingColor: Colors.white,
-          onTap: () {}),
+          onTap: () {
+            Get.toNamed(AppRoutes.notification);
+          }),
     ];
   }
 

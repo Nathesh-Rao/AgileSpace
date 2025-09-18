@@ -1,4 +1,4 @@
-package com.agile.axpert_space
+package com.agile.space
 
 import io.flutter.embedding.android.FlutterActivity
 

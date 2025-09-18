@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:axpert_space/core/utils/server_connections/server_connections.dart';
+import 'package:axpert_space/data/data_source/datasource_services.dart';
 import 'package:axpert_space/modules/task/models/models.dart';
 import 'package:axpert_space/modules/task/models/task_row_options_model.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,52 @@ class TaskController extends GetxController {
   ServerConnections serverConnections = ServerConnections();
   AppStorage appStorage = AppStorage();
 
+  // taskFilter section
+
+  // var taskFilterUserName = globalVariableController.USER_NAME;
+  var taskFilterUserName = "shilpa".obs;
+  var taskFilterShowTask = 'Open'.obs;
+  var taskFilterPriority = 'ALL'.obs;
+  var taskFilterTaskIdController = TextEditingController(text: "ALL");
+  RxList<String> taskFilterUserNameList = <String>[].obs;
+  var taskFilterShowTaskList = [
+    'ALL',
+    'Completed by',
+    'Dropped by',
+    'Initiated by me',
+    'Open',
+    'Returned to me by',
+    'Sent by me to',
+    'Sent to me by',
+  ];
+  var taskFilterPriorityList = ['ALL', 'High', 'Medium', 'Low', 'Show Stopper'];
+
+  //-------------------
+
+  // taskFilter chip section
+  var taskFilterChipUserName = "shilpa".obs;
+  var taskFilterChipShowTask = 'Open'.obs;
+  var taskFilterChipPriority = 'ALL'.obs;
+  var taskFilterChipTaskId = 'ALL'.obs;
+  //-------------------
+
+  //TaskDetailsPage
+  var taskHistoryList = [].obs;
+  var taskAttachmentList = [].obs;
+  var isTaskDetailsLoading = false.obs;
+  var isTaskAttachmentsLoading = false.obs;
+  var showHistoryFlag = false.obs;
+  var showHistoryContent = true.obs;
+  // TaskListModel? _lastLoadedTask;
+
+  void onShowHistoryIconClick() {
+    showHistoryFlag.toggle();
+  }
+
+  void onHistoryWidgetAnimationEndCallBack() {
+    showHistoryContent.toggle();
+  }
+
   loadInitialData() async {
     int newPage = taskListPageViewController.page?.round() ?? 0;
     if (newPage != taskListPageViewIndex.value) {
@@ -35,6 +82,7 @@ class TaskController extends GetxController {
     isTaskOverviewLoading.value = true;
     pendingTaskCount.value = await _getTaskPendingForToday();
     isTaskOverviewLoading.value = false;
+    await _getAllUserNames();
     mainTaskList = taskList.value = await _getAllTaskList();
     isTaskListLoading.value = false;
   }
@@ -63,21 +111,31 @@ class TaskController extends GetxController {
     taskListPageViewIndex.value = newIndex;
   }
 
-  //TaskDetailsPage
-  var taskHistoryList = [].obs;
-  var taskAttachmentList = [].obs;
-  var isTaskDetailsLoading = false.obs;
-  var isTaskAttachmentsLoading = false.obs;
-  var showHistoryFlag = false.obs;
-  var showHistoryContent = true.obs;
-  TaskListModel? _lastLoadedTask;
+  getTaskWithFilter({bool reset = false}) async {
+    isTaskListLoading.value = true;
+    taskFilterExpandController.collapse();
 
-  void onShowHistoryIconClick() {
-    showHistoryFlag.toggle();
+    if (taskFilterTaskIdController.text.isEmpty ||
+        taskFilterTaskIdController.text.length < 4) {
+      taskFilterTaskIdController.text = 'ALL';
+    }
+    if (reset) {
+      taskFilterUserName.value = 'shilpa';
+      // taskFilterUserName.value = globalVariableController.USER_NAME.value;
+      taskFilterShowTask.value = 'Open';
+      taskFilterTaskIdController.text = 'ALL';
+      taskFilterPriority.value = 'ALL';
+    }
+
+    mainTaskList = taskList.value = await _getAllTaskList();
+    isTaskListLoading.value = false;
   }
 
-  void onHistoryWidgetAnimationEndCallBack() {
-    showHistoryContent.toggle();
+  updateFilterChipData() {
+    taskFilterChipUserName.value = taskFilterUserName.value;
+    taskFilterChipShowTask.value = taskFilterShowTask.value;
+    taskFilterChipPriority.value = taskFilterPriority.value;
+    taskFilterChipTaskId.value = taskFilterTaskIdController.text;
   }
 
   Future<void> loadTaskDetails({required TaskListModel task}) async {
@@ -85,7 +143,7 @@ class TaskController extends GetxController {
 
     taskHistoryList.clear();
     taskAttachmentList.clear();
-    _lastLoadedTask = task;
+    // _lastLoadedTask = task;
     showHistoryFlag.value = false;
     isTaskDetailsLoading.value = true;
     isTaskAttachmentsLoading.value = true;
@@ -170,7 +228,13 @@ class TaskController extends GetxController {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
       "datasource": "DS_GETALLTASKS",
-      "sqlParams": {"username": "narasimha"}
+      "sqlParams": {
+        "username": "shilpa",
+        "person": taskFilterUserName.value,
+        "showtasks": taskFilterShowTask.value,
+        "priority": taskFilterPriority.value,
+        "ptaskid": taskFilterTaskIdController.text
+      }
       // "sqlParams": {"username": appStorage.retrieveValue(AppStorage.USER_NAME)}
     };
 
@@ -193,8 +257,39 @@ class TaskController extends GetxController {
         }
       }
     }
-
+    updateFilterChipData();
     return taskList;
+  }
+
+  _getAllUserNames() async {
+    taskFilterUserNameList.value = [];
+
+    LogService.writeLog(message: "_getAllUserNames()");
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": DataSourceServices.DS_GET_ALl_USERNAMES,
+      "sqlParams": {}
+    };
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        var dsDataList = jsonDSResp['result']['data'];
+        for (var item in dsDataList) {
+          try {
+            if (item != null) {
+              taskFilterUserNameList.add(item["username"]);
+            }
+          } catch (e) {
+            debugPrint(" $e");
+          }
+        }
+      }
+    }
   }
 
   Future<List<TaskRowOptionModel>> _getAllTaskRowList(String taskId) async {

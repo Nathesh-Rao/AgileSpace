@@ -12,3 +12,24 @@ extension SkeletonizeExtension on Widget {
     );
   }
 }
+
+extension DateTimeHourOffset on DateTime {
+  DateTime copyWithHourOffset(int offset) {
+    int baseHour = hour;
+
+    if (baseHour < 9) {
+      baseHour = 9;
+    }
+
+    return DateTime(
+      year,
+      month,
+      day,
+      baseHour + offset,
+      minute,
+      second,
+      millisecond,
+      microsecond,
+    );
+  }
+}

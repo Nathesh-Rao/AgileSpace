@@ -1,6 +1,7 @@
 import 'package:axpert_space/common/controller/web_view_controller.dart';
 import 'package:axpert_space/modules/auth/controllers/auth_controller.dart';
 import 'package:axpert_space/modules/calendar/controller/calendar_controller.dart';
+import 'package:axpert_space/modules/notifications/controller/notification_controller.dart';
 import 'package:axpert_space/modules/settings/controller/settings_controller.dart';
 import 'package:axpert_space/modules/task/task.dart';
 import 'package:get/get.dart';

@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:axpert_space/core/config/colors/app_colors.dart';
+import 'package:axpert_space/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../common/log_service/log_services.dart';
+import '../../../core/constants/const.dart';
+import '../../../data/data_source/datasource_services.dart';
 import '../leaves.dart';
 
 // import '../../../common/common.dart';
@@ -15,7 +21,8 @@ class LeaveController extends GetxController {
   var leaveHistoryList = RxList<LeaveHistoryModel>();
   var leaveCountRatio = 0.0.obs;
   var leaveDivisionsValue = RxList<double>();
-
+  var appStorage = AppStorage();
+  var serverConnections = ServerConnections();
   getLeaveActivity() async {
     if (leaveActivity.value != null) return;
     isLeaveActivityLoading.value = true;
@@ -27,8 +34,9 @@ class LeaveController extends GetxController {
 
   _setLeaveCountRatio() {
     if (leaveActivity.value == null) return;
-    leaveCountRatio.value =
-        leaveActivity.value!.totalLeave == 0 ? 0 : leaveActivity.value!.balanceLeave / leaveActivity.value!.totalLeave;
+    leaveCountRatio.value = leaveActivity.value!.totalLeave == 0
+        ? 0
+        : leaveActivity.value!.balanceLeave / leaveActivity.value!.totalLeave;
   }
 
   getLeaveDetails() async {
@@ -37,7 +45,8 @@ class LeaveController extends GetxController {
     isLeaveDetailsLoading.value = true;
     await Future.delayed(Duration(seconds: 2));
     leaveDetails.value = LeaveDetailsModel.tempData;
-    leaveDivisionsValue.value = calculateLeavePercentages(leaveDetails.value!.leaveBreakup);
+    leaveDivisionsValue.value =
+        calculateLeavePercentages(leaveDetails.value!.leaveBreakup);
     isLeaveDetailsLoading.value = false;
   }
 
@@ -56,8 +65,33 @@ class LeaveController extends GetxController {
   getLeaveHistory() async {
     // if (leaveHistoryList.isNotEmpty) return;
     isLeaveHistoryLoading.value = true;
-    await Future.delayed(Duration(seconds: 3));
-    leaveHistoryList.value = LeaveHistoryModel.tempData;
+    LogService.writeLog(message: "_getAllUserNames()");
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "appname": "agilespace",
+      "datasource": "DS_GETLEAVEHISTORY",
+      "sqlParams": {"username": "shilpa"}
+    };
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        var dsDataList = jsonDSResp['result']['data'];
+        for (var item in dsDataList) {
+          try {
+            if (item != null) {
+              leaveHistoryList.add(LeaveHistoryModel.fromJson(item));
+            }
+          } catch (e) {
+            debugPrint(" $e");
+          }
+        }
+      }
+    }
+
     isLeaveHistoryLoading.value = false;
   }
 
@@ -83,6 +117,8 @@ class LeaveController extends GetxController {
         return Colors.pink;
       case 'paternity leave':
         return Colors.green;
+      case 'earned leave':
+        return Colors.green;
       default:
         return Colors.grey;
     }
@@ -99,6 +135,8 @@ class LeaveController extends GetxController {
       case 'maternity leave':
         return Icons.child_friendly;
       case 'paternity leave':
+        return Icons.family_restroom;
+      case 'earned leave':
         return Icons.family_restroom;
       default:
         return Icons.event_note;
