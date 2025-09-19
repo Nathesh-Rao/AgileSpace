@@ -46,13 +46,12 @@ class CalendarController extends GetxController {
       "appname": globalVariableController.PROJECT_NAME.value,
       "datasource": DataSourceServices.DS_GETEVENTSBYDAY,
       "sqlParams": {
-        "username": globalVariableController.USER_NAME.value,
+        "username": globalVariableController.NICK_NAME.value,
         "date": DateUtilsHelper.getFormattedDateYMD(selectedDate.toString())
       }
       // "sqlParams": {"username": "syamala", "date": "2025-09-15"}
     };
-    var dsResp = await serverConnections.postToServer(
-        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
 
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);
@@ -83,12 +82,11 @@ class CalendarController extends GetxController {
       "appname": globalVariableController.PROJECT_NAME.value,
       "datasource": DataSourceServices.DS_GETTASKSBYDAY,
       "sqlParams": {
-        "username": globalVariableController.USER_NAME.value,
+        "username": globalVariableController.NICK_NAME.value,
         "date": DateUtilsHelper.getFormattedDateYMD(selectedDate.toString())
       }
     };
-    var dsResp = await serverConnections.postToServer(
-        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
 
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);

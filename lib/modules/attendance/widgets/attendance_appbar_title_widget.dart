@@ -28,7 +28,7 @@ class AttendanceAppBarTitleWidget extends GetView<AttendanceController> {
               ),
               children: [
                 TextSpan(
-                  text: globalVariableController.USER_NAME.value,
+                  text: globalVariableController.NICK_NAME.value,
                   style: AppStyles.appBarTitleTextStyle.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColors.primaryActionColorDarkBlue,

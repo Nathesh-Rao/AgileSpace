@@ -30,7 +30,7 @@ class TaskController extends GetxController {
   // taskFilter section
 
   // var taskFilterUserName = globalVariableController.USER_NAME;
-  var taskFilterUserName = globalVariableController.USER_NAME;
+  var taskFilterUserName = globalVariableController.USER_NAME.value.obs;
   var taskFilterShowTask = 'Open'.obs;
   var taskFilterPriority = 'ALL'.obs;
   var taskFilterTaskIdController = TextEditingController(text: "ALL");
@@ -50,7 +50,7 @@ class TaskController extends GetxController {
   //-------------------
 
   // taskFilter chip section
-  var taskFilterChipUserName = globalVariableController.USER_NAME;
+  var taskFilterChipUserName = globalVariableController.USER_NAME.value.obs;
   var taskFilterChipShowTask = 'Open'.obs;
   var taskFilterChipPriority = 'ALL'.obs;
   var taskFilterChipTaskId = 'ALL'.obs;

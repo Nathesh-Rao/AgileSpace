@@ -34,9 +34,8 @@ class LeaveController extends GetxController {
 
   _setLeaveCountRatio() {
     if (leaveActivity.value == null) return;
-    leaveCountRatio.value = leaveActivity.value!.totalLeave == 0
-        ? 0
-        : leaveActivity.value!.balanceLeave / leaveActivity.value!.totalLeave;
+    leaveCountRatio.value =
+        leaveActivity.value!.totalLeave == 0 ? 0 : leaveActivity.value!.balanceLeave / leaveActivity.value!.totalLeave;
   }
 
   getLeaveDetails() async {
@@ -45,8 +44,7 @@ class LeaveController extends GetxController {
     isLeaveDetailsLoading.value = true;
     await Future.delayed(Duration(seconds: 2));
     leaveDetails.value = LeaveDetailsModel.tempData;
-    leaveDivisionsValue.value =
-        calculateLeavePercentages(leaveDetails.value!.leaveBreakup);
+    leaveDivisionsValue.value = calculateLeavePercentages(leaveDetails.value!.leaveBreakup);
     isLeaveDetailsLoading.value = false;
   }
 
@@ -71,10 +69,9 @@ class LeaveController extends GetxController {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
       "datasource": DataSourceServices.DS_GETLEAVEHISTORY,
-      "sqlParams": {"username": globalVariableController.USER_NAME.value}
+      "sqlParams": {"username": globalVariableController.NICK_NAME.value}
     };
-    var dsResp = await serverConnections.postToServer(
-        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
 
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);

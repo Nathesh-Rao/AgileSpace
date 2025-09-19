@@ -16,9 +16,7 @@ class SettingsTabHeaderWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 13.w),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.r),
-          image: DecorationImage(
-              image: AssetImage("assets/images/common/profile_bg.png"),
-              fit: BoxFit.cover)),
+          image: DecorationImage(image: AssetImage("assets/images/common/profile_bg.png"), fit: BoxFit.cover)),
       child: Row(
         children: [
           CircleAvatar(
@@ -26,8 +24,7 @@ class SettingsTabHeaderWidget extends StatelessWidget {
             backgroundColor: Colors.white,
             child: CircleAvatar(
               radius: 30.h,
-              backgroundImage:
-                  AssetImage("assets/images/common/profile_temp.png"),
+              backgroundImage: AssetImage("assets/images/common/profile_temp.png"),
             ),
           ),
           20.horizontalSpace,
@@ -39,7 +36,7 @@ class SettingsTabHeaderWidget extends StatelessWidget {
                 Obx(
                   () => Flexible(
                     child: Text(
-                      "Mr ${globalVariableController.USER_NAME.value}",
+                      "Mr ${globalVariableController.NICK_NAME.value}",
                       style: GoogleFonts.poppins(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w500,

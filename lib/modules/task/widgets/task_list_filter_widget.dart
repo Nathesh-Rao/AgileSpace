@@ -145,7 +145,7 @@ class TaskListFilterWidget extends GetView<TaskController> {
               items: controller.taskFilterUserNameList.value,
               onChanged: (value) {
                 if (value != null) {
-                  controller.taskFilterShowTask.value = value;
+                  controller.taskFilterUserName.value = value;
                 }
               },
             ),
@@ -166,7 +166,7 @@ class TaskListFilterWidget extends GetView<TaskController> {
             items: controller.taskFilterPriorityList,
             onChanged: (value) {
               if (value != null) {
-                controller.taskFilterShowTask.value = value;
+                controller.taskFilterPriority.value = value;
               }
             },
           ),

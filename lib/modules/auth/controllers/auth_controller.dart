@@ -266,8 +266,11 @@ class AuthController extends GetxController {
     await appStorage.storeValue(AppStorage.NICK_NAME,
         json["nickname"].toString() ?? userNameController.text.trim());
 
-    globalVariableController.USER_NAME.value =
+    globalVariableController.NICK_NAME.value =
         json["nickname"].toString() ?? userNameController.text.trim();
+
+    globalVariableController.USER_NAME.value =
+        json["username"].toString() ?? userNameController.text.trim();
     globalVariableController.USER_EMAIL.value =
         json["email_id"].toString() ?? userNameController.text.trim();
     //Save Data

@@ -48,8 +48,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
               spacing: 10.w,
               children: [
                 CircleAvatar(
-                  backgroundImage:
-                      AssetImage("assets/images/common/profile_temp.png"),
+                  backgroundImage: AssetImage("assets/images/common/profile_temp.png"),
                 ),
                 Obx(
                   () => Column(
@@ -57,7 +56,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        globalVariableController.USER_NAME.value,
+                        globalVariableController.NICK_NAME.value,
                         style: AppStyles.appBarTitleTextStyle.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryActionColorDarkBlue,
@@ -122,8 +121,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
                               tilePadding: EdgeInsets.zero,
                               backgroundColor: Colors.white,
                               collapsedBackgroundColor: Colors.white,
-                              collapsedIconColor:
-                                  AppColors.drawerPrimaryColorViolet,
+                              collapsedIconColor: AppColors.drawerPrimaryColorViolet,
                               title: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -135,8 +133,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
                                           Icon(
                                             Bootstrap.stack,
                                             size: 12.w,
-                                            color: AppColors
-                                                .drawerPrimaryColorViolet,
+                                            color: AppColors.drawerPrimaryColorViolet,
                                           ),
                                           5.horizontalSpace,
                                           Text(
@@ -144,8 +141,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
                                             style: GoogleFonts.poppins(
                                                 fontSize: 12.sp,
                                                 fontWeight: FontWeight.w600,
-                                                color: AppColors
-                                                    .primarySubTitleTextColorBlueGreyLight),
+                                                color: AppColors.primarySubTitleTextColorBlueGreyLight),
                                           )
                                         ],
                                       ),
@@ -154,8 +150,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
                                           Icon(
                                             Bootstrap.bell_fill,
                                             size: 12.w,
-                                            color: AppColors
-                                                .chipCardWidgetColorRed,
+                                            color: AppColors.chipCardWidgetColorRed,
                                           ),
                                           5.horizontalSpace,
                                           Text(
@@ -163,8 +158,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
                                             style: GoogleFonts.poppins(
                                                 fontSize: 12.sp,
                                                 fontWeight: FontWeight.w600,
-                                                color: AppColors
-                                                    .primarySubTitleTextColorBlueGreyLight),
+                                                color: AppColors.primarySubTitleTextColorBlueGreyLight),
                                           )
                                         ],
                                       ),
@@ -173,8 +167,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
                                 ],
                               ),
                               showTrailingIcon: true,
-                              children:
-                                  drawerHeadSectionListWidget(taskController),
+                              children: drawerHeadSectionListWidget(taskController),
                             ),
                           ),
 
@@ -303,9 +296,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
             Image.asset(
               leadingIcon,
               width: iconWidth ?? 40.w,
-              color: isSelected
-                  ? Colors.white
-                  : AppColors.primaryTitleTextColorBlueGrey,
+              color: isSelected ? Colors.white : AppColors.primaryTitleTextColorBlueGrey,
             ),
             5.horizontalSpace,
             Text(
@@ -313,9 +304,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
               style: GoogleFonts.poppins(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
-                  color: isSelected
-                      ? Colors.white
-                      : AppColors.primaryTitleTextColorBlueGrey),
+                  color: isSelected ? Colors.white : AppColors.primaryTitleTextColorBlueGrey),
             ),
             Spacer(),
             trailing != null

@@ -67,15 +67,13 @@ class NotificationController extends GetxController {
     //doTheMergeProcess();
 
     var projectName = globalVariableController.PROJECT_NAME.value;
-    var userName = globalVariableController.USER_NAME.value;
+    var userName = globalVariableController.NICK_NAME.value;
 
-    Map oldMessages =
-        AppStorage().retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
+    Map oldMessages = AppStorage().retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
     Map projectWiseMessages = oldMessages[projectName] ?? {};
     List notList = projectWiseMessages[userName] ?? [];
     //get Noti Count
-    Map oldNotifyNum =
-        AppStorage().retrieveValue(AppStorage.NOTIFICATION_UNREAD) ?? {};
+    Map oldNotifyNum = AppStorage().retrieveValue(AppStorage.NOTIFICATION_UNREAD) ?? {};
     Map projectWiseNum = oldNotifyNum[projectName] ?? {};
     var notNo = projectWiseNum[userName] ?? "0";
     if (notNo != "0") {
@@ -92,8 +90,7 @@ class NotificationController extends GetxController {
         var notifyTo = val["notify_to"].toString().toLowerCase();
         var projectDet = jsonDecode(val['project_details']);
         // print("notiiii: " + projectDet["projectname"].toString());
-        if (projectDet["projectname"].toString() ==
-                globalVariableController.PROJECT_NAME.value &&
+        if (projectDet["projectname"].toString() == globalVariableController.PROJECT_NAME.value &&
             notifyTo.contains(userName.toString().toLowerCase())) {
           list.add(NotificationWidget(
             message: FirebaseMessageModel.fromJson(val),
@@ -131,11 +128,10 @@ class NotificationController extends GetxController {
   }
 
   _deleteNotificationFromStorage(int index) async {
-    Map oldMessages =
-        appStorage.retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
+    Map oldMessages = appStorage.retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
     var projectName = globalVariableController.PROJECT_NAME.value;
     Map projectWiseMessages = oldMessages[projectName] ?? {};
-    var userName = globalVariableController.USER_NAME.value;
+    var userName = globalVariableController.NICK_NAME.value;
     List notiList = projectWiseMessages[userName] ?? [];
 
     notiList.removeAt(index);
