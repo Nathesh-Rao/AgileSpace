@@ -16,37 +16,40 @@ class AttendanceAppBarSwitchWidget extends GetView<AttendanceController> {
         width: 90.w,
         child: Stack(
           children: [
-            LoadSwitch(
-              height: 45.w,
-              width: 90.w,
-              thumbSizeRatio: 0.9,
-              switchDecoration: (value, _) => BoxDecoration(
-                color: !value ? Color(0xffE6F4F0) : Colors.white,
-                borderRadius: BorderRadius.circular(50.r),
-                shape: BoxShape.rectangle,
+            Obx(
+              () => LoadSwitch(
+                height: 45.w,
+                width: 90.w,
+                thumbSizeRatio: 0.9,
+                switchDecoration: (value, _) => BoxDecoration(
+                  color: !value ? Color(0xffE6F4F0) : Colors.white,
+                  borderRadius: BorderRadius.circular(50.r),
+                  shape: BoxShape.rectangle,
+                ),
+                spinColor: (value) {
+                  // return !value ? AppColors.snackBarSuccessColorGreen : AppColors.snackBarErrorColorRed;
+                  return Colors.white;
+                },
+                thumbDecoration: (value, _) => BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage(
+                          globalVariableController.PROFILE_PICTURE.value)),
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      color: !value
+                          ? AppColors.snackBarSuccessColorGreen
+                          : AppColors.snackBarErrorColorRed),
+                ),
+                isLoading: controller.isAttendanceDetailsIsLoading.value,
+                value: controller.attendanceAppbarSwitchValue.value,
+                future: () async {
+                  return controller.attendanceAppbarSwitchValue.value;
+                },
+                style: SpinStyle.material,
+                onTap: controller.onAttendanceAppbarSwitch,
+                onChange: (_) {},
               ),
-              spinColor: (value) {
-                // return !value ? AppColors.snackBarSuccessColorGreen : AppColors.snackBarErrorColorRed;
-                return Colors.white;
-              },
-              thumbDecoration: (value, _) => BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("assets/images/common/profile_temp.png")),
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(
-                    color: !value
-                        ? AppColors.snackBarSuccessColorGreen
-                        : AppColors.snackBarErrorColorRed),
-              ),
-              isLoading: controller.isAttendanceDetailsIsLoading.value,
-              value: controller.attendanceAppbarSwitchValue.value,
-              future: () async {
-                return controller.attendanceAppbarSwitchValue.value;
-              },
-              style: SpinStyle.material,
-              onTap: controller.onAttendanceAppbarSwitch,
-              onChange: (_) {},
             ),
             Visibility(
               visible: !controller.attendanceAppbarSwitchValue.value &&

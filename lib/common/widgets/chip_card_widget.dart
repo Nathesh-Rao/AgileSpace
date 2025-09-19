@@ -25,12 +25,16 @@ class ChipCardWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(
           vertical: onMaxSize ? pVertical ?? 7.h : pVertical ?? 4.h,
           horizontal: onMaxSize ? pHorizontal ?? 12.w : pHorizontal ?? 10.w),
-      decoration: BoxDecoration(color: color.withAlpha(25), borderRadius: BorderRadius.circular(borderRadius ?? 50.r)),
+      decoration: BoxDecoration(
+          color: label.isEmpty ? null : color.withAlpha(25),
+          borderRadius: BorderRadius.circular(borderRadius ?? 50.r)),
       child: Text(
         label,
         textAlign: TextAlign.center,
         style: GoogleFonts.poppins(
-            fontSize: onMaxSize ? fontSize ?? 12.sp : fontSize ?? 6.sp, fontWeight: FontWeight.w500, color: color),
+            fontSize: onMaxSize ? fontSize ?? 12.sp : fontSize ?? 6.sp,
+            fontWeight: FontWeight.w500,
+            color: color),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:axpert_space/common/log_service/log_services.dart';
+import 'package:axpert_space/common/models/user_profile_model.dart';
 import 'package:axpert_space/core/utils/server_connections/server_connections.dart';
 import 'package:axpert_space/data/data_source/datasource_services.dart';
 import 'package:axpert_space/modules/task/models/models.dart';
@@ -81,6 +82,7 @@ class TaskController extends GetxController {
     // if (taskList.isNotEmpty) return;
     isTaskListLoading.value = true;
     isTaskOverviewLoading.value = true;
+    await _getUserProfile();
     pendingTaskCount.value = await _getTaskPendingForToday();
     isTaskOverviewLoading.value = false;
     await _getAllUserNames();
@@ -290,6 +292,42 @@ class TaskController extends GetxController {
           } catch (e) {
             debugPrint(" $e");
           }
+        }
+      }
+    }
+  }
+
+  _getUserProfile() async {
+    LogService.writeLog(message: "_getUserProfile()");
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": DataSourceServices.DS_GETUSERPROFILE,
+      "sqlParams": {"username": globalVariableController.USER_NAME.value}
+    };
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        var dsDataList = jsonDSResp['result']['data'];
+        var item = dsDataList[0];
+        try {
+          if (item != null) {
+            var userProfile = UserProfileModel.fromJson(item);
+
+            if (userProfile.gender.toString().toLowerCase().contains("male")) {
+              globalVariableController.PROFILE_PICTURE.value =
+                  "assets/icons/common/profile_male.png";
+            } else {
+              globalVariableController.PROFILE_PICTURE.value =
+                  "assets/icons/common/profile_female.png";
+            }
+          }
+        } catch (e) {
+          debugPrint(" $e");
         }
       }
     }

@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:axpert_space/common/common.dart';
+import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -118,16 +119,30 @@ class ServerConnections {
           AppSnackBar.showError("Error! ${response.statusCode.toString()}",
               "Something went wrong");
         } else {
-          if (response.statusCode == 400) {
+          if (response.statusCode == 400 || response.statusCode == 401) {
             LogService.writeLog(
                 message:
                     "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $apiName\nBody: $body\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
-            return response.body;
+
+            if (response.body
+                    .toString()
+                    .toLowerCase()
+                    .contains("sessionid is not valid") ||
+                response.body
+                    .toString()
+                    .toLowerCase()
+                    .contains("unauthorized error")) {
+              WebViewController webViewController = Get.find();
+              webViewController.showSignOutDialog_sessionExpired();
+            } else {
+              return response.body;
+            }
           } else {
             print("API_ERROR: $apiName: ${response.body}");
             LogService.writeLog(
                 message:
                     "[ERROR] API_ERROR\nURL:$url\nAPI_NAME: $apiName\nBody: $body\nStatusCode: ${response.statusCode}\nResponse: ${response.body}");
+
             var msg = response.body.toString();
             if (response.body.toString().contains("message")) {
               try {

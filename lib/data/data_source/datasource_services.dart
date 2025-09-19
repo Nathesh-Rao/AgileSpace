@@ -28,4 +28,6 @@ class DataSourceServices {
   static const DS_GETTASKSBYDAY = "DS_GETTASKSBYDAY";
 
   static const DS_GETLEAVEHISTORY = "DS_GETLEAVEHISTORY";
+
+  static const DS_GETUSERPROFILE = "DS_GETUSERPROFILE";
 }

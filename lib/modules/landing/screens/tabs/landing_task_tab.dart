@@ -21,6 +21,7 @@ class LandingTaskTab extends StatelessWidget {
       leading: LandingDrawerIconWidget(),
       title: AttendanceAppBarTitleWidget(),
       actions: [
+        10.horizontalSpace,
         AttendanceAppBarSwitchWidget(),
         10.horizontalSpace,
         NotificationIconWidget(),

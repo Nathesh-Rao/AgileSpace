@@ -7,4 +7,5 @@ class GlobalVariableController extends GetxController {
   var NICK_NAME = ''.obs;
   var USER_NAME = ''.obs;
   var USER_EMAIL = ''.obs;
+  var PROFILE_PICTURE = 'assets/icons/common/profile.png'.obs;
 }

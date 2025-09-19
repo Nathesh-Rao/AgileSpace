@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,15 +17,20 @@ class SettingsTabHeaderWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 13.w),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.r),
-          image: DecorationImage(image: AssetImage("assets/images/common/profile_bg.png"), fit: BoxFit.cover)),
+          image: DecorationImage(
+              image: AssetImage("assets/images/common/profile_bg.png"),
+              fit: BoxFit.cover)),
       child: Row(
         children: [
           CircleAvatar(
             radius: 34.h,
             backgroundColor: Colors.white,
-            child: CircleAvatar(
-              radius: 30.h,
-              backgroundImage: AssetImage("assets/images/common/profile_temp.png"),
+            child: Obx(
+              () => CircleAvatar(
+                radius: 30.h,
+                backgroundImage:
+                    AssetImage(globalVariableController.PROFILE_PICTURE.value),
+              ),
             ),
           ),
           20.horizontalSpace,
@@ -35,13 +41,14 @@ class SettingsTabHeaderWidget extends StatelessWidget {
               children: [
                 Obx(
                   () => Flexible(
-                    child: Text(
+                    child: AutoSizeText(
                       "Mr ${globalVariableController.NICK_NAME.value}",
                       style: GoogleFonts.poppins(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
                       ),
+                      maxLines: 1,
                       // overflow: TextOverflow.ellipsis,
                       // maxLines: 1,
                       // softWrap: false,

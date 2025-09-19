@@ -117,8 +117,8 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    Icons.check_circle,
-                    color: AppColors.otpFieldThemeColorGreen,
+                    Icons.file_open_rounded,
+                    color: AppColors.blue10,
                     size: 12.h,
                   ),
                   5.horizontalSpace,
@@ -155,13 +155,13 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
             children: [
               Icon(
                 // CupertinoIcons.check_mark_circled_solid,
-                Icons.check_circle,
-                color: AppColors.otpFieldThemeColorGreen,
+                Icons.file_open_rounded,
+                color: AppColors.blue10,
                 size: 12.h,
               ),
               5.horizontalSpace,
               Text(
-                "Work Sheet Updated",
+                "Work Sheet ${controller.attendanceDetails.value?.worksheetUpdateStatus}",
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w500,
                   fontSize: 10.sp,

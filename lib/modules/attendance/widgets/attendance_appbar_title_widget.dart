@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/modules/attendance/attendance.dart';
 import 'package:axpert_space/modules/task/widgets/widgets.dart';
@@ -18,26 +19,36 @@ class AttendanceAppBarTitleWidget extends GetView<AttendanceController> {
       children: [
         5.verticalSpace,
         Obx(
-          () => RichText(
-            text: TextSpan(
-              text: 'Hey, ',
-              style: GoogleFonts.poppins(
-                fontSize: 20.sp,
-                color: AppColors.primaryActionColorDarkBlue,
-                fontWeight: FontWeight.normal,
-              ),
-              children: [
-                TextSpan(
-                  text: globalVariableController.NICK_NAME.value,
-                  style: AppStyles.appBarTitleTextStyle.copyWith(
-                    fontWeight: FontWeight.bold,
+            // () => RichText(
+            //   text: TextSpan(
+            //     text: 'Hey, ',
+            //     style: GoogleFonts.poppins(
+            //       fontSize: 20.sp,
+            //       color: AppColors.primaryActionColorDarkBlue,
+            //       fontWeight: FontWeight.normal,
+            //     ),
+            //     children: [
+
+            //       TextSpan(
+            //         text: globalVariableController.NICK_NAME.value,
+            //         style: AppStyles.appBarTitleTextStyle.copyWith(
+            //           fontWeight: FontWeight.bold,
+            //           color: AppColors.primaryActionColorDarkBlue,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+
+            () => AutoSizeText(
+                  globalVariableController.NICK_NAME.value,
+                  style: GoogleFonts.poppins(
+                    fontSize: 20.sp,
                     color: AppColors.primaryActionColorDarkBlue,
+                    fontWeight: FontWeight.w500,
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
+                  maxLines: 1,
+                )),
         3.verticalSpace,
         TaskOverviewCountWidget(),
       ],

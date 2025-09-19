@@ -98,10 +98,14 @@ class AttendanceController extends GetxController {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
       "datasource": DataSourceServices.DS_GETATTENDANCELOG,
-      "sqlParams": {"username": globalVariableController.NICK_NAME.value, "month": "${DateTime.now().year}-$selectedMonthIndex"}
+      "sqlParams": {
+        "username": globalVariableController.NICK_NAME.value,
+        "month": "${DateTime.now().year}-$selectedMonthIndex"
+      }
     };
 
-    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
 
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);
@@ -153,10 +157,14 @@ class AttendanceController extends GetxController {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
       "datasource": DataSourceServices.DS_GETATTENDANCE_DETAIL,
-      "sqlParams": {"username": globalVariableController.NICK_NAME.value, "date": DateFormat('dd/MM/yyyy').format(DateTime.now())}
+      "sqlParams": {
+        "username": globalVariableController.USER_NAME.value,
+        "date": DateFormat('dd-MM-yyyy').format(DateTime.now())
+      }
     };
 
-    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
     LogService.writeLog(message: dsResp);
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);
@@ -183,17 +191,29 @@ class AttendanceController extends GetxController {
   }
 
   _setAttendanceStatus(AttendanceDetailsModel value) async {
-    if (value.outtime != null) {
+    if (value.outtime != null && value.intime != null) {
       isClockedIn.value = isClockedOut.value = true;
       attendanceAppbarSwitchValue.value = true;
     } else if (value.intime != null && value.outtime == null) {
       isClockedIn.value = true;
       isClockedOut.value = false;
       attendanceAppbarSwitchValue.value = true;
-    } else if (value.intime != null) {
+    } else if (value.intime == null) {
       isClockedIn.value = isClockedOut.value = false;
       attendanceAppbarSwitchValue.value = false;
     }
+
+    // if (value.outtime != null) {
+    //   isClockedIn.value = isClockedOut.value = true;
+    //   attendanceAppbarSwitchValue.value = true;
+    // } else if (value.intime != null && value.outtime == null) {
+    //   isClockedIn.value = true;
+    //   isClockedOut.value = false;
+    //   attendanceAppbarSwitchValue.value = true;
+    // } else if (value.intime != null) {
+    //   isClockedIn.value = isClockedOut.value = false;
+    //   attendanceAppbarSwitchValue.value = false;
+    // }
 
     await _setLocationDetails(value);
   }
@@ -203,7 +223,8 @@ class AttendanceController extends GetxController {
       double latitude = double.tryParse(value.intimeLatitude ?? "") ?? 0.0;
       double longitude = double.tryParse(value.intimeLongitude ?? "") ?? 0.0;
 
-      clockInLocation.value = await LocationUtils.getAddressFromLatLng(latitude: latitude, longitude: longitude);
+      clockInLocation.value = await LocationUtils.getAddressFromLatLng(
+          latitude: latitude, longitude: longitude);
 
       LogService.writeLog(message: clockInLocation.value);
     }
@@ -211,7 +232,8 @@ class AttendanceController extends GetxController {
     if (value.outtimeLatitude != null && value.outtimeLongitude != null) {
       double latitude = double.tryParse(value.outtimeLatitude ?? "") ?? 0.0;
       double longitude = double.tryParse(value.outtimeLongitude ?? "") ?? 0.0;
-      clockOutLocation.value = await LocationUtils.getAddressFromLatLng(latitude: latitude, longitude: longitude);
+      clockOutLocation.value = await LocationUtils.getAddressFromLatLng(
+          latitude: latitude, longitude: longitude);
     }
   }
 }

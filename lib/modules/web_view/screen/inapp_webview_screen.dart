@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:axpert_space/common/common.dart';
+import 'package:axpert_space/common/widgets/flat_button_widget.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/landing/landing.dart';
 import 'package:axpert_space/routes/app_routes.dart';
@@ -510,21 +511,78 @@ class _InApplicationWebViewerState extends State<InApplicationWebViewer> {
   void showSignOutDialog() {
     widget.webViewController
         .signOut(url: Const.getFullWebUrl("aspx/AxMain.aspx?signout=true"));
-    Get.defaultDialog(
-      barrierDismissible: false,
-      titleStyle: TextStyle(color: AppColors.baseBlue),
-      titlePadding: EdgeInsets.only(
-        top: 20,
+
+    Get.dialog(
+      barrierColor: Colors.black26,
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Title
+              Text(
+                "Session Expired",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.baseBlue,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 16),
+
+              // Message
+              Text(
+                "Your session has expired. Please log in again to continue.",
+                style: const TextStyle(fontSize: 16, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 24),
+
+              // Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Flexible(
+                    child: FlatButtonWidget(
+                      color: AppColors.baseRed,
+                      onTap: () {
+                        widget.webViewController.signOut_withoutDialog();
+                        // Get.offAllNamed(AppRoutes.login);
+                      },
+                      label: "Logout",
+                    ),
+                  ),
+                  // Confirm button
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
-      contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-      title: "Session Expired",
-      middleText: "Your session has expired. Please log in again to continue.",
-      confirm: ElevatedButton(
-          onPressed: () async {
-            widget.webViewController.signOut_withoutDialog();
-          },
-          child: Text("Login")),
+      barrierDismissible: false,
     );
+
+    // Get.defaultDialog(
+    //   barrierDismissible: false,
+    //   titleStyle: TextStyle(color: AppColors.baseBlue),
+    //   titlePadding: EdgeInsets.only(
+    //     top: 20,
+    //   ),
+    //   contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+    //   title: "Session Expired",
+    //   middleText: "Your session has expired. Please log in again to continue.",
+    //   confirm: ElevatedButton(
+    //       onPressed: () async {
+    //         widget.webViewController.signOut_withoutDialog();
+    //       },
+    //       child: Text("Login")),
+    // );
   }
 }
 

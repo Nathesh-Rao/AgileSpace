@@ -249,7 +249,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
           ),
           Spacer(),
           Text(
-            "${controller.clockInLocation.value.split("\n")[0].replaceFirst("Name:", "").trim()}\n${controller.clockInLocation.value.split("\n")[4].replaceFirst("Postal code:", "").trim()}",
+            // "${controller.clockInLocation.value.split("\n")[0].replaceFirst("Name:", "").trim()}\n${controller.clockInLocation.value.split("\n")[4].replaceFirst("Postal code:", "").trim()}",
+            "location",
             style:
                 AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 10.sp),
           ),
