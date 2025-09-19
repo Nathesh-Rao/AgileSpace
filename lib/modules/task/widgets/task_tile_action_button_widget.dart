@@ -2,7 +2,9 @@ import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:axpert_space/modules/modules.dart';
 import 'package:axpert_space/modules/task/models/models.dart';
+import 'package:axpert_space/modules/task/models/task_action_model.dart';
 import 'package:axpert_space/modules/task/models/task_row_options_model.dart';
+import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -41,22 +43,6 @@ class _TaskTileActionButtonWidgetState
       content: TaskTileActionContentWidget(
           taskId: widget.task.id, sController: _controller),
       onHide: _taskController.resetRowOptions,
-      // child: Icon(
-      //   // CupertinoIcons.flowchart,
-      //   // CupertinoIcons.list_bullet_below_rectangle,
-      //   // CupertinoIcons.rectangle_expand_vertical,
-      //   // CupertinoIcons.layers_fill,
-      //   // CupertinoIcons.ellipsis_vertical_circle,
-      //   // CupertinoIcons.square_on_circle,
-      //   // CupertinoIcons.square_stack_3d_down_right_fill,
-      //   // CupertinoIcons.square_stack_3d_up_fill,
-      //   // CupertinoIcons.rectangle_fill_on_rectangle_angled_fill,
-      //   CupertinoIcons.ellipsis_vertical,
-
-      //   color: Colors.black,
-      //   size: 20.w,
-      //   // color: AppColors.getPriorityColor(widget.task.priority),
-      // ),
 
       child: Container(
         height: 20.w,
@@ -138,8 +124,74 @@ class TaskTileActionContentWidget extends GetView<TaskController> {
       color: controller.getTaskActionColor(taskRowOption.action),
       onTap: () {
         sController.hideTooltip();
+        _acceptTaskTemp(taskRowOption);
       },
       isCompact: true,
     );
+  }
+
+  void _acceptTaskTemp(TaskRowOptionModel taskRowOption) {
+    AppStorage appStorage = AppStorage();
+    WebViewController webViewController = Get.find();
+    Map tsk = {
+      "command": [
+        {
+          "cmd": "opentstruct",
+          "cmdval": "accp",
+          "showin": "pop",
+          "parentrefresh": "true",
+          "pname": "taskid",
+          "pvalue": taskId
+        },
+        {
+          "cmd": "opentstruct",
+          "cmdval": "send",
+          "showin": "pop",
+          "parentrefresh": "true",
+          "pname": "taskid",
+          "pvalue": taskId
+        },
+        {
+          "cmd": "openiview",
+          "cmdval": "history",
+          "showin": "pop",
+          "parentrefresh": "false",
+          "pname": "tid",
+          "pvalue": taskId
+        }
+      ]
+    };
+    Map<String, dynamic> tskJsn = {};
+
+    switch (taskRowOption.action) {
+      case "accep":
+        tskJsn = tsk["command"][0];
+        break;
+      case "sendtask":
+        tskJsn = tsk["command"][1];
+        break;
+      case "return":
+      case "infor":
+      case "loadhist":
+        tskJsn = tsk["command"][2];
+        break;
+
+      case "droptask":
+      default:
+        tskJsn = tsk["command"][2];
+        break;
+    }
+    var tskMOdel = TaskActionModel.fromJson(tskJsn);
+    var cmdValue = '';
+    if (tskMOdel.cmd.contains("tstruct")) {
+      cmdValue = "t${tskMOdel.cmdVal}";
+    } else if (tskMOdel.cmd.contains("iview")) {
+      cmdValue = "i${tskMOdel.cmdVal}";
+    }
+
+    var url =
+        "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=$cmdValue&params=^act=open^${tskMOdel.pName}~${tskMOdel.pValue}";
+
+    webViewController.openWebView(url: url);
   }
 }

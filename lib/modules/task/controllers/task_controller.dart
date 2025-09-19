@@ -7,6 +7,7 @@ import 'package:axpert_space/modules/task/models/models.dart';
 import 'package:axpert_space/modules/task/models/task_row_options_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
 
@@ -29,7 +30,7 @@ class TaskController extends GetxController {
   // taskFilter section
 
   // var taskFilterUserName = globalVariableController.USER_NAME;
-  var taskFilterUserName = "shilpa".obs;
+  var taskFilterUserName = globalVariableController.USER_NAME;
   var taskFilterShowTask = 'Open'.obs;
   var taskFilterPriority = 'ALL'.obs;
   var taskFilterTaskIdController = TextEditingController(text: "ALL");
@@ -49,7 +50,7 @@ class TaskController extends GetxController {
   //-------------------
 
   // taskFilter chip section
-  var taskFilterChipUserName = "shilpa".obs;
+  var taskFilterChipUserName = globalVariableController.USER_NAME;
   var taskFilterChipShowTask = 'Open'.obs;
   var taskFilterChipPriority = 'ALL'.obs;
   var taskFilterChipTaskId = 'ALL'.obs;
@@ -120,8 +121,7 @@ class TaskController extends GetxController {
       taskFilterTaskIdController.text = 'ALL';
     }
     if (reset) {
-      taskFilterUserName.value = 'shilpa';
-      // taskFilterUserName.value = globalVariableController.USER_NAME.value;
+      taskFilterUserName.value = globalVariableController.USER_NAME.value;
       taskFilterShowTask.value = 'Open';
       taskFilterTaskIdController.text = 'ALL';
       taskFilterPriority.value = 'ALL';
@@ -196,8 +196,11 @@ class TaskController extends GetxController {
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
-      "datasource": "DS_GETTASKSUMMARY",
-      "sqlParams": {"username": "support", "date": "20/08/2025"}
+      "datasource": DataSourceServices.DS_GETTASKSUMMARY,
+      "sqlParams": {
+        "username": globalVariableController.USER_NAME.value,
+        "date": DateFormat('dd/MM/yyyy').format(DateTime.now())
+      }
     };
 
     var dsResp = await serverConnections.postToServer(
@@ -211,7 +214,7 @@ class TaskController extends GetxController {
           var overview = TaskOverviewModel.fromJson(dsDataList);
           return overview.data[0].pendingTodayCount;
         } catch (e) {
-          print(e);
+          debugPrint(e.toString());
         }
       }
     }
@@ -227,9 +230,9 @@ class TaskController extends GetxController {
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
-      "datasource": "DS_GETALLTASKS",
+      "datasource": DataSourceServices.DS_GET_ALL_TASKS,
       "sqlParams": {
-        "username": "shilpa",
+        "username": globalVariableController.USER_NAME.value,
         "person": taskFilterUserName.value,
         "showtasks": taskFilterShowTask.value,
         "priority": taskFilterPriority.value,
@@ -252,7 +255,7 @@ class TaskController extends GetxController {
               taskList.add(task);
             }
           } catch (e) {
-            print("_getAllTaskList()   $e");
+            debugPrint("_getAllTaskList()   $e");
           }
         }
       }
@@ -299,8 +302,11 @@ class TaskController extends GetxController {
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
-      "datasource": "DS_GETACTIONLIST",
-      "sqlParams": {"username": "narasimha", "taskid": taskId}
+      "datasource": DataSourceServices.DS_GETACTIONLIST,
+      "sqlParams": {
+        "username": globalVariableController.USER_NAME.value,
+        "taskid": taskId
+      }
     };
 
     var dsResp = await serverConnections.postToServer(
@@ -371,7 +377,7 @@ class TaskController extends GetxController {
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
-      "datasource": "DS_GETTASKHISTORY",
+      "datasource": DataSourceServices.DS_GETTASKHISTORY,
       "sqlParams": {"taskid": taskId}
       // "sqlParams": {"username": appStorage.retrieveValue(AppStorage.USER_NAME)}
     };
@@ -388,7 +394,7 @@ class TaskController extends GetxController {
             var task = TaskHistoryModel.fromJson(item);
             taskHistoryList.add(task);
           } catch (e) {
-            print(e);
+            debugPrint(e.toString());
           }
         }
       }
@@ -403,7 +409,7 @@ class TaskController extends GetxController {
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
-      "datasource": "DS_GETTASKATTACHMENTS",
+      "datasource": DataSourceServices.DS_GETTASKATTACHMENTS,
       "sqlParams": {"taskid": taskId}
     };
 

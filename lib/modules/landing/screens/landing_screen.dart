@@ -1,4 +1,4 @@
-import 'package:axpert_space/common/controller/web_view_controller.dart';
+import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
 import 'package:axpert_space/modules/landing/landing.dart';
 import 'package:axpert_space/modules/landing/widgets/landing_drawer_widget.dart';
 import 'package:axpert_space/modules/web_view/screen/inapp_webview_screen.dart';

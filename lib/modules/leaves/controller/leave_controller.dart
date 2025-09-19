@@ -69,9 +69,9 @@ class LeaveController extends GetxController {
     var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
-      "appname": "agilespace",
-      "datasource": "DS_GETLEAVEHISTORY",
-      "sqlParams": {"username": "shilpa"}
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": DataSourceServices.DS_GETLEAVEHISTORY,
+      "sqlParams": {"username": globalVariableController.USER_NAME.value}
     };
     var dsResp = await serverConnections.postToServer(
         url: dataSourceUrl, isBearer: true, body: jsonEncode(body));

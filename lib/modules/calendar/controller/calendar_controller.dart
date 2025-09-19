@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:axpert_space/core/app_storage/app_storage.dart';
 import 'package:axpert_space/core/core.dart';
+import 'package:axpert_space/data/data_source/datasource_services.dart';
 import 'package:axpert_space/modules/calendar/models/event_model.dart';
 import 'package:axpert_space/modules/calendar/models/meeting_model.dart';
 import 'package:axpert_space/modules/calendar/models/task_by_day_model.dart';
@@ -42,10 +43,10 @@ class CalendarController extends GetxController {
     var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
-      "appname": "agilespace",
-      "datasource": "DS_GETEVENTSBYDAY",
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": DataSourceServices.DS_GETEVENTSBYDAY,
       "sqlParams": {
-        "username": "syamala",
+        "username": globalVariableController.USER_NAME.value,
         "date": DateUtilsHelper.getFormattedDateYMD(selectedDate.toString())
       }
       // "sqlParams": {"username": "syamala", "date": "2025-09-15"}
@@ -79,10 +80,10 @@ class CalendarController extends GetxController {
     var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
-      "appname": "agilespace",
-      "datasource": "DS_GETTASKSBYDAY",
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": DataSourceServices.DS_GETTASKSBYDAY,
       "sqlParams": {
-        "username": "syamala",
+        "username": globalVariableController.USER_NAME.value,
         "date": DateUtilsHelper.getFormattedDateYMD(selectedDate.toString())
       }
     };

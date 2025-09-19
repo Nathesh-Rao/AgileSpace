@@ -220,8 +220,8 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
       decoration: BoxDecoration(
           color: Colors.white,
           border: Border(
-              bottom:
-                  BorderSide(color: _getTileWidgetBorderColor(data.status)))),
+              bottom: BorderSide(
+                  color: _getTileWidgetBorderColor(data.status ?? '')))),
       padding: EdgeInsets.symmetric(horizontal: 15),
       height: 52,
       child: Row(
@@ -231,7 +231,7 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
             child: _getTileDateWidget(data),
           ),
           Expanded(
-            child: _statusCheck(data.status)
+            child: _statusCheck(data.status ?? '')
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,51 +242,59 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
                         style: style,
                         textAlign: TextAlign.start,
                       ),
-                      Text(
-                        "📍Location",
-                        style: style.copyWith(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xff919191)),
-                        textAlign: TextAlign.start,
-                      ),
+                      // Text(
+                      //   "📍Location",
+                      //   style: style.copyWith(
+                      //       fontSize: 8,
+                      //       fontWeight: FontWeight.w700,
+                      //       color: Color(0xff919191)),
+                      //   textAlign: TextAlign.start,
+                      // ),
                     ],
                   )
                 : Text(
-                    data.status,
+                    data.status ?? '',
                     style: style.copyWith(
-                      color: _getTileWidgetBorderColor(data.status),
+                      color: _getTileWidgetBorderColor(data.status ?? ""),
                     ),
                   ),
           ),
           SizedBox(width: 25),
           Expanded(
-            child: _statusCheck(data.status)
+            child: _statusCheck(data.status ?? "")
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        data.clockOut,
-                        style: style,
-                        textAlign: TextAlign.start,
-                      ),
-                      Text(
-                        "📍Location",
-                        style: style.copyWith(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xff919191)),
-                        textAlign: TextAlign.start,
-                      ),
+                      data.punchOutTime != null
+                          ? Text(
+                              data.clockOut,
+                              style: style,
+                              textAlign: TextAlign.start,
+                            )
+                          : Text(
+                              data.status ?? '',
+                              style: style.copyWith(
+                                color: _getTileWidgetBorderColor(
+                                    data.status ?? ""),
+                              ),
+                            ),
+                      // Text(
+                      //   "📍Location",
+                      //   style: style.copyWith(
+                      //       fontSize: 8,
+                      //       fontWeight: FontWeight.w700,
+                      //       color: Color(0xff919191)),
+                      //   textAlign: TextAlign.start,
+                      // ),
                     ],
                   )
                 : SizedBox.shrink(),
           ),
           Expanded(
             child: Text(
-              data.workingHours,
+              data.formattedWorkingHours,
               style: style,
               textAlign: TextAlign.end,
             ),
@@ -297,8 +305,8 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
   }
 
   Widget _getTileDateWidget(AttendanceReportModel data) {
-    var color = _getTileDateWidgetColor(data.status);
-    var date = data.date;
+    var color = _getTileDateWidgetColor(data.status ?? "");
+    var date = data.formattedPunchDate;
     return Row(
       children: [
         Container(
@@ -342,7 +350,7 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
   }
 
   bool _statusCheck(String status) {
-    if (status.toLowerCase().contains("active") ||
+    if (status.toLowerCase().contains("present") ||
         status.toLowerCase().contains("half")) {
       return true;
     }
@@ -353,7 +361,8 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
   Color _getTileDateWidgetColor(String status) {
     if (status.toLowerCase().contains("off")) {
       return AppColors.baseRed;
-    } else if (status.toLowerCase().contains("leave")) {
+    } else if (status.toLowerCase().contains("leave") ||
+        status.toLowerCase().contains("half")) {
       return AppColors.baseYellow;
     } else {
       return AppColors.baseBlue;
@@ -363,7 +372,8 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
   Color _getTileWidgetBorderColor(String status) {
     if (status.toLowerCase().contains("off")) {
       return AppColors.baseRed;
-    } else if (status.toLowerCase().contains("leave")) {
+    } else if (status.toLowerCase().contains("leave") ||
+        status.toLowerCase().contains("half")) {
       return AppColors.baseYellow;
     } else {
       return AppColors.baseGray;

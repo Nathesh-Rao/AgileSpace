@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
-import '../../../common/controller/web_view_controller.dart';
+import '../controller/web_view_controller.dart';
 import '../../../common/log_service/log_services.dart';
 
 class InApplicationWebViewer extends StatefulWidget {

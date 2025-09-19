@@ -1,8 +1,31 @@
+// ignore_for_file: constant_identifier_names
+
 class DataSourceServices {
   static const String DATA_SOURCE_CONNECTION = "api/v1/ARMGetDataResponse";
+
   static const String DS_ATTENDANCE_DETAILS = "DS_GETATTENDANCE_DETAIL";
+
   static const String DS_GET_ALL_TASKS = "DS_GETALLTASKS";
+
   static const String DS_GET_PARTICIPENT_LIST = "DS_GETPARTICIPANTLIST";
 
   static const String DS_GET_ALl_USERNAMES = "DS_GETALLUSERNAMES";
+
+  static const String DS_GETTASKSUMMARY = "DS_GETTASKSUMMARY";
+
+  static const DS_GETACTIONLIST = "DS_GETACTIONLIST";
+
+  static const DS_GETTASKHISTORY = "DS_GETTASKHISTORY";
+
+  static const DS_GETTASKATTACHMENTS = "DS_GETTASKATTACHMENTS";
+
+  static const DS_GETATTENDANCELOG = "DS_GETATTENDANCELOG";
+
+  static const DS_GETATTENDANCE_DETAIL = "DS_GETATTENDANCE_DETAIL";
+
+  static const DS_GETEVENTSBYDAY = "DS_GETEVENTSBYDAY";
+
+  static const DS_GETTASKSBYDAY = "DS_GETTASKSBYDAY";
+
+  static const DS_GETLEAVEHISTORY = "DS_GETLEAVEHISTORY";
 }

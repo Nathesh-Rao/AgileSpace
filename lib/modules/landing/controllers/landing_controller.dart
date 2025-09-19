@@ -1,6 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
-import 'package:axpert_space/common/controller/web_view_controller.dart';
+import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
 import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:axpert_space/core/utils/internet_connections/internet_connectivity.dart';
 import 'package:axpert_space/modules/landing/widgets/widgets.dart';

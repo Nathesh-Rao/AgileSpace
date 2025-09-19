@@ -9,8 +9,9 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../core/core.dart';
-import '../../core/utils/internet_connections/internet_connectivity.dart';
+import '../../../common/log_service/log_services.dart';
+import '../../../core/core.dart';
+import '../../../core/utils/internet_connections/internet_connectivity.dart';
 
 class WebViewController extends GetxController {
   InternetConnectivity internetConnectivity = Get.find();
@@ -33,7 +34,8 @@ class WebViewController extends GetxController {
 
     if (authController.isAxpertConnectEstablished) {
       currentUrl.value = url;
-
+      LogService.writeLog(
+          message: "WebViewController - openWebView - url => $url");
       await inAppWebViewController.value!
           .loadUrl(
             urlRequest: URLRequest(

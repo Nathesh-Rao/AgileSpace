@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:axpert_space/common/log_service/log_services.dart';
+import 'package:axpert_space/data/data_source/datasource_services.dart';
 import 'package:axpert_space/modules/attendance/models/AttendanceReportModel.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -96,8 +97,11 @@ class AttendanceController extends GetxController {
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
-      "datasource": "DS_GETATTENDANCELOG",
-      "sqlParams": {"username": "malakonda", "month": "2025-08"}
+      "datasource": DataSourceServices.DS_GETATTENDANCELOG,
+      "sqlParams": {
+        "username": globalVariableController.USER_NAME.value,
+        "month": "${DateTime.now().year}-$selectedMonthIndex"
+      }
     };
 
     var dsResp = await serverConnections.postToServer(
@@ -152,16 +156,24 @@ class AttendanceController extends GetxController {
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
-      "datasource": "DS_GETATTENDANCE_DETAIL",
-      "sqlParams": {"username": "malakonda", "date": "19/08/2025"}
+      "datasource": DataSourceServices.DS_GETATTENDANCE_DETAIL,
+      "sqlParams": {
+        "username": globalVariableController.USER_NAME.value,
+        "date": DateFormat('dd/MM/yyyy').format(DateTime.now())
+      }
     };
 
     var dsResp = await serverConnections.postToServer(
         url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
-
+    LogService.writeLog(message: dsResp);
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);
       if (jsonDSResp['result']['success'].toString() == "true") {
+        if (jsonDSResp['result']['data'].isEmpty) {
+          isAttendanceDetailsIsLoading.value = false;
+          return;
+        }
+
         var dsData = jsonDSResp['result']['data'][0] ?? '';
         try {
           attendanceDetails.value = AttendanceDetailsModel.fromJson(dsData);
@@ -169,6 +181,7 @@ class AttendanceController extends GetxController {
             await _setAttendanceStatus(attendanceDetails.value!);
           }
         } catch (e) {
+          isAttendanceDetailsIsLoading.value = false;
           LogService.writeLog(message: "$e");
         }
       }

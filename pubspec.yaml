@@ -116,11 +116,11 @@ flutter:
     - assets/images/
     - assets/images/onboarding/
     - assets/images/auth/
-    - assets/images/task/
+    # - assets/images/task/
     - assets/images/common/
     - assets/icons/
     - assets/icons/bottom_nav/
-    - assets/icons/action/
+    # - assets/icons/action/
     - assets/icons/common/
     - assets/lotties/
 

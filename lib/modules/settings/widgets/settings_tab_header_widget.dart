@@ -31,29 +31,36 @@ class SettingsTabHeaderWidget extends StatelessWidget {
             ),
           ),
           20.horizontalSpace,
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Obx(
-                () => Text(
-                  "Mr ${globalVariableController.USER_NAME.value}",
-                  style: GoogleFonts.poppins(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white,
+          Flexible(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Obx(
+                  () => Flexible(
+                    child: Text(
+                      "Mr ${globalVariableController.USER_NAME.value}",
+                      style: GoogleFonts.poppins(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                      // overflow: TextOverflow.ellipsis,
+                      // maxLines: 1,
+                      // softWrap: false,
+                    ),
                   ),
                 ),
-              ),
-              Text(
-                "@username",
-                style: GoogleFonts.poppins(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
-              )
-            ],
+                Text(
+                  "@username",
+                  style: GoogleFonts.poppins(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                )
+              ],
+            ),
           )
         ],
       ),
