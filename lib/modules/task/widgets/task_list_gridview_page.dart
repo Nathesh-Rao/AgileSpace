@@ -39,7 +39,7 @@ class TaskListGridviewPage extends GetView<TaskController> {
       required Widget? Function(BuildContext, int) itemBuilder}) {
     return GridView.builder(
       physics: BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 100.h),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 16,

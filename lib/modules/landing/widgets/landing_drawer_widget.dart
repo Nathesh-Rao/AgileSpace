@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/modules/landing/controllers/landing_controller.dart';
 import 'package:axpert_space/modules/modules.dart';
@@ -58,17 +59,17 @@ class LandingDrawerWidget extends GetView<LandingController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      AutoSizeText(
                         globalVariableController.NICK_NAME.value,
                         style: AppStyles.appBarTitleTextStyle.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryActionColorDarkBlue,
                         ),
                       ),
-                      Text(
+                      AutoSizeText(
                         globalVariableController.USER_EMAIL.value,
                         style: AppStyles.appBarTitleTextStyle.copyWith(
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w400,
                           color: AppColors.primaryActionColorDarkBlue,
                           fontSize: 11.sp,
                         ),

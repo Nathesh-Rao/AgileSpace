@@ -36,6 +36,7 @@ dependencies:
   flutter_number_flow: ^0.1.0
   dropdown_button2: ^2.3.9
   easy_date_timeline: ^2.0.9
+  one_clock:
   ############################################################
   # ⚙️ STATE MANAGEMENT
   ############################################################

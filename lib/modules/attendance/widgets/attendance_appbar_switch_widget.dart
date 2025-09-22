@@ -42,9 +42,11 @@ class AttendanceAppBarSwitchWidget extends GetView<AttendanceController> {
                           : AppColors.snackBarErrorColorRed),
                 ),
                 isLoading: controller.isAttendanceDetailsIsLoading.value,
-                value: controller.attendanceAppbarSwitchValue.value,
+                value: controller.attendanceState.value !=
+                    AttendanceState.punchedIn,
                 future: () async {
-                  return controller.attendanceAppbarSwitchValue.value;
+                  return controller.attendanceState.value !=
+                      AttendanceState.punchedIn;
                 },
                 style: SpinStyle.material,
                 onTap: controller.onAttendanceAppbarSwitch,
@@ -52,7 +54,8 @@ class AttendanceAppBarSwitchWidget extends GetView<AttendanceController> {
               ),
             ),
             Visibility(
-              visible: !controller.attendanceAppbarSwitchValue.value &&
+              visible: controller.attendanceState.value ==
+                      AttendanceState.punchedIn &&
                   !controller.attendanceAppbarSwitchIsLoading.value,
               child: Padding(
                 padding: EdgeInsets.only(right: 15.w),
@@ -70,7 +73,7 @@ class AttendanceAppBarSwitchWidget extends GetView<AttendanceController> {
             )
           ],
         ),
-      ),
+      ).skeletonLoading(controller.attendanceAppbarSwitchIsLoading.value),
     );
   }
 }

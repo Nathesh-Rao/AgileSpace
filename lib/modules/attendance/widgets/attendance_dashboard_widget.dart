@@ -1,6 +1,9 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:axpert_space/routes/app_routes.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:one_clock/one_clock.dart';
 import '../../../common/common.dart';
 import '../../../core/core.dart';
 import '../attendance.dart';
@@ -26,80 +29,46 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
               Container(
                 padding: EdgeInsets.all(10.w),
                 width: double.infinity,
-                height: 265.h,
+                height: 200.h,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.r),
                     border: Border.all(
                       color: AppColors.violetBorder,
                     )),
-                child: Obx(
-                  () => Column(
-                    children: [
-                      controller.isClockedIn.value
-                          ? Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                5.verticalSpace,
-                                Text(
-                                  "You are in the Clock-Out area now , Clock-Out available from ${controller.attendanceDetails.value?.actualOuttime}",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Remaining time until you can clock out is 0 min ",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 11.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            )
-                          : Text(
-                              "Please clock in before ${controller.attendanceDetails.value?.actualIntime}",
-                              style: GoogleFonts.poppins(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                      30.verticalSpace,
-                      Obx(
-                        () => controller.isClockedIn.value
-                            ? Expanded(
-                                flex: 2,
-                                child: Row(
-                                  children: [
-                                    _getAttendanceInfoMainWidget(),
-                                    10.horizontalSpace,
-                                    _getAttendanceInfoSecondWidget(),
-                                  ],
-                                ))
-                            : Expanded(child: _beforeClockedInWidget()),
+                child: Column(
+                  children: [
+                    Obx(
+                      () => controller.attendanceState.value ==
+                              AttendanceState.notPunchedIn
+                          ? Expanded(child: _beforeClockedInWidget())
+                          : Expanded(
+                              flex: 2,
+                              child: Row(
+                                children: [
+                                  _getAttendanceInfoMainWidget(),
+                                  10.horizontalSpace,
+                                  _getAttendanceInfoSecondWidget(),
+                                ],
+                              )),
+                    ),
+                    20.verticalSpace,
+                    Container(
+                      decoration: BoxDecoration(
+                          color: AppColors.violetBorder.withAlpha(50),
+                          borderRadius: BorderRadius.circular(5.r)),
+                      padding: EdgeInsets.symmetric(vertical: 5.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Update your work sheet before clock out",
+                            style: GoogleFonts.poppins(
+                                fontSize: 11.sp, fontWeight: FontWeight.w600),
+                          ),
+                        ],
                       ),
-                      20.verticalSpace,
-                      Container(
-                        decoration: BoxDecoration(
-                            color: AppColors.violetBorder.withAlpha(50),
-                            borderRadius: BorderRadius.circular(5.r)),
-                        padding: EdgeInsets.symmetric(vertical: 5.h),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Update your work sheet before clock out",
-                              style: GoogleFonts.poppins(
-                                  fontSize: 11.sp, fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
             ],
@@ -129,7 +98,11 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
           children: [
             10.horizontalSpace,
             Text(
-              "30 mins to clock-out",
+              controller.attendanceState.value == AttendanceState.punchedIn
+                  ? controller.clockTimeStatus(
+                      "${controller.attendanceDetails.value?.actualOuttime}")
+                  : controller.clockTimeStatus(
+                      "${controller.attendanceDetails.value?.actualIntime}"),
               style: GoogleFonts.poppins(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w500,
@@ -169,7 +142,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
                         color: AppColors.chipCardWidgetColorGreen,
                       ),
                       Text(
-                        "On time",
+                        // controller.clockedInTimeStatus(${controller.attendanceDetails.value?.intime}, expectedTimeStr),
+                        "",
                         style: GoogleFonts.poppins(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w500,
@@ -248,11 +222,13 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
             ],
           ),
           Spacer(),
-          Text(
-            // "${controller.clockInLocation.value.split("\n")[0].replaceFirst("Name:", "").trim()}\n${controller.clockInLocation.value.split("\n")[4].replaceFirst("Postal code:", "").trim()}",
-            "location",
-            style:
-                AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 10.sp),
+          Obx(
+            () => Text(
+              // "${controller.clockInLocation.value.split("\n")[0].replaceFirst("Name:", "").trim()}\n${controller.clockInLocation.value.split("\n")[4].replaceFirst("Postal code:", "").trim()}",
+              controller.clockInLocation.value,
+              style:
+                  AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 10.sp),
+            ),
           ),
           5.verticalSpace,
         ],
@@ -344,20 +320,96 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
         duration: Duration(milliseconds: 400),
         child: Row(
           children: [
+            Expanded(child: _clockWidget()),
             Expanded(
-                child: PrimaryButtonWidget(
-              height: double.infinity,
-              margin: EdgeInsets.zero,
-              key: ValueKey(controller.attendanceAppbarSwitchValue.value),
-              isLoading: controller.attendanceAppbarSwitchIsLoading.value,
-              onPressed: controller.onAttendanceClockInCardClick,
-              label: "ClockInn 🌞",
-              backgroundColor: AppColors.taskClockInWidgetColorPurple,
-              labelStyle: AppStyles.textButtonStyle.copyWith(
-                color: Colors.white,
-              ),
+                child: Column(
+              children: [
+                Expanded(
+                    child: Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.chipCardWidgetColorBlue.withAlpha(30),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        CupertinoIcons.location_circle,
+                        color: AppColors.chipCardWidgetColorBlue,
+                      ),
+                      10.horizontalSpace,
+                      Obx(() => Flexible(
+                            child: AutoSizeText(
+                              maxFontSize: 10,
+                              minFontSize: 3,
+                              controller.clockInLocation.value,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.chipCardWidgetColorBlue,
+                              ),
+                            ),
+                          ))
+                    ],
+                  ),
+                )),
+                10.verticalSpace,
+                Expanded(
+                  child: PrimaryButtonWidget(
+                    height: double.infinity,
+                    margin: EdgeInsets.zero,
+                    key: ValueKey(controller.attendanceAppbarSwitchValue.value),
+                    isLoading: controller.attendanceAppbarSwitchIsLoading.value,
+                    onPressed: controller.onAttendanceClockInCardClick,
+                    label: "ClockInn 🌞",
+                    backgroundColor: AppColors.taskClockInWidgetColorPurple,
+                    labelStyle: AppStyles.textButtonStyle.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ))
           ],
+        ),
+      );
+
+  Widget _clockWidget() => Padding(
+        padding: EdgeInsets.symmetric(vertical: 5.h),
+        child: AnalogClock(
+          decoration: const BoxDecoration(shape: BoxShape.circle),
+          isLive: true,
+          hourHandColor: AppColors.primaryActionColorDarkBlue,
+          minuteHandColor: AppColors.primaryActionColorDarkBlue,
+          showSecondHand: true,
+          numberColor: AppColors.primaryActionColorDarkBlue,
+          secondHandColor: AppColors.baseRed,
+          showNumbers: true,
+          showAllNumbers: true,
+          textScaleFactor: 1,
+          showTicks: true,
+          showDigitalClock: true,
+          datetime: DateTime.now(),
+        ),
+      );
+
+  Widget statusChip(String text, Color color) => Container(
+        decoration: BoxDecoration(
+          color: color.withAlpha(30),
+          borderRadius: BorderRadius.circular(5.r),
+        ),
+        padding: EdgeInsets.all(5.h),
+        width: 100.w,
+        child: Center(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: 7.sp,
+              fontWeight: FontWeight.w500,
+              color: color,
+            ),
+          ),
         ),
       );
 }

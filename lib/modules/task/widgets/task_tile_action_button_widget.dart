@@ -120,7 +120,8 @@ class TaskTileActionContentWidget extends GetView<TaskController> {
   Widget _rowTile(TaskRowOptionModel taskRowOption) {
     return FlatButtonWidget(
       width: 110.w,
-      label: controller.getTaskActionName(taskRowOption.action),
+      // label: controller.getTaskActionName(taskRowOption.action),
+      label: taskRowOption.url.split(",")[1],
       color: controller.getTaskActionColor(taskRowOption.action),
       onTap: () {
         sController.hideTooltip();

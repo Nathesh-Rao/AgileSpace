@@ -14,10 +14,11 @@ class TaskListListviewPage extends GetView<TaskController> {
     return Obx(
       () => ListView.builder(
           physics: BouncingScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 15.w),
+          padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 100.h),
           itemCount: controller.taskList.length,
           itemBuilder: (context, index) => Obx(() =>
-              TaskListListTileWidget(taskModel: controller.taskList[index]).skeletonLoading(controller.isTaskListLoading.value))),
+              TaskListListTileWidget(taskModel: controller.taskList[index])
+                  .skeletonLoading(controller.isTaskListLoading.value))),
     );
   }
 }
