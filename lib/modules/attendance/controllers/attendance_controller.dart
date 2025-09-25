@@ -374,7 +374,7 @@ class AttendanceController extends GetxController {
     } else {
       attendanceState.value = AttendanceState.error;
     }
-
+    isAttendanceDetailsIsLoading.value = false;
     LogService.writeLog(
         message: "Punch status : ${attendanceState.value.name}");
 
