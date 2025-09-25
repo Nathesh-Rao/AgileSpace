@@ -6,6 +6,8 @@ import 'package:axpert_space/modules/calendar/widgets/calendar_view_widget.dart'
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../calendar/widgets/calendar_create_task_widget.dart';
+
 class LandingCalendarTab extends StatelessWidget {
   const LandingCalendarTab({super.key});
 
@@ -39,13 +41,7 @@ class LandingCalendarTab extends StatelessWidget {
                 ],
               ),
               Spacer(),
-              FlatButtonWidget(
-                width: 108.w,
-                label: "Add task",
-                color: AppColors.chipCardWidgetColorViolet,
-                onTap: () {},
-                // isCompact: true,
-              ),
+              CalendarCreateTaskWidget(),
               10.horizontalSpace,
               CalendarViewSwitchWidget()
             ],

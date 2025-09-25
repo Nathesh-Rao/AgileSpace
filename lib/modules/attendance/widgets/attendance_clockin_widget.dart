@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:axpert_space/common/common.dart';
+import 'package:axpert_space/common/widgets/flat_button_widget.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -108,25 +109,70 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
         ),
       );
 
-  Widget _actionButton(String text) => Container(
-        margin: EdgeInsets.all(10.h),
-        decoration: BoxDecoration(
-          color: AppColors.taskClockInWidgetColorPurple,
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(
-              color: AppColors.taskClockInWidgetColorPurple, width: 0.5),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: GoogleFonts.poppins(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
-              color: AppColors.primaryButtonFGColorWhite,
+  Widget _actionButton(String text) {
+    Color color = text.toLowerCase().contains('Inn')
+        ? AppColors.chipCardWidgetColorViolet
+        : AppColors.statusAccepted;
+
+    return Container(
+      height: double.infinity,
+      padding: EdgeInsets.all(10.w),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.all(5.w),
+            elevation: 0,
+            backgroundColor: color.withAlpha(50),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.r),
+            )),
+        onPressed: () {},
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 5.w,
+          children: [
+            Icon(
+              CupertinoIcons.dial_fill,
+              color: color,
             ),
-          ),
+            Text(
+              text,
+              style: AppStyles.textButtonStyleNormal.copyWith(
+                  color: color, fontSize: 14.sp, fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
-      );
+      ),
+    );
+  }
+
+  //  InkWell(
+  //       onTap: () {
+  //         controller.showDLG();
+  //       },
+  //       child: Container(
+  //         margin: EdgeInsets.all(10.h),
+  //         decoration: BoxDecoration(
+  //           color: AppColors.taskClockInWidgetColorPurple,
+  //           // image: DecorationImage(
+  //           //     image: AssetImage("assets/icons/common/ morning.jpg"),
+  //           //     colorFilter: ColorFilter.mode(Colors.white, BlendMode.dstATop),
+  //           //     fit: BoxFit.cover),
+  //           borderRadius: BorderRadius.circular(8.r),
+  //           // border: Border.all(
+  //           //     color: AppColors.taskClockInWidgetColorPurple, width: 0.5),
+  //         ),
+  //         child: Center(
+  //           child: Text(
+  //             text,
+  //             style: GoogleFonts.poppins(
+  //               fontSize: 16.sp,
+  //               fontWeight: FontWeight.w500,
+  //               color: AppColors.primaryButtonFGColorWhite,
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     );
 
   Widget _beforeClockInWidget() => Row(
         children: [
@@ -147,9 +193,12 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
                 Expanded(
                   child: _statusChip(
                     "Work Sheet ${controller.attendanceDetails.value?.worksheetUpdateStatus}",
-                    "${controller.attendanceDetails.value?.worksheetUpdateStatus}"
-                            .toLowerCase()
-                            .contains("not")
+                    ("${controller.attendanceDetails.value?.worksheetUpdateStatus}"
+                                .toLowerCase()
+                                .contains("not") ||
+                            "${controller.attendanceDetails.value?.worksheetUpdateStatus}"
+                                .toLowerCase()
+                                .contains("null"))
                         ? AppColors.chipCardWidgetColorRed
                         : AppColors.chipCardWidgetColorGreen,
                   ),
@@ -157,7 +206,9 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
               ],
             ),
           ),
+          10.horizontalSpace,
           Expanded(flex: 3, child: _actionButton("Clock Inn")),
+          5.horizontalSpace,
         ],
       );
 
@@ -207,9 +258,12 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
                 Expanded(
                   child: _statusChip(
                     "Work Sheet ${controller.attendanceDetails.value?.worksheetUpdateStatus}",
-                    "${controller.attendanceDetails.value?.worksheetUpdateStatus}"
-                            .toLowerCase()
-                            .contains("not")
+                    ("${controller.attendanceDetails.value?.worksheetUpdateStatus}"
+                                .toLowerCase()
+                                .contains("not") ||
+                            "${controller.attendanceDetails.value?.worksheetUpdateStatus}"
+                                .toLowerCase()
+                                .contains("null"))
                         ? AppColors.chipCardWidgetColorRed
                         : AppColors.chipCardWidgetColorGreen,
                   ),

@@ -1,25 +1,28 @@
 class EventModel {
   final String eventName;
   final String description;
-  final DateTime fromDate;
-  final DateTime toDate;
-  final String isAllDay;
+  final String taskType;
+  final String taskSubType;
+  final String hrs;
+  final String mns;
 
   EventModel({
     required this.eventName,
     required this.description,
-    required this.fromDate,
-    required this.toDate,
-    required this.isAllDay,
+    required this.taskType,
+    required this.taskSubType,
+    required this.hrs,
+    required this.mns,
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
     return EventModel(
-      eventName: json['eventname'] ?? '',
+      eventName: json['event_name'] ?? '',
       description: json['description'] ?? '',
-      fromDate: DateTime.parse(json['from_date']),
-      toDate: DateTime.parse(json['to_date']),
-      isAllDay: json['isallday'] ?? 'No',
+      taskType: json['task_type'] ?? '',
+      taskSubType: json['task_sybtype'] ?? '',
+      hrs: json['hours'].toInt().toString(),
+      mns: json['minutes'].toInt().toString(),
     );
   }
 
@@ -27,9 +30,6 @@ class EventModel {
     return {
       'eventname': eventName,
       'description': description,
-      'from_date': fromDate.toIso8601String(),
-      'to_date': toDate.toIso8601String(),
-      'isallday': isAllDay,
     };
   }
 }

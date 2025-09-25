@@ -5,6 +5,7 @@ import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/core/config/colors/app_colors.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/core/utils/extensions.dart';
+import 'package:axpert_space/modules/calendar/models/event_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -64,33 +65,29 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
                         15.verticalSpace,
                         controller.eventsList.isNotEmpty
                             ? _buildSectionTitle(
-                                "Events for ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : " - ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}",
+                                "Tasks for ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : " - ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}",
                                 CupertinoIcons.circle_grid_hex_fill)
                             : SizedBox.shrink(),
                         5.verticalSpace,
                         ...List.generate(
                             controller.eventsList.length,
-                            (index) => _buildEvent(
-                                controller.eventsList[index].eventName,
-                                DateUtilsHelper.getTimeFromDate(controller
-                                    .eventsList[index].fromDate
-                                    .toString()),
+                            (index) => _buildEvent(controller.eventsList[index],
                                 AppColors.getNextColor())),
                         // _buildSectionTitle("Today", Icons.calendar_today),
 
-                        15.verticalSpace,
-                        _buildSectionTitle(
-                            "Tasks for ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : " - ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}",
-                            CupertinoIcons.dial_fill),
-                        5.verticalSpace,
-                        ...List.generate(
-                            controller.taskList.length,
-                            (index) => _buildEvent(
-                                controller.taskList[index].caption,
-                                DateUtilsHelper.getTimeFromDate(controller
-                                    .taskList[index].fromDate
-                                    .toString()),
-                                AppColors.getNextColor())),
+                        // 15.verticalSpace,
+                        // _buildSectionTitle(
+                        //     "Events for ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : " - ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}",
+                        //     CupertinoIcons.dial_fill),
+                        // 5.verticalSpace,
+                        // ...List.generate(
+                        //     controller.taskList.length,
+                        //     (index) => _buildEvent(
+                        //         controller.taskList[index].caption,
+                        //         DateUtilsHelper.getTimeFromDate(controller
+                        //             .taskList[index].fromDate
+                        //             .toString()),
+                        //         AppColors.getNextColor())),
                       ],
                     ).skeletonLoading(controller.calendarEventLoading.value),
             ),
@@ -130,7 +127,10 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
     );
   }
 
-  Widget _buildEvent(String title, String time, Color color) {
+  Widget _buildEvent(EventModel task, Color color) {
+    var style = GoogleFonts.poppins(
+      color: Colors.black87,
+    );
     return Container(
       margin: EdgeInsets.symmetric(vertical: 3.h),
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.h),
@@ -143,7 +143,7 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
           8.horizontalSpace,
           Expanded(
             child: Text(
-              title,
+              task.eventName,
               style: GoogleFonts.poppins(
                 fontSize: 10,
                 color: color,
@@ -152,14 +152,41 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
             ),
           ),
           Spacer(),
-          Text(
-            time,
-            style: GoogleFonts.poppins(
-              fontSize: 10,
-              color: Colors.black87,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          RichText(
+              text: TextSpan(children: [
+            TextSpan(
+                text: task.hrs,
+                style: style.copyWith(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                )),
+            TextSpan(
+                text: " hrs",
+                style: style.copyWith(
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w500,
+                )),
+            TextSpan(
+                text: "  ${task.mns}",
+                style: style.copyWith(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                )),
+            TextSpan(
+                text: " min",
+                style: style.copyWith(
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w500,
+                ))
+          ])),
+          // Text(
+          //   "${task.hrs}hrs ${task.mns}mins",
+          //   style: GoogleFonts.poppins(
+          //     fontSize: 10,
+          //     color: Colors.black,
+          //     fontWeight: FontWeight.w600,
+          //   ),
+          // ),
         ],
       ),
     );

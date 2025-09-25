@@ -118,81 +118,19 @@ class TaskTileActionContentWidget extends GetView<TaskController> {
   }
 
   Widget _rowTile(TaskRowOptionModel taskRowOption) {
-    return FlatButtonWidget(
-      width: 110.w,
-      // label: controller.getTaskActionName(taskRowOption.action),
-      label: taskRowOption.url.split(",")[1],
-      color: controller.getTaskActionColor(taskRowOption.action),
-      onTap: () {
-        sController.hideTooltip();
-        _acceptTaskTemp(taskRowOption);
-      },
-      isCompact: true,
-    );
-  }
+    return (taskRowOption.action.isEmpty)
+        ? SizedBox.shrink()
+        : FlatButtonWidget(
+            width: 110.w,
+            // label: controller.getTaskActionName(taskRowOption.action),
+            label: taskRowOption.url.split(",")[1],
+            color: controller.getTaskActionColor(taskRowOption.action),
+            onTap: () {
+              sController.hideTooltip();
 
-  void _acceptTaskTemp(TaskRowOptionModel taskRowOption) {
-    AppStorage appStorage = AppStorage();
-    WebViewController webViewController = Get.find();
-    Map tsk = {
-      "command": [
-        {
-          "cmd": "opentstruct",
-          "cmdval": "accp",
-          "showin": "pop",
-          "parentrefresh": "true",
-          "pname": "taskid",
-          "pvalue": taskId
-        },
-        {
-          "cmd": "opentstruct",
-          "cmdval": "send",
-          "showin": "pop",
-          "parentrefresh": "true",
-          "pname": "taskid",
-          "pvalue": taskId
-        },
-        {
-          "cmd": "openiview",
-          "cmdval": "history",
-          "showin": "pop",
-          "parentrefresh": "false",
-          "pname": "tid",
-          "pvalue": taskId
-        }
-      ]
-    };
-    Map<String, dynamic> tskJsn = {};
-
-    switch (taskRowOption.action) {
-      case "accep":
-        tskJsn = tsk["command"][0];
-        break;
-      case "sendtask":
-        tskJsn = tsk["command"][1];
-        break;
-      case "return":
-      case "infor":
-      case "loadhist":
-        tskJsn = tsk["command"][2];
-        break;
-
-      case "droptask":
-      default:
-        tskJsn = tsk["command"][2];
-        break;
-    }
-    var tskMOdel = TaskActionModel.fromJson(tskJsn);
-    var cmdValue = '';
-    if (tskMOdel.cmd.contains("tstruct")) {
-      cmdValue = "t${tskMOdel.cmdVal}";
-    } else if (tskMOdel.cmd.contains("iview")) {
-      cmdValue = "i${tskMOdel.cmdVal}";
-    }
-
-    var url =
-        "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=$cmdValue&params=^act=open^${tskMOdel.pName}~${tskMOdel.pValue}";
-
-    webViewController.openWebView(url: url);
+              controller.acceptTaskTemp(taskRowOption, taskId);
+            },
+            isCompact: true,
+          );
   }
 }

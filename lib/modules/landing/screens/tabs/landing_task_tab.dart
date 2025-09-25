@@ -2,12 +2,14 @@ import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/attendance/attendance.dart';
 import 'package:axpert_space/modules/notifications/widgets/notification_icon_widget.dart';
+import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_number_flow/flutter_number_flow.dart';
 import 'package:get/get.dart';
 
+import '../../../task/widgets/task_list_floating_action_button.dart';
 import '../../../task/widgets/widgets.dart';
 import '../../widgets/landing_drawer_icon_widget.dart';
 
@@ -50,17 +52,7 @@ class LandingTaskTab extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-          label: Text(
-            "Create Task",
-            style: AppStyles.searchFieldTextStyle.copyWith(
-              color: AppColors.primaryButtonFGColorWhite,
-            ),
-          ),
-          backgroundColor: AppColors.chipCardWidgetColorBlue,
-          foregroundColor: AppColors.primaryButtonFGColorWhite,
-          icon: Icon(CupertinoIcons.add_circled_solid),
-          onPressed: () {}),
+      floatingActionButton: TaskListFloatingActionButton(),
     );
   }
 }

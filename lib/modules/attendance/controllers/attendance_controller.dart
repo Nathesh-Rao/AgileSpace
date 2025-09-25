@@ -1,13 +1,17 @@
 import 'dart:convert';
 
+import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/log_service/log_services.dart';
+import 'package:axpert_space/common/widgets/flat_button_widget.dart';
 import 'package:axpert_space/data/data_source/datasource_services.dart';
 import 'package:axpert_space/modules/attendance/models/AttendanceReportModel.dart';
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/core.dart';
@@ -97,6 +101,7 @@ class AttendanceController extends GetxController {
 
   _getAttendanceReport() async {
     isAttendanceReportLoading.value = true;
+
     var reportList = [];
     var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
     var body = {
@@ -104,8 +109,9 @@ class AttendanceController extends GetxController {
       "appname": globalVariableController.PROJECT_NAME.value,
       "datasource": DataSourceServices.DS_GETATTENDANCELOG,
       "sqlParams": {
-        "username": globalVariableController.NICK_NAME.value,
-        "month": "${DateTime.now().year}-$selectedMonthIndex"
+        "username": globalVariableController.USER_NAME.value,
+        "month":
+            "${DateTime.now().year}-${(selectedMonthIndex.value + 1).toString().padLeft(2, "0")}"
       }
     };
 
@@ -174,27 +180,26 @@ class AttendanceController extends GetxController {
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);
       if (jsonDSResp['result']['success'].toString() == "true") {
-        if (jsonDSResp['result']['data'].isEmpty) {
-          isAttendanceDetailsIsLoading.value = false;
-          return;
-        }
+        // if (jsonDSResp['result']['data'].isEmpty) {
+        //   isAttendanceDetailsIsLoading.value = false;
+        //   attendanceState.value = AttendanceState.error;
+        //   return;
+        // }
 
-        var dsData = jsonDSResp['result']['data'][0] ?? '';
-
-        // var beforePunchIn = {
-        //   "username": "amrithanath",
-        //   "status": "notPunchedIn",
-        //   "actual_intime": "9:30 AM",
-        //   "intime": null,
-        //   "actual_outtime": "6:30 PM",
-        //   "outtime": null,
-        //   "intime_latitude": null,
-        //   "intime_longitude": null,
-        //   "outtime_latitude": null,
-        //   "outtime_longitude": null,
-        //   "worksheet_update_status": "Not Filled"
-        // };
-
+        var beforePunchIn = {
+          "username": globalVariableController.USER_NAME.value,
+          "status": "notPunchedIn",
+          "actual_intime": "9:30 AM",
+          "intime": null,
+          "actual_outtime": "6:30 PM",
+          "outtime": null,
+          "intime_latitude": null,
+          "intime_longitude": null,
+          "outtime_latitude": null,
+          "outtime_longitude": null,
+          "worksheet_update_status": "Not Filled",
+          "message": ""
+        };
         // var punchedIn = {
         //   "username": "amrithanath",
         //   "status": "punchedIn",
@@ -222,6 +227,9 @@ class AttendanceController extends GetxController {
         //   "outtime_longitude": "77.5950",
         //   "worksheet_update_status": "Filled"
         // };
+        var dsData = jsonDSResp['result']['data'].isEmpty
+            ? beforePunchIn
+            : jsonDSResp['result']['data'][0];
 
         try {
           LogService.writeLog(message: dsData.toString());
@@ -366,9 +374,100 @@ class AttendanceController extends GetxController {
     } else {
       attendanceState.value = AttendanceState.error;
     }
+
     LogService.writeLog(
         message: "Punch status : ${attendanceState.value.name}");
+
+    if (attendanceState.value == AttendanceState.notPunchedIn) {
+      _showPunchInDialog();
+    }
     await _setLocationDetails(attendance);
+  }
+
+  showDLG() {
+    _showPunchInDialog();
+  }
+
+  _showPunchInDialog() {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Not Punched In",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.chipCardWidgetColorGreen,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              8.verticalSpace,
+              Lottie.asset(
+                'assets/lotties/glass_loading.json',
+              ),
+
+              // RichText(
+              //   text: TextSpan(children: [
+              //     TextSpan(
+              //         text: "You are ",
+              //         style: GoogleFonts.poppins(
+              //             fontSize: 12, color: Colors.black87)),
+              //     TextSpan(
+              //         text: clockTimeStatus(
+              //             "${attendanceDetails.value?.actualIntime}"),
+              //         style: GoogleFonts.poppins(
+              //             fontSize: 12,
+              //             fontWeight: FontWeight.w600,
+              //             color: AppColors.chipCardWidgetColorRed)),
+              //     TextSpan(
+              //         text: " today.\nPlease punch in before doing anything.",
+              //         style: GoogleFonts.poppins(
+              //             fontSize: 12, color: Colors.black87))
+              //   ]),
+              //   textAlign: TextAlign.center,
+              // ),
+
+              Text(
+                "You are not punched in today.\nPlease punch in before doing anything.",
+                style: GoogleFonts.poppins(fontSize: 12, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+              20.verticalSpace,
+              Row(
+                children: [
+                  Expanded(
+                    child: FlatButtonWidget(
+                      width: 100.w,
+                      label: "On Leave",
+                      color: AppColors.chipCardWidgetColorRed,
+                      onTap: () => Get.back(),
+                    ),
+                  ),
+                  // Spacer(),
+                  20.horizontalSpace,
+                  Expanded(
+                    child: FlatButtonWidget(
+                      width: 100.w,
+                      label: "Clock Inn",
+                      color: AppColors.chipCardWidgetColorGreen,
+                      onTap: () => Get.back(),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false, // Prevent closing by tapping outside
+    );
   }
 
   _setLocationDetails(AttendanceDetailsModel value) async {

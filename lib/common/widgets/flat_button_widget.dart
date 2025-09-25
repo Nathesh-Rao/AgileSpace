@@ -32,9 +32,8 @@ class FlatButtonWidget extends StatelessWidget {
         style: ElevatedButton.styleFrom(
             padding: EdgeInsets.all(5.w),
             elevation: 0,
-            backgroundColor: color != null
-                ? color!.withAlpha(50)
-                : AppColors.flatButtonColorBlue.withAlpha(50),
+            backgroundColor: (bgColor ?? color ?? AppColors.flatButtonColorBlue)
+                .withAlpha(50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5.r),
             )),

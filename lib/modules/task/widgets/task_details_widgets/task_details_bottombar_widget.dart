@@ -8,8 +8,8 @@ import 'package:get/get.dart';
 import '../../models/task_row_options_model.dart';
 
 class TaskDetailsBottomBarWidget extends GetView<TaskController> {
-  const TaskDetailsBottomBarWidget({super.key});
-
+  const TaskDetailsBottomBarWidget({super.key, required this.taskID});
+  final String taskID;
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -61,11 +61,14 @@ class TaskDetailsBottomBarWidget extends GetView<TaskController> {
   Widget _rowTile(TaskRowOptionModel taskRowOption) {
     return FlatButtonWidget(
       width: (1.sw / 2) - 30.w,
-      label: controller.getTaskActionName(taskRowOption.action),
+      label: taskRowOption.url.split(",")[1],
       // label: taskRowOption.url,
 
       color: controller.getTaskActionColor(taskRowOption.action),
-      onTap: () {},
+      onTap: () {
+        Get.back();
+        controller.acceptTaskTemp(taskRowOption, taskID);
+      },
       // isCompact: true,
     );
   }

@@ -24,7 +24,12 @@ class TaskDetailsScreen extends GetView<TaskController> {
       appBar: AppBar(
         title: Text("TID : ${taskModel.id}"),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(AntDesign.edit_fill))
+          IconButton(
+              onPressed: () {
+                Get.back();
+                controller.navigateToCreateTask();
+              },
+              icon: Icon(AntDesign.edit_fill))
         ],
       ),
       body: NotificationListener<ScrollNotification>(
@@ -45,7 +50,9 @@ class TaskDetailsScreen extends GetView<TaskController> {
         ),
       ),
 
-      bottomNavigationBar: TaskDetailsBottomBarWidget(),
+      bottomNavigationBar: TaskDetailsBottomBarWidget(
+        taskID: taskModel.id,
+      ),
       floatingActionButton: FloatingActionButton(
         // mini: true,
         shape: RoundedRectangleBorder(

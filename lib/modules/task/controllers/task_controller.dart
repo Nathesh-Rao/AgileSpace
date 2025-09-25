@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
+import '../../web_view/controller/web_view_controller.dart';
+import '../models/task_action_model.dart';
 
 class TaskController extends GetxController {
   final taskListPageViewIndex = 0.obs;
@@ -27,6 +29,7 @@ class TaskController extends GetxController {
   var taskRowOptions = [].obs;
   ServerConnections serverConnections = ServerConnections();
   AppStorage appStorage = AppStorage();
+  WebViewController webViewController = Get.find();
 
   // taskFilter section
 
@@ -313,8 +316,9 @@ class TaskController extends GetxController {
       var jsonDSResp = jsonDecode(dsResp);
       if (jsonDSResp['result']['success'].toString() == "true") {
         var dsDataList = jsonDSResp['result']['data'];
-        var item = dsDataList[0];
+
         try {
+          var item = dsDataList[0];
           if (item != null) {
             var userProfile = UserProfileModel.fromJson(item);
 
@@ -472,4 +476,141 @@ class TaskController extends GetxController {
 
     return taskAttachmentData;
   }
+
+  void acceptTaskTemp(TaskRowOptionModel taskRowOption, String taskId) {
+    // AppStorage appStorage = AppStorage();
+    Map tsk = {
+      "command": [
+        {
+          "cmd": "opentstruct",
+          "cmdval": "accp",
+          "showin": "pop",
+          "parentrefresh": "true",
+          "pname": "taskid",
+          "pvalue": taskId
+        },
+        {
+          "cmd": "opentstruct",
+          "cmdval": "send",
+          "showin": "pop",
+          "parentrefresh": "true",
+          "pname": "taskid",
+          "pvalue": taskId
+        },
+        {
+          "cmd": "openiview",
+          "cmdval": "history",
+          "showin": "pop",
+          "parentrefresh": "false",
+          "pname": "tid",
+          "pvalue": taskId
+        },
+        {
+          "cmd": "opentstruct",
+          "cmdval": "close",
+          "showin": "pop",
+          "parentrefresh": "true",
+          "pname": "taskid",
+          "pvalue": taskId
+        },
+        {
+          "cmd": "opentstruct",
+          "cmdval": "drop",
+          "showin": "pop",
+          "parentrefresh": "true",
+          "pname": "taskid",
+          "pvalue": taskId
+        },
+        {
+          "cmd": "opentstruct",
+          "cmdval": "stupd",
+          "showin": "pop",
+          "parentrefresh": "true",
+          "pname": "taskid",
+          "pvalue": taskId
+        },
+        {
+          "cmd": "opentstruct",
+          "cmdval": "taskc",
+          "showin": "pop",
+          "parentrefresh": "true",
+          "pname": "taskid",
+          "pvalue": taskId
+        },
+        {
+          "cmd": "opentstruct",
+          "cmdval": "infor",
+          "showin": "pop",
+          "parentrefresh": "true",
+          "pname": "taskid",
+          "pvalue": taskId
+        },
+        {
+          "cmd": "opentstruct",
+          "cmdval": "retun",
+          "showin": "pop",
+          "parentrefresh": "true",
+          "pname": "taskid",
+          "pvalue": taskId
+        }
+      ]
+    };
+    Map<String, dynamic> tskJsn = {};
+
+    switch (taskRowOption.action) {
+      case "accep":
+        tskJsn = tsk["command"][0];
+        break;
+      case "sendtask":
+        tskJsn = tsk["command"][1];
+        break;
+      case "return":
+        tskJsn = tsk["command"][8];
+        break;
+      case "infor":
+        tskJsn = tsk["command"][7];
+        break;
+      case "loadhist":
+        tskJsn = tsk["command"][2];
+        break;
+      case "droptask":
+        tskJsn = tsk["command"][4];
+        break;
+      case "close":
+        tskJsn = tsk["command"][3];
+        break;
+      case "status":
+        tskJsn = tsk["command"][5];
+        break;
+      case "complete":
+        tskJsn = tsk["command"][6];
+        break;
+      default:
+        tskJsn = tsk["command"][2];
+        break;
+    }
+    var tskMOdel = TaskActionModel.fromJson(tskJsn);
+    var transIdN = '';
+    if (tskMOdel.cmd.contains("tstruct")) {
+      transIdN = "t${taskRowOption.transid}";
+    } else if (tskMOdel.cmd.contains("iview")) {
+      transIdN = "i${taskRowOption.transid}";
+    }
+
+    var url =
+        "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=$transIdN&params=^act=open^${tskMOdel.pName}~${tskMOdel.pValue}";
+
+    webViewController.openWebView(url: url);
+  }
+
+  void navigateToCreateTask() {
+    webViewController.navigateToCreateTask();
+  }
+
+  // void navigateToCreateTask() {
+
+  //         var url =
+  //             "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=tTaskm";
+
+  // }
 }

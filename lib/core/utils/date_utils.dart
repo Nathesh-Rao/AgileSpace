@@ -75,7 +75,7 @@ class DateUtilsHelper {
     if (dateStr == null) return "";
     try {
       DateTime date = DateTime.parse(dateStr);
-      return DateFormat('yyyy-MM-dd').format(date);
+      return DateFormat('yyyy/MM/dd').format(date);
     } catch (e) {
       return '';
     }

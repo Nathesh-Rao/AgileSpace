@@ -220,4 +220,11 @@ class WebViewController extends GetxController {
       }
     }
   }
+
+  void navigateToCreateTask() {
+    var url =
+        "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=tTaskm";
+
+    openWebView(url: url);
+  }
 }

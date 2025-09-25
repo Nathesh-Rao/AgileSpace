@@ -3,6 +3,7 @@ import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/widgets/empty_widget.dart';
 import 'package:axpert_space/core/config/config.dart';
 import 'package:axpert_space/core/utils/utils.dart';
+import 'package:axpert_space/modules/calendar/models/event_model.dart';
 import 'package:axpert_space/modules/calendar/models/meeting_model.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,8 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
     return Obx(
       () {
         var meetingList = controller.meetingList.value;
+
+        var eventList = controller.eventsList.value;
         return Column(
           children: [
             15.verticalSpace,
@@ -34,7 +37,7 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
               },
             ),
             15.verticalSpace,
-            meetingList.isNotEmpty
+            eventList.isNotEmpty
                 ? Row(
                     children: [
                       10.horizontalSpace,
@@ -48,12 +51,12 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
             Expanded(
                 child: AnimatedSwitcherPlus.translationTop(
                     duration: Duration(milliseconds: 400),
-                    child: meetingList.isNotEmpty
+                    child: eventList.isNotEmpty
                         ? ListView.builder(
                             padding: EdgeInsets.only(top: 10.h),
-                            itemCount: meetingList.length,
+                            itemCount: eventList.length,
                             itemBuilder: (context, index) =>
-                                _buildEvent(meetingList[index]))
+                                _buildEvent(eventList[index]))
                         : Center(
                             child: EmptyWidget(
                               label: "No Events found",
@@ -65,8 +68,14 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
     );
   }
 
-  Widget _buildEvent(Meeting meeting) {
+  Widget _buildEvent(EventModel event) {
     var color = AppColors.getRandomColor();
+
+    var style = GoogleFonts.poppins(
+      color: Colors.black87,
+      fontSize: 14.sp,
+    );
+
     return Container(
       margin: EdgeInsets.symmetric(
         vertical: 6.h,
@@ -91,7 +100,7 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  meeting.eventName,
+                  event.eventName,
                   style: GoogleFonts.poppins(
                     fontSize: 10,
                     color: AppColors.primaryTitleTextColorBlueGrey,
@@ -99,7 +108,7 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
                   ),
                 ),
                 Text(
-                  meeting.description,
+                  event.description,
                   maxLines: 4,
                   style: GoogleFonts.poppins(
                     fontSize: 8,
@@ -107,27 +116,54 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Row(
-                  children: [
-                    Text(
-                      DateUtilsHelper.getTodayFormattedDateMD(
-                          date: meeting.from),
-                      style: GoogleFonts.poppins(
-                        fontSize: 10,
-                        color: Colors.black87,
+                // Row(
+                //   children: [
+                //     Text(
+                //       "${event.hrs} hr",
+                //       style: GoogleFonts.poppins(
+                //         fontSize: 10,
+                //         color: Colors.black87,
+                //         fontWeight: FontWeight.w500,
+                //       ),
+                //     ),
+                //     Text(
+                //       "${event.mns} min",
+                //       style: GoogleFonts.poppins(
+                //         fontSize: 10,
+                //         color: Colors.black87,
+                //         fontWeight: FontWeight.w500,
+                //       ),
+                //     ),
+                //   ],
+                // )
+
+                RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                      text: event.hrs,
+                      style: style.copyWith(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                      )),
+                  TextSpan(
+                      text: " hrs",
+                      style: style.copyWith(
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Text(
-                      DateUtilsHelper.getTodayFormattedDateMD(date: meeting.to),
-                      style: GoogleFonts.poppins(
-                        fontSize: 10,
-                        color: Colors.black87,
+                      )),
+                  TextSpan(
+                      text: "  ${event.mns}",
+                      style: style.copyWith(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                      )),
+                  TextSpan(
+                      text: " min",
+                      style: style.copyWith(
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                )
+                      ))
+                ])),
               ],
             ),
           ),
