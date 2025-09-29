@@ -37,6 +37,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   easy_date_timeline: ^2.0.9
   one_clock:
+  flutter_heatmap_calendar: ^1.0.5
   # slider_button: ^2.1.0
   ############################################################
   # ⚙️ STATE MANAGEMENT

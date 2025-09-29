@@ -1,8 +1,10 @@
 import 'package:axpert_space/common/common.dart';
+import 'package:axpert_space/modules/news_events/widgets/news_events_dashboard_widget.dart';
 import 'package:flutter/material.dart';
 import '../../../attendance/attendance.dart';
 import '../../../leaves/leaves.dart';
 import '../../../payroll/payroll.dart';
+import '../../../work_calendar/widgets/work_calendar_dashboard_widget.dart';
 import '../../widgets/widgets.dart';
 
 class LandingPayAndAttendanceTab extends StatelessWidget {
@@ -29,7 +31,9 @@ class LandingPayAndAttendanceTab extends StatelessWidget {
           child: Column(
             spacing: 20.h,
             children: [
-              PayRollDashBoardWidget(),
+              NewsEventsDashboardWidget(),
+              // PayRollDashBoardWidget(),
+              WorkCalendarDashboardWidget(),
               AttendanceDashBoardWidget(),
               LeaveDashboardWidget(),
             ],

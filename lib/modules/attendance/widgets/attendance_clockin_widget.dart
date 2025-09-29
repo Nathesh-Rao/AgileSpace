@@ -1,3 +1,4 @@
+import 'package:animated_switcher_plus/animated_switcher_plus.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/widgets/flat_button_widget.dart';
@@ -5,6 +6,7 @@ import 'package:axpert_space/core/core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:one_clock/one_clock.dart';
 
 import '../attendance.dart';
@@ -32,18 +34,24 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.r),
-          color: AppColors.taskClockInWidgetColorPurple,
+          color: controller.attendanceState.value == AttendanceState.holiday
+              ? AppColors.baseYellow
+              : controller.attendanceState.value == AttendanceState.leave
+                  ? AppColors.flatButtonColorBlue
+                  : AppColors.taskClockInWidgetColorPurple,
         ),
         child: Column(
           children: [
             if (controller.attendanceDetails.value != null)
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 5.h),
-                child: _locationWidget(),
-              ),
+              if (controller.attendanceState.value != AttendanceState.leave &&
+                  controller.attendanceState.value != AttendanceState.holiday)
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5.h),
+                  child: _locationWidget(),
+                ),
             Expanded(
               child: Container(
-                margin: EdgeInsets.all(2),
+                margin: EdgeInsets.all(1),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.r),
                   color: Colors.white,
@@ -67,6 +75,10 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
         return _clockedOutWidget();
       case AttendanceState.error:
         return _noDetailsAvailableWidget();
+      case AttendanceState.leave:
+        return _leaveWidget();
+      case AttendanceState.holiday:
+        return _holidayWidget();
     }
   }
 
@@ -111,8 +123,8 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
 
   Widget _actionButton(String text) {
     Color color = text.toLowerCase().contains('Inn')
-        ? AppColors.chipCardWidgetColorViolet
-        : AppColors.statusAccepted;
+        ? AppColors.chipCardWidgetColorGreen
+        : AppColors.baseRed;
 
     return Container(
       height: double.infinity,
@@ -125,19 +137,27 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5.r),
             )),
-        onPressed: () {},
+        onPressed: () {
+          controller.showDLG();
+        },
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          spacing: 5.w,
+          spacing: 8.w,
           children: [
-            Icon(
-              CupertinoIcons.dial_fill,
-              color: color,
-            ),
+            // Icon(
+            //   CupertinoIcons.dial_fill,
+            //   color: color,
+            // ),
+
             Text(
               text,
               style: AppStyles.textButtonStyleNormal.copyWith(
                   color: color, fontSize: 14.sp, fontWeight: FontWeight.w500),
+            ),
+            Image.asset(
+              "assets/images/common/clock_inn.png",
+              width: 24.w,
+              color: color,
             ),
           ],
         ),
@@ -335,21 +355,121 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
         ],
       );
 
-  Widget _locationWidget() => Row(
-        children: [
-          20.horizontalSpace,
-          Icon(Icons.my_location, color: Colors.white, size: 10.h),
-          5.horizontalSpace,
-          Text(
-            controller.clockInLocation.value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.poppins(
-              fontSize: 8.sp,
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
+  Widget _leaveWidget() {
+    var message =
+        controller.attendanceDetails.value?.message.toLowerCase() ?? '';
+    var text = "";
+    var image = "assets/lotties/relaxing.json";
+    if (message.contains("sick")) {
+      text = "Hope you feel better soon! 🛌 Take care today.";
+      image = "assets/lotties/sick1.json";
+    } else if (message.contains("earned")) {
+      text = "Enjoy your well-deserved leave today! ⛴️";
+    } else if (message.contains("casual")) {
+      text = "Take it easy and enjoy your casual leave! ☀️";
+      image = "assets/lotties/car.json";
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: EdgeInsets.all(10.w),
+          child: Lottie.asset(
+            image,
+            // width: 150.w,
+            // height: 150.w,
+            // fit: BoxFit.cover,
+          ),
+        ),
+        10.horizontalSpace,
+        Expanded(
+            child: Container(
+          padding: EdgeInsets.all(10.w),
+          decoration: BoxDecoration(
+            color: AppColors.flatButtonColorBlue.withAlpha(30),
+          ),
+          child: Center(
+            child: Text(
+              text,
+              style: GoogleFonts.poppins(
+                color: AppColors.flatButtonColorBlue,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
+        )),
+      ],
+    );
+  }
+
+  Widget _holidayWidget() => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(10.w),
+            child: Lottie.asset("assets/lotties/relaxing2.json"),
+          ),
+          10.horizontalSpace,
+          Expanded(
+              child: Container(
+            padding: EdgeInsets.all(10.w),
+            decoration: BoxDecoration(
+              color: AppColors.baseYellow.withAlpha(10),
+            ),
+            child: Center(
+              child: Text(
+                "Happy Holidays! Enjoy your day off! 🚌",
+                style: GoogleFonts.poppins(
+                  color: AppColors.baseYellow,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          )),
         ],
       );
+  Widget _locationWidget() => Obx(() => AnimatedSwitcherPlus.flipY(
+        duration: Duration(milliseconds: 500),
+        child: controller.isAddrsFetchLoading.value
+            ? Row(
+                children: [
+                  20.horizontalSpace,
+                  CupertinoActivityIndicator(
+                    radius: 5.w,
+                    color: AppColors.primaryButtonFGColorWhite,
+                  ),
+                  5.horizontalSpace,
+                  Text(
+                    "Fetching current address....",
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 8.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  20.horizontalSpace
+                ],
+              )
+            : Row(
+                children: [
+                  20.horizontalSpace,
+                  Icon(Icons.my_location, color: Colors.white, size: 10.h),
+                  5.horizontalSpace,
+                  Flexible(
+                    child: AutoSizeText(
+                      maxFontSize: 8,
+                      minFontSize: 8,
+                      controller.clockInLocation.value,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+      ));
 }

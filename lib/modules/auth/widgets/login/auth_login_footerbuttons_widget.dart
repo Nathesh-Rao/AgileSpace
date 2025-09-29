@@ -37,16 +37,31 @@ class AuthLoginFooterButtonsWidget extends GetView<AuthController> {
                     ),
             )),
         20.verticalSpace,
+        // Row(
+        //   children: [
+        //     Flexible(
+        //         child: SecondaryButtonWidget(
+        //             margin: EdgeInsets.only(left: 25, right: 10), onPressed: () {}, child: Brand(Brands.google, size: 24.w))),
+        //     Flexible(
+        //         child: SecondaryButtonWidget(
+        //             margin: EdgeInsets.only(left: 10, right: 25), onPressed: () {}, child: Icon(Bootstrap.phone, size: 24.w))),
+        //   ],
+        // ),
+
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Flexible(
-                child: SecondaryButtonWidget(
-                    margin: EdgeInsets.only(left: 25, right: 10), onPressed: () {}, child: Brand(Brands.google, size: 24.w))),
-            Flexible(
-                child: SecondaryButtonWidget(
-                    margin: EdgeInsets.only(left: 10, right: 25), onPressed: () {}, child: Icon(Bootstrap.phone, size: 24.w))),
+            Text(
+              "Powered by Axpert",
+              style: GoogleFonts.poppins(),
+            ),
+            5.horizontalSpace,
+            Image.asset(
+              "assets/images/common/axpert_03.png",
+              width: 25,
+            )
           ],
-        ),
+        )
       ],
     );
   }

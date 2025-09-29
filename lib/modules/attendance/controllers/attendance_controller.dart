@@ -5,6 +5,7 @@ import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:axpert_space/common/widgets/flat_button_widget.dart';
 import 'package:axpert_space/data/data_source/datasource_services.dart';
 import 'package:axpert_space/modules/attendance/models/AttendanceReportModel.dart';
+import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -22,6 +23,7 @@ class AttendanceController extends GetxController {
   var attendanceAppbarSwitchIsLoading = false.obs;
   var attendanceClockInWidgetCallBackValue = false.obs;
   var isAttendanceDetailsIsLoading = false.obs;
+  var isAddrsFetchLoading = false.obs;
   var attendanceDetails = Rxn<AttendanceDetailsModel>();
   var isClockedIn = false.obs;
   var isClockedOut = false.obs;
@@ -39,6 +41,7 @@ class AttendanceController extends GetxController {
 
   ServerConnections serverConnections = ServerConnections();
   AppStorage appStorage = AppStorage();
+  WebViewController webViewController = Get.find();
 
   var months = [
     'January',
@@ -161,8 +164,9 @@ class AttendanceController extends GetxController {
 
   //--------
   getInitialAttendanceDetails() async {
-    if (attendanceDetails.value != null) return;
+    // if (attendanceDetails.value != null) return;
     isAttendanceDetailsIsLoading.value = true;
+    isAddrsFetchLoading.value = true;
     var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
@@ -171,6 +175,8 @@ class AttendanceController extends GetxController {
       "sqlParams": {
         "username": globalVariableController.USER_NAME.value,
         "date": DateFormat('dd-MM-yyyy').format(DateTime.now())
+        // "username": "narasimha",
+        // "date": "26-09-2025",
       }
     };
 
@@ -366,7 +372,13 @@ class AttendanceController extends GetxController {
 
   _setAttendanceStatus(AttendanceDetailsModel attendance) async {
     if (attendance.intime == null && attendance.outtime == null) {
-      attendanceState.value = AttendanceState.notPunchedIn;
+      if (attendance.message.toLowerCase().contains("leave")) {
+        attendanceState.value = AttendanceState.leave;
+      } else if (attendance.message.toLowerCase().contains("holiday")) {
+        attendanceState.value = AttendanceState.holiday;
+      } else {
+        attendanceState.value = AttendanceState.notPunchedIn;
+      }
     } else if (attendance.intime != null && attendance.outtime == null) {
       attendanceState.value = AttendanceState.punchedIn;
     } else if (attendance.intime != null && attendance.outtime != null) {
@@ -379,16 +391,20 @@ class AttendanceController extends GetxController {
         message: "Punch status : ${attendanceState.value.name}");
 
     if (attendanceState.value == AttendanceState.notPunchedIn) {
-      _showPunchInDialog();
+      _showPunchInDialog(message: attendance.message);
     }
     await _setLocationDetails(attendance);
   }
 
   showDLG() {
-    _showPunchInDialog();
+    _showPunchInDialog(message: "");
   }
 
-  _showPunchInDialog() {
+  _showPunchInDialog({required String message}) {
+    // var caption = message.toLowerCase().contains("absent")
+    // ? "Enjoy your well-deserved leave today!"
+    // : "Happy Holidays! Enjoy your day off!";
+
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -400,7 +416,7 @@ class AttendanceController extends GetxController {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Not Punched In",
+                "Please Clock Inn",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -447,7 +463,10 @@ class AttendanceController extends GetxController {
                       width: 100.w,
                       label: "On Leave",
                       color: AppColors.chipCardWidgetColorRed,
-                      onTap: () => Get.back(),
+                      onTap: () {
+                        openLeavePage();
+                        Get.back();
+                      },
                     ),
                   ),
                   // Spacer(),
@@ -457,7 +476,10 @@ class AttendanceController extends GetxController {
                       width: 100.w,
                       label: "Clock Inn",
                       color: AppColors.chipCardWidgetColorGreen,
-                      onTap: () => Get.back(),
+                      onTap: () {
+                        openLeavePage();
+                        Get.back();
+                      },
                     ),
                   ),
                 ],
@@ -468,6 +490,12 @@ class AttendanceController extends GetxController {
       ),
       barrierDismissible: false, // Prevent closing by tapping outside
     );
+  }
+
+  openLeavePage() {
+    var url =
+        "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=tLeave";
+    webViewController.openWebView(url: url);
   }
 
   _setLocationDetails(AttendanceDetailsModel value) async {
@@ -494,6 +522,7 @@ class AttendanceController extends GetxController {
                 latitude: latitude, longitude: longitude));
       }
     }
+    isAddrsFetchLoading.value = false;
     LogService.writeLog(message: "position : ${clockInLocation.value}");
   }
 

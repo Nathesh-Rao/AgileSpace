@@ -53,6 +53,7 @@ class AppColors {
   static const Color historyCompleted = Color(0xff2DCE89);
 
   static const flatButtonColorBlue = Color(0xff2A79E4);
+  static const brownRed = Color(0xff4F0006);
   static const flatButtonColorPurple = Color(0xff8371EC);
 
   static const leaveWidgetColorSandal = Color(0xffE0A47A);

@@ -374,25 +374,6 @@ class TaskController extends GetxController {
     return taskRowList;
   }
 
-  String getTaskActionName(String action) {
-    switch (action) {
-      case "accep":
-        return "Accept";
-      case "sendtask":
-        return "Send";
-      case "return":
-        return "Return";
-      case "infor":
-        return "Reschedule";
-      case "loadhist":
-        return "History";
-      case "droptask":
-        return "Drop";
-      default:
-        return action;
-    }
-  }
-
   Color getTaskActionColor(String action) {
     switch (action) {
       case "accep":
@@ -407,9 +388,37 @@ class TaskController extends GetxController {
         return AppColors.baseYellow;
       case "droptask":
         return AppColors.blue9;
+      case "close":
+        return AppColors.statusPending;
+      case "status":
+        return AppColors.flatButtonColorBlue;
+      case "complete":
+        return AppColors.chipCardWidgetColorGreen;
       default:
         return AppColors.blue9;
     }
+
+    // switch (taskRowOption.action) {
+    //   case "accep":
+    //     tskJsn = tsk["command"][0];
+    //     break;
+    //   case "sendtask":
+    //     tskJsn = tsk["command"][1];
+    //     break;
+    //   case "return":
+    //     tskJsn = tsk["command"][8];
+    //     break;
+    //   case "infor":
+    //     tskJsn = tsk["command"][7];
+    //     break;
+    //   case "loadhist":
+    //     tskJsn = tsk["command"][2];
+    //     break;
+    //   case "droptask":
+    //     tskJsn = tsk["command"][4];
+    //     break;
+
+    // }
   }
 
   Future<List<TaskHistoryModel>> _getTaskHistory(String taskId) async {

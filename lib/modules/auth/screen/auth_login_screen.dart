@@ -18,7 +18,9 @@ class AuthLoginScreen extends GetView<AuthController> {
             height: 1.sh - MediaQuery.of(context).viewPadding.vertical,
             child: Column(
               children: [
-                Obx(() => Visibility(visible: controller.isLoginLoading.value, child: RainbowLoadingWidget())),
+                Obx(() => Visibility(
+                    visible: controller.isLoginLoading.value,
+                    child: RainbowLoadingWidget())),
                 Spacer(),
                 Column(
                   mainAxisSize: MainAxisSize.min,

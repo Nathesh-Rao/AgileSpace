@@ -9,6 +9,7 @@ class AttendanceDetailsModel {
   String? outtimeLatitude;
   String? outtimeLongitude;
   String? worksheetUpdateStatus;
+  String message;
 
   AttendanceDetailsModel({
     this.username,
@@ -21,6 +22,7 @@ class AttendanceDetailsModel {
     this.outtimeLatitude,
     this.outtimeLongitude,
     this.worksheetUpdateStatus,
+    this.message = "",
   });
 
   /// Factory constructor for JSON parsing
@@ -36,6 +38,7 @@ class AttendanceDetailsModel {
       outtimeLatitude: json['outtime_latitude'],
       outtimeLongitude: json['outtime_longitude'],
       worksheetUpdateStatus: json['worksheet_update_status'],
+      message: json['message'],
     );
   }
 
@@ -52,6 +55,7 @@ class AttendanceDetailsModel {
       'outtime_latitude': outtimeLatitude,
       'outtime_longitude': outtimeLongitude,
       'worksheet_update_status': worksheetUpdateStatus,
+      'message': message,
     };
   }
 }
