@@ -101,7 +101,8 @@ class TaskController extends GetxController {
     taskList.value = mainTaskList
         .where((task) =>
             (task.caption.toLowerCase().contains(searchText.toLowerCase()) ||
-                task.id.toLowerCase().contains(searchText.toLowerCase())))
+                task.id.toLowerCase().contains(searchText.toLowerCase())) ||
+            task.projectName.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
   }
 
