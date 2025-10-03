@@ -122,7 +122,7 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
       );
 
   Widget _actionButton(String text) {
-    Color color = text.toLowerCase().contains('Inn')
+    Color color = text.toLowerCase().contains('inn')
         ? AppColors.chipCardWidgetColorGreen
         : AppColors.baseRed;
 

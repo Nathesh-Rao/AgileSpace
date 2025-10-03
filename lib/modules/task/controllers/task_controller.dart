@@ -30,7 +30,7 @@ class TaskController extends GetxController {
   ServerConnections serverConnections = ServerConnections();
   AppStorage appStorage = AppStorage();
   WebViewController webViewController = Get.find();
-
+  var taskSearchText = ''.obs;
   // taskFilter section
 
   // var taskFilterUserName = globalVariableController.USER_NAME;
@@ -94,12 +94,14 @@ class TaskController extends GetxController {
   }
 
   onTaskSearch(String searchText) {
+    taskSearchText.value = searchText;
     if (searchText.isEmpty) {
       taskList.value = mainTaskList;
     }
     taskList.value = mainTaskList
         .where((task) =>
-            task.caption.toLowerCase().contains(searchText.toLowerCase()))
+            (task.caption.toLowerCase().contains(searchText.toLowerCase()) ||
+                task.id.toLowerCase().contains(searchText.toLowerCase())))
         .toList();
   }
 
@@ -616,10 +618,44 @@ class TaskController extends GetxController {
     webViewController.navigateToCreateTask();
   }
 
-  // void navigateToCreateTask() {
+  Widget highlightedText(String text, TextStyle style, {bool isTitle = false}) {
+    if (taskSearchText.value.isEmpty) {
+      return Text(
+        text,
+        style: style,
+        overflow: TextOverflow.ellipsis,
+        maxLines: isTitle ? 1 : 2,
+      );
+    }
 
-  //         var url =
-  //             "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=tTaskm";
+    final index =
+        text.toLowerCase().indexOf(taskSearchText.value.toLowerCase());
+    if (index == -1) {
+      return Text(
+        text,
+        style: style,
+        overflow: TextOverflow.ellipsis,
+        maxLines: isTitle ? 1 : 2,
+      );
+    }
 
-  // }
+    return RichText(
+      overflow: TextOverflow.ellipsis,
+      maxLines: isTitle ? 1 : 2,
+      text: TextSpan(
+        style: style.copyWith(color: Colors.black),
+        children: [
+          TextSpan(
+            text: text.substring(0, index),
+          ),
+          TextSpan(
+            text: text.substring(index, index + taskSearchText.value.length),
+            style: TextStyle(
+                color: AppColors.baseRed, fontWeight: FontWeight.bold),
+          ),
+          TextSpan(text: text.substring(index + taskSearchText.value.length)),
+        ],
+      ),
+    );
+  }
 }
