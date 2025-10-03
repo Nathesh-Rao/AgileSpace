@@ -26,6 +26,10 @@ class AuthLoginScreen extends GetView<AuthController> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Image.asset(
+                      "assets/images/common/axpert_space.png",
+                      width: 50,
+                    ),
                     Text(
                       "Login",
                       style: AppStyles.onboardingTitleTextStyle,
@@ -38,7 +42,10 @@ class AuthLoginScreen extends GetView<AuthController> {
                   ],
                 ),
                 Spacer(),
-                Image.asset(controller.loginHeaderImage, width: 300.w),
+                Image.asset(
+                  controller.loginHeaderImage,
+                  width: 300.w,
+                ),
                 Spacer(flex: 2),
                 AuthLoginTextFieldsWidget(),
                 AuthLoginActionFooterWidget(),

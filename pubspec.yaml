@@ -104,7 +104,7 @@ dev_dependencies:
   # 🧪 MOCKING & CODE GENERATION
   ############################################################
   change_app_package_name: ^1.5.0
-  # mockito: ^5.4.4
+  icons_launcher: ^3.0.3
   # build_runner: ^2.4.8
   # freezed: ^2.5.0
   # json_serializable: ^6.7.1
@@ -136,3 +136,10 @@ flutter:
   #       - asset: assets/fonts/Manrope-Regular.ttf
   #       - asset: assets/fonts/Manrope-Bold.ttf
   #         weight: 700
+icons_launcher:
+  image_path: "assets/images/common/axpert_space.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true

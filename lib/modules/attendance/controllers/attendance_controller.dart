@@ -393,18 +393,70 @@ class AttendanceController extends GetxController {
     if (attendanceState.value == AttendanceState.notPunchedIn) {
       _showPunchInDialog(message: attendance.message);
     }
+
     await _setLocationDetails(attendance);
   }
 
   showDLG() {
-    _showPunchInDialog(message: "");
+    _showTimeSheetDialog("");
+  }
+
+  _showTimeSheetDialog(String message) {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                // "Worksheet not filled",
+                message.replaceAll("Simple`", ""),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.chipCardWidgetColorBlue,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              8.verticalSpace,
+              Lottie.asset(
+                reverse: true,
+                'assets/lotties/work-sheet3.json',
+              ),
+              Text(
+                "You have not filled your worksheet for today.\nPlease update it before proceeding.",
+                style: GoogleFonts.poppins(fontSize: 12, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+              20.verticalSpace,
+              Row(
+                children: [
+                  Expanded(
+                    child: FlatButtonWidget(
+                      width: 100.w,
+                      label: "Fill Worksheet",
+                      color: AppColors.chipCardWidgetColorBlue,
+                      onTap: () {
+                        openWorkSheet();
+                        Get.back();
+                      },
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: true, // Prevent closing by tapping outside
+    );
   }
 
   _showPunchInDialog({required String message}) {
-    // var caption = message.toLowerCase().contains("absent")
-    // ? "Enjoy your well-deserved leave today!"
-    // : "Happy Holidays! Enjoy your day off!";
-
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -565,5 +617,66 @@ class AttendanceController extends GetxController {
     } catch (e) {
       return "Invalid input";
     }
+  }
+
+  doPunchInPunchOut(scriptName) async {
+    isAttendanceDetailsIsLoading.value = true;
+    var url = Const.getFullARMUrl(ServerConnections.API_AXSCRIPT);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "script": scriptName,
+      "type": "form",
+      "name": "punch",
+      "recordid": "0",
+      "trace": false,
+      "apiparams": {"username": "${globalVariableController.USER_NAME.value}~c"}
+    };
+    var dsResp = await serverConnections.postToServer(
+        url: url, isBearer: true, body: jsonEncode(body));
+    LogService.writeLog(
+        message: "doPunchInPunchOut - script : $scriptName\n$dsResp");
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        var innerResultJSON = jsonDecode(jsonDSResp['result']['result']);
+        if (innerResultJSON['message']
+            .toString()
+            .contains("Punched in successfully")) {
+          AppSnackBar.showSuccess("Punched in successfully", "message");
+        } else if (innerResultJSON['message']
+            .toString()
+            .contains("Punched out successfully")) {
+          AppSnackBar.showSuccess("Punched out successfully", "message");
+        } else if (innerResultJSON['message']
+            .toString()
+            .contains("timesheet")) {
+          _showTimeSheetDialog(innerResultJSON['message'][0]["msg"]);
+        } else {
+          if (innerResultJSON['message'].toString().contains("Exceptions")) {
+            //remove "Exception later"
+            AppSnackBar.showError(
+                "title", innerResultJSON['message'][0]["msg"]);
+          } else {
+            AppSnackBar.showInfo("title", innerResultJSON['message'][0]["msg"]);
+          }
+        }
+      } else {
+        // Get.snackbar("Error ", jsonDSResp["result"]["message"],
+        //     snackPosition: SnackPosition.BOTTOM,
+        //     backgroundColor: Colors.redAccent,
+        //     colorText: Colors.white);
+
+        AppSnackBar.showError("Error ", jsonDSResp["result"]["message"]);
+      }
+    }
+
+    await getInitialAttendanceDetails();
+    isAttendanceDetailsIsLoading.value = false;
+  }
+
+  openWorkSheet() {
+    var url =
+        "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=ttimes";
+    webViewController.openWebView(url: url);
   }
 }

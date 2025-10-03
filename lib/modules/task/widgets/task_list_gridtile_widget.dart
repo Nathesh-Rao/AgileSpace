@@ -1,5 +1,6 @@
 import 'package:axpert_space/core/config/colors/app_colors.dart';
 import 'package:axpert_space/core/core.dart';
+import 'package:axpert_space/modules/modules.dart';
 import 'package:axpert_space/modules/task/models/models.dart';
 import 'package:axpert_space/modules/task/widgets/widgets.dart';
 import 'package:axpert_space/routes/app_routes.dart';
@@ -8,7 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../common/common.dart';
 
-class TaskListGridTileWidget extends StatelessWidget {
+class TaskListGridTileWidget extends GetView<TaskController> {
   const TaskListGridTileWidget({super.key, required this.taskModel});
   final TaskListModel taskModel;
   @override
@@ -33,16 +34,24 @@ class TaskListGridTileWidget extends StatelessWidget {
               children: [
                 Flexible(
                   flex: 5,
-                  child: Text(
-                    taskModel.caption,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryActionColorDarkBlue,
-                    ),
-                  ),
+                  child: controller.highlightedText(
+                      taskModel.caption,
+                      GoogleFonts.poppins(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryActionColorDarkBlue,
+                      )),
+
+                  //  Text(
+                  //   taskModel.caption,
+                  //   maxLines: 2,
+                  //   overflow: TextOverflow.ellipsis,
+                  //   style: GoogleFonts.poppins(
+                  //     fontSize: 12.sp,
+                  //     fontWeight: FontWeight.w600,
+                  //     color: AppColors.primaryActionColorDarkBlue,
+                  //   ),
+                  // ),
                 ),
                 20.horizontalSpace,
                 TaskTileActionButtonWidget(
@@ -52,14 +61,22 @@ class TaskListGridTileWidget extends StatelessWidget {
               ],
             ),
             3.verticalSpace,
-            Text(
+            controller.highlightedText(
               "TID : ${taskModel.id}",
-              style: GoogleFonts.poppins(
+              GoogleFonts.poppins(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: AppColors.primaryTitleTextColorBlueGrey,
               ),
             ),
+            // Text(
+            //   "TID : ${taskModel.id}",
+            //   style: GoogleFonts.poppins(
+            //     fontSize: 10,
+            //     fontWeight: FontWeight.w600,
+            //     color: AppColors.primaryTitleTextColorBlueGrey,
+            //   ),
+            // ),
             3.verticalSpace,
             Row(
               children: [

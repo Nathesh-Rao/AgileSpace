@@ -43,6 +43,7 @@ class ServerConnections {
 
   static const String API_GET_MENU = "api/v1/ARMGetMenu";
   static const String API_GET_MENU_V2 = "api/v2/ARMGetMenu";
+  static const String API_AXSCRIPT = "api/v1/AxScript";
   static const String API_SIGNOUT = "api/v1/ARMSignOut";
 
   static const String API_GET_PENDING_ACTIVETASK =

@@ -1,7 +1,6 @@
 import 'package:animated_switcher_plus/animated_switcher_plus.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:axpert_space/common/common.dart';
-import 'package:axpert_space/common/widgets/flat_button_widget.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +124,7 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
     Color color = text.toLowerCase().contains('inn')
         ? AppColors.chipCardWidgetColorGreen
         : AppColors.baseRed;
-
+    var isPunchInn = text.toLowerCase().contains('inn');
     return Container(
       height: double.infinity,
       padding: EdgeInsets.all(10.w),
@@ -138,7 +137,11 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
               borderRadius: BorderRadius.circular(5.r),
             )),
         onPressed: () {
-          controller.showDLG();
+          if (isPunchInn) {
+            controller.doPunchInPunchOut(Const.SCRIPT_PUNCH_INN);
+          } else {
+            controller.doPunchInPunchOut(Const.SCRIPT_PUNCH_OUT);
+          }
         },
         child: Row(
           mainAxisSize: MainAxisSize.min,

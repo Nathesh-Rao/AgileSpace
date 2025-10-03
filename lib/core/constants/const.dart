@@ -16,6 +16,9 @@ class Const {
   static String DUMMY_USER = "admin";
   static const String DUMMYUSER_PWD = "a5ca360e803b868680e2b6f7805fcb9e";
 
+  static const String SCRIPT_PUNCH_INN = 'script1';
+  static const String SCRIPT_PUNCH_OUT = 'script2';
+
   static bool isLogEnabled = false;
 
   static var APP_VERSION = '0.01';

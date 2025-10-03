@@ -8,10 +8,11 @@ class PrimarySearchFieldWidget extends StatelessWidget {
   final void Function(String)? onSubmitted;
   final void Function()? onSuffixTap;
   final String? placeholder;
-
+  final TextEditingController? controller;
   const PrimarySearchFieldWidget(
       {super.key,
       this.onChanged,
+      this.controller,
       this.onSubmitted,
       this.placeholder,
       this.onSuffixTap});
@@ -27,6 +28,7 @@ class PrimarySearchFieldWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: CupertinoSearchTextField(
+          controller: controller,
           placeholder: placeholder,
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
           prefixInsets: EdgeInsets.only(left: 10.w),

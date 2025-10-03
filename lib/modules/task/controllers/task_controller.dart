@@ -31,6 +31,7 @@ class TaskController extends GetxController {
   AppStorage appStorage = AppStorage();
   WebViewController webViewController = Get.find();
   var taskSearchText = ''.obs;
+  var searchController = TextEditingController();
   // taskFilter section
 
   // var taskFilterUserName = globalVariableController.USER_NAME;
@@ -69,6 +70,12 @@ class TaskController extends GetxController {
   var showHistoryContent = true.obs;
   // TaskListModel? _lastLoadedTask;
 
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
   void onShowHistoryIconClick() {
     showHistoryFlag.toggle();
   }
@@ -96,6 +103,7 @@ class TaskController extends GetxController {
   onTaskSearch(String searchText) {
     taskSearchText.value = searchText;
     if (searchText.isEmpty) {
+      searchController.text = '';
       taskList.value = mainTaskList;
     }
     taskList.value = mainTaskList
@@ -619,13 +627,13 @@ class TaskController extends GetxController {
     webViewController.navigateToCreateTask();
   }
 
-  Widget highlightedText(String text, TextStyle style, {bool isTitle = false}) {
+  Widget highlightedText(String text, TextStyle style, {int maxLines = 2}) {
     if (taskSearchText.value.isEmpty) {
       return Text(
         text,
         style: style,
         overflow: TextOverflow.ellipsis,
-        maxLines: isTitle ? 1 : 2,
+        maxLines: maxLines,
       );
     }
 
@@ -636,23 +644,25 @@ class TaskController extends GetxController {
         text,
         style: style,
         overflow: TextOverflow.ellipsis,
-        maxLines: isTitle ? 1 : 2,
+        maxLines: maxLines,
       );
     }
 
     return RichText(
       overflow: TextOverflow.ellipsis,
-      maxLines: isTitle ? 1 : 2,
+      maxLines: maxLines,
       text: TextSpan(
-        style: style.copyWith(color: Colors.black),
+        style: style,
         children: [
           TextSpan(
             text: text.substring(0, index),
           ),
           TextSpan(
             text: text.substring(index, index + taskSearchText.value.length),
-            style: TextStyle(
-                color: AppColors.baseRed, fontWeight: FontWeight.bold),
+            style: style.copyWith(
+              // color: AppColors.baseYellow,
+              background: Paint()..color = AppColors.baseYellow.withAlpha(100),
+            ),
           ),
           TextSpan(text: text.substring(index + taskSearchText.value.length)),
         ],
