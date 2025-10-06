@@ -6,7 +6,9 @@ import 'package:axpert_space/common/widgets/flat_button_widget.dart';
 import 'package:axpert_space/routes/app_routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:platform_device_id_plus/platform_device_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zo_animated_border/zo_animated_border.dart';
@@ -47,7 +49,58 @@ class AuthController extends GetxController {
   var otpErrorText = ''.obs;
   bool isDuplicate_session = false;
   bool isAxpertConnectEstablished = false;
+
+  // final rememberMe = false.obs;
   //-------------------------------------------------------------------------------
+  final _secureStorage = const FlutterSecureStorage();
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadRememberedUser();
+  }
+
+  Future<void> loadRememberedUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final rememberedUsername = prefs.getString('username');
+    final isRemembered = prefs.getBool('rememberMe') ?? false;
+
+    if (isRemembered && rememberedUsername != null) {
+      userNameController.text = rememberedUsername;
+      rememberMe.value = true;
+
+      final rememberedPassword =
+          await _secureStorage.read(key: rememberedUsername) ?? '';
+      userPasswordController.text = rememberedPassword;
+    }
+  }
+
+  Future<void> handleRememberMe(String username, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (rememberMe.value) {
+      await prefs.setString('username', username);
+      await prefs.setBool('rememberMe', true);
+      await _secureStorage.write(key: username, value: password);
+    } else {
+      await prefs.remove('username');
+      await prefs.setBool('rememberMe', false);
+      await _secureStorage.delete(key: username);
+    }
+  }
+
+  Future<void> onUsernameValidated(String username) async {
+    final prefs = await SharedPreferences.getInstance();
+    final rememberedUsername = prefs.getString('username');
+
+    if (rememberedUsername == username) {
+      final savedPassword = await _secureStorage.read(key: username);
+      if (savedPassword != null) {
+        userPasswordController.text = savedPassword;
+      }
+    } else {
+      userPasswordController.text = '';
+    }
+  }
 
   validate() {
     if (userNameController.text.trim().isEmpty) {
@@ -92,6 +145,7 @@ class AuthController extends GetxController {
 
   startLoginProcess() async {
     if (!validateUserName()) return;
+
     showPassword.value = true;
     isLoginLoading.value = true;
     authType.value = await getLoginUserDetailsAndAuthType();
@@ -143,7 +197,8 @@ class AuthController extends GetxController {
           otpChars.value = authUserdetails.otpsettings!.otpchars!;
           otpExpiryTime.value = authUserdetails.otpsettings!.otpexpiry!;
         }
-
+        //rememberMe username here
+        onUsernameValidated(userNameController.text);
         if (isPWD_auth.value && isOTP_auth.value) return AuthType.both;
         if (isPWD_auth.value) return AuthType.passwordOnly;
         if (isOTP_auth.value) return AuthType.otpOnly;
@@ -275,6 +330,7 @@ class AuthController extends GetxController {
         json["email_id"].toString() ?? userNameController.text.trim();
     //Save Data
     if (rememberMe.value) {
+      handleRememberMe(userNameController.text, userPasswordController.text);
       rememberCredentials();
     } else {
       dontRememberCredentials();

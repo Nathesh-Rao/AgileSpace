@@ -32,13 +32,13 @@ class CalendarController extends GetxController {
   }
 
   getAllData() async {
-    await getTaskByDay();
+    // await getTaskByDay();
     await getEventsByDay();
-    getMeetingsFromEvents();
+    // getMeetingsFromEvents();
   }
 
   getEventsByDay() async {
-    eventsList.value = [];
+    // eventsList.value = [];
     calendarEventLoading.value = true;
     LogService.writeLog(message: "getEventsByDay()");
     var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
@@ -54,11 +54,14 @@ class CalendarController extends GetxController {
     };
     var dsResp = await serverConnections.postToServer(
         url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
-
+    eventsList.value = [];
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);
       if (jsonDSResp['result']['success'].toString() == "true") {
         var dsDataList = jsonDSResp['result']['data'];
+
+        LogService.writeLog(
+            message: "Calendar dsDataList ${dsDataList.length.toString()}");
         for (var item in dsDataList) {
           try {
             if (item != null) {
@@ -68,67 +71,70 @@ class CalendarController extends GetxController {
             debugPrint(" $e");
           }
         }
+
+        LogService.writeLog(
+            message: "Calendar Events ${eventsList.length.toString()}");
       }
     }
 
     calendarEventLoading.value = false;
   }
 
-  getTaskByDay() async {
-    taskList.value = [];
-    calendarEventLoading.value = true;
-    LogService.writeLog(
-        message:
-            "getTaskByDay() => Username => ${globalVariableController.USER_NAME.value}");
-    var username = globalVariableController.USER_NAME.value;
-    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
-    var body = {
-      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
-      "appname": globalVariableController.PROJECT_NAME.value,
-      "datasource": DataSourceServices.DS_GETTASKSBYDAY,
-      "sqlParams": {
-        "username": username,
-        "date": DateUtilsHelper.getFormattedDateYMD(selectedDate.toString())
-      }
-    };
-    var dsResp = await serverConnections.postToServer(
-        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+  // getTaskByDay() async {
+  //   taskList.value = [];
+  //   calendarEventLoading.value = true;
+  //   LogService.writeLog(
+  //       message:
+  //           "getTaskByDay() => Username => ${globalVariableController.USER_NAME.value}");
+  //   var username = globalVariableController.USER_NAME.value;
+  //   var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
+  //   var body = {
+  //     "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+  //     "appname": globalVariableController.PROJECT_NAME.value,
+  //     "datasource": DataSourceServices.DS_GETTASKSBYDAY,
+  //     "sqlParams": {
+  //       "username": username,
+  //       "date": DateUtilsHelper.getFormattedDateYMD(selectedDate.toString())
+  //     }
+  //   };
+  //   var dsResp = await serverConnections.postToServer(
+  //       url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
 
-    if (dsResp != "") {
-      var jsonDSResp = jsonDecode(dsResp);
-      if (jsonDSResp['result']['success'].toString() == "true") {
-        var dsDataList = jsonDSResp['result']['data'];
-        for (var item in dsDataList) {
-          try {
-            if (item != null) {
-              taskList.add(TaskByDayModel.fromJson(item));
-            }
-          } catch (e) {
-            debugPrint(" $e");
-          }
-        }
-      }
-    }
+  //   if (dsResp != "") {
+  //     var jsonDSResp = jsonDecode(dsResp);
+  //     if (jsonDSResp['result']['success'].toString() == "true") {
+  //       var dsDataList = jsonDSResp['result']['data'];
+  //       for (var item in dsDataList) {
+  //         try {
+  //           if (item != null) {
+  //             taskList.add(TaskByDayModel.fromJson(item));
+  //           }
+  //         } catch (e) {
+  //           debugPrint(" $e");
+  //         }
+  //       }
+  //     }
+  //   }
 
-    calendarEventLoading.value = false;
-  }
+  //   calendarEventLoading.value = false;
+  // }
 
-  getMeetingsFromEvents() {
-    meetingList.value = [];
+  // getMeetingsFromEvents() {
+  //   meetingList.value = [];
 
-    // for (var i = 0; i < eventsList.length; i++) {
-    //   var m = eventsList[i];
+  //   // for (var i = 0; i < eventsList.length; i++) {
+  //   //   var m = eventsList[i];
 
-    //   meetingList.add(Meeting(
-    //     m.eventName,
-    //     m.description,
-    //     m.toDate.copyWithHourOffset(i),
-    //     m.toDate.copyWithHourOffset(3 + i),
-    //     AppColors.getRandomColor(),
-    //     m.isAllDay.toString().contains("yes") ? true : false,
-    //   ));
-    // }
-  }
+  //   //   meetingList.add(Meeting(
+  //   //     m.eventName,
+  //   //     m.description,
+  //   //     m.toDate.copyWithHourOffset(i),
+  //   //     m.toDate.copyWithHourOffset(3 + i),
+  //   //     AppColors.getRandomColor(),
+  //   //     m.isAllDay.toString().contains("yes") ? true : false,
+  //   //   ));
+  //   // }
+  // }
 
   navigateToCreateTask() {
     webViewController.navigateToCreateTask();

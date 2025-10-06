@@ -394,7 +394,7 @@ class AttendanceController extends GetxController {
       _showPunchInDialog(message: attendance.message);
     }
 
-    await _setLocationDetails(attendance);
+    // await _setLocationDetails(attendance);
   }
 
   showDLG() {
@@ -529,7 +529,7 @@ class AttendanceController extends GetxController {
                       label: "Clock Inn",
                       color: AppColors.chipCardWidgetColorGreen,
                       onTap: () {
-                        openLeavePage();
+                        doPunchInPunchOut(Const.SCRIPT_PUNCH_INN);
                         Get.back();
                       },
                     ),
@@ -642,10 +642,12 @@ class AttendanceController extends GetxController {
         if (innerResultJSON['message']
             .toString()
             .contains("Punched in successfully")) {
+          await getInitialAttendanceDetails();
           AppSnackBar.showSuccess("Punched in successfully", "message");
         } else if (innerResultJSON['message']
             .toString()
             .contains("Punched out successfully")) {
+          await getInitialAttendanceDetails();
           AppSnackBar.showSuccess("Punched out successfully", "message");
         } else if (innerResultJSON['message']
             .toString()
@@ -670,7 +672,6 @@ class AttendanceController extends GetxController {
       }
     }
 
-    await getInitialAttendanceDetails();
     isAttendanceDetailsIsLoading.value = false;
   }
 

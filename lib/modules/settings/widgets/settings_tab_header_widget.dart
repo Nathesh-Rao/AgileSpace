@@ -56,7 +56,7 @@ class SettingsTabHeaderWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "@username",
+                  globalVariableController.USER_EMAIL.value,
                   style: GoogleFonts.poppins(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.w500,

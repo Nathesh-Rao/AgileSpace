@@ -12,20 +12,33 @@ class AuthLoginActionFooterWidget extends GetView<AuthController> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          Transform.scale(
-            scale: 12 / 18, // default checkbox is ~18x18, so scale down
-            child: Checkbox(
-              activeColor: Color(0xff5BBBA9),
-              value: true,
-              onChanged: (bool? newValue) {},
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              visualDensity: VisualDensity.compact,
-              side: const BorderSide(width: 2, color: Colors.black), // optional
+          Obx(
+            () => GestureDetector(
+              onTap: controller.rememberMe.toggle,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Transform.scale(
+                    scale: 12 / 18, // default checkbox is ~18x18, so scale down
+                    child: Checkbox(
+                      activeColor: Color(0xff5BBBA9),
+                      value: controller.rememberMe.value,
+                      onChanged: (bool? newValue) {
+                        controller.rememberMe.toggle;
+                      },
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      visualDensity: VisualDensity.compact,
+                      side: const BorderSide(
+                          width: 2, color: Colors.black), // optional
+                    ),
+                  ),
+                  Text(
+                    "Remember Me?",
+                    style: AppStyles.actionButtonStyle,
+                  ),
+                ],
+              ),
             ),
-          ),
-          Text(
-            "Remember Me?",
-            style: AppStyles.actionButtonStyle,
           ),
           Spacer(),
           Text(
