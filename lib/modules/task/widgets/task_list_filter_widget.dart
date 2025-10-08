@@ -3,7 +3,8 @@ import 'package:axpert_space/core/config/config.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/modules.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_number_flow/flutter_number_flow.dart';
+// import 'package:flutter_number_flow/flutter_number_flow.dart';
+import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:get/get.dart';
 
 import 'widgets.dart';
@@ -90,13 +91,21 @@ class TaskListFilterWidget extends GetView<TaskController> {
               () => Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  NumberFlow(
+                  // NumberFlow(
+                  //   value: controller.taskList.length,
+                  //   animationStyle: NumberFlowAnimation.slide,
+                  //   duration: const Duration(milliseconds: 600),
+                  //   textStyle: GoogleFonts.poppins(
+                  //       fontSize: 20.sp, fontWeight: FontWeight.w500),
+                  // ),
+                  AnimatedFlipCounter(
                     value: controller.taskList.length,
-                    animationStyle: NumberFlowAnimation.slide,
-                    duration: const Duration(milliseconds: 600),
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeIn,
                     textStyle: GoogleFonts.poppins(
                         fontSize: 20.sp, fontWeight: FontWeight.w500),
                   ),
+
                   5.horizontalSpace,
                   Text(
                     "Tasks",
