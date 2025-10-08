@@ -19,17 +19,15 @@ class SplashController extends GetxController {
   }
 
   _getInitialData() async {
-    // globalVariableController.WEB_URL.value = "https://agileqa.agilecloud.biz/qaaxpert11.4base";
-    // globalVariableController.ARM_URL.value = "https://agileqa.agilecloud.biz/qaarm11.4base";
-    // globalVariableController.PROJECT_NAME.value = "pgbase114";
-    globalVariableController.WEB_URL.value =
-        "https://alpha.agilecloud.biz/axpert";
-    // globalVariableController.ARM_URL.value = "https://alpha.agilecloud.biz/arm";
-    globalVariableController.ARM_URL.value =
-        "https://agileqa.agilecloud.biz/qaarm11.4base";
+    globalVariableController.WEB_URL.value = Const.BASE_WEB_URL;
 
-    globalVariableController.PROJECT_NAME.value = "agilespace";
+    globalVariableController.ARM_URL.value = Const.CONST_ARM_URL;
 
+    globalVariableController.PROJECT_NAME.value = Const.CONST_PROJECTNAME;
+
+//
+//
+//
     if (appStorage.retrieveValue(AppStorage.ARM_URL) == null) {
       appStorage.storeValue(
           AppStorage.ARM_URL, globalVariableController.ARM_URL.value);

@@ -6,7 +6,20 @@ import '../core.dart';
 final GlobalVariableController globalVariableController = Get.find();
 
 class Const {
-  static const String BASE_WEB_URL = "https://alpha.agilecloud.biz/axpert";
+  // globalVariableController.WEB_URL.value =
+  //     "https://alpha.agilecloud.biz/axpert";
+  // globalVariableController.ARM_URL.value = "https://alpha.agilecloud.biz/arm";
+  // globalVariableController.PROJECT_NAME.value = "agilespace";
+
+  // static const String BASE_WEB_URL = "https://alpha.agilecloud.biz/axpert";
+  // static const String CONST_ARM_URL = "https://alpha.agilecloud.biz/arm";
+  // static const String CONST_PROJECTNAME = "agilespace";
+
+  static const String BASE_WEB_URL =
+      "https://agileqa.agilecloud.biz/qaaxpert11.4base";
+  static const String CONST_ARM_URL =
+      "https://agileqa.agilecloud.biz/qaarm11.4base";
+  static const String CONST_PROJECTNAME = "agilespaceqanew";
 
   static const String CLOUD_PROJECT = "axpmobileclient";
   static const String CLOUD_URL = "";

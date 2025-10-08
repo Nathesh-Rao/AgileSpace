@@ -13,12 +13,12 @@ class LandingDrawerIconWidget extends GetView<LandingController> {
         child: ValueListenableBuilder(
           valueListenable: controller.landingDrawerController,
           builder: (_, value, __) => Icon(
-              // CupertinoIcons.sidebar_left,
-              value.visible
-                  ? CupertinoIcons.clear_circled
-                  : CupertinoIcons.sidebar_left
-              // size: 30,
-              ),
+            // CupertinoIcons.sidebar_left,
+            value.visible
+                ? CupertinoIcons.clear_circled
+                : CupertinoIcons.text_justifyleft,
+            // size: 30,
+          ),
         ));
   }
 }

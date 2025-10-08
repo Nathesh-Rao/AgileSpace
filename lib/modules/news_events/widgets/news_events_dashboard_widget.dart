@@ -15,6 +15,10 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.getInitialData();
+    });
+
     return Column(
       children: [
         IconLabelWidget(

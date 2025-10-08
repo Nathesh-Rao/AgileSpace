@@ -26,6 +26,19 @@ class WebViewController extends GetxController {
   ServerConnections serverConnections = ServerConnections();
   AppStorage appStorage = AppStorage();
   DateTime currentBackPressTime = DateTime.now();
+//-------------On Index change------------------------
+  void Function(int)? onIndexChanged;
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(currentIndex, (index) {
+      if (onIndexChanged != null) {
+        onIndexChanged!(index);
+      }
+    });
+  }
+//-------------------------------------
 
   openWebView({required String url}) async {
     AuthController authController = Get.find();

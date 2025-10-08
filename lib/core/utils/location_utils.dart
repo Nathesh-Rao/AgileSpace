@@ -1,3 +1,4 @@
+import 'package:axpert_space/common/common.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -19,5 +20,19 @@ class LocationUtils {
       output = placemarks[0].toString();
     });
     return output;
+  }
+
+  static Future<Position?> getCurrentPosition() async {
+    var pmsn = await Geolocator.checkPermission();
+
+    if (pmsn == LocationPermission.always ||
+        pmsn == LocationPermission.whileInUse) {
+      var p = Geolocator.getCurrentPosition();
+      return p;
+    } else {
+      AppSnackBar.showError("Enable Location",
+          "Please enable location permission to complete the action");
+    }
+    return null;
   }
 }

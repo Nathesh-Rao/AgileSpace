@@ -24,6 +24,7 @@ class DataSourceServices {
   static const DS_GETATTENDANCE_DETAIL = "DS_GETATTENDANCE_DETAIL";
 
   static const DS_GETEVENTSBYDAY = "DS_GETEVENTSBYDAY";
+  static const DS_GETALLEVENTS = "DS_GETEVENTS";
 
   static const DS_GETTASKSBYDAY = "DS_GETTASKSBYDAY";
 

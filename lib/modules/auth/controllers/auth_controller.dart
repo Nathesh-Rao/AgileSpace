@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:axpert_space/common/common.dart';
+import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:axpert_space/common/widgets/flat_button_widget.dart';
 import 'package:axpert_space/routes/app_routes.dart';
 import 'package:flutter/cupertino.dart';
@@ -314,20 +315,19 @@ class AuthController extends GetxController {
 
   processSignInDataResponse(json) async {
     await appStorage.storeValue(AppStorage.TOKEN, json["token"].toString());
+
+    LogService.writeLog(message: "Token : ${json["token"].toString()}");
     await appStorage.storeValue(
         AppStorage.SESSIONID, json["ARMSessionId"].toString());
     await appStorage.storeValue(
         AppStorage.USER_NAME, userNameController.text.trim());
-    await appStorage.storeValue(AppStorage.NICK_NAME,
-        json["nickname"].toString() ?? userNameController.text.trim());
+    await appStorage.storeValue(
+        AppStorage.NICK_NAME, json["nickname"].toString());
 
-    globalVariableController.NICK_NAME.value =
-        json["nickname"].toString() ?? userNameController.text.trim();
+    globalVariableController.NICK_NAME.value = json["nickname"].toString();
 
-    globalVariableController.USER_NAME.value =
-        json["username"].toString() ?? userNameController.text.trim();
-    globalVariableController.USER_EMAIL.value =
-        json["email_id"].toString() ?? userNameController.text.trim();
+    globalVariableController.USER_NAME.value = json["username"].toString();
+    globalVariableController.USER_EMAIL.value = json["email_id"].toString();
     //Save Data
     if (rememberMe.value) {
       handleRememberMe(userNameController.text, userPasswordController.text);

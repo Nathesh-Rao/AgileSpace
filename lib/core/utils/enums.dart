@@ -10,3 +10,5 @@ enum AttendanceState {
   holiday,
   error
 }
+
+enum AttendancePendingAction { punchIn, punchOut, leave, none }

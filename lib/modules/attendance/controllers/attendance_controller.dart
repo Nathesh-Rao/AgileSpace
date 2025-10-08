@@ -33,6 +33,7 @@ class AttendanceController extends GetxController {
 //----
   var attendanceDashboardIsLoading = false.obs;
   var attendanceState = AttendanceState.notPunchedIn.obs;
+  var attendancePendingAction = AttendancePendingAction.none.obs;
 //-----
   var attendanceReportList = [].obs;
   var isAttendanceReportLoading = false.obs;
@@ -42,6 +43,31 @@ class AttendanceController extends GetxController {
   ServerConnections serverConnections = ServerConnections();
   AppStorage appStorage = AppStorage();
   WebViewController webViewController = Get.find();
+
+  @override
+  void onInit() {
+    super.onInit();
+    webViewController.onIndexChanged = handleWebViewIndexChange;
+  }
+
+  handleWebViewIndexChange(int index) async {
+    if (index == 0) {
+      LogService.writeLog(message: "${attendancePendingAction.value}");
+
+      switch (attendancePendingAction.value) {
+        case AttendancePendingAction.none:
+          return;
+        case AttendancePendingAction.punchIn:
+          await doPunchInPunchOut(Const.SCRIPT_PUNCH_INN);
+          break;
+        case AttendancePendingAction.punchOut:
+          await doPunchInPunchOut(Const.SCRIPT_PUNCH_OUT);
+        case AttendancePendingAction.leave:
+          await getInitialAttendanceDetails(force: true);
+          break;
+      }
+    }
+  }
 
   var months = [
     'January',
@@ -78,13 +104,13 @@ class AttendanceController extends GetxController {
   updateSelectedYear(dynamic date) {
     if (selectedYear.value == years[date]) return;
     selectedYear.value = years[date];
-    _getAttendanceReport();
+    getAttendanceReport();
   }
 
   updateMonthIndex(int index) {
     if (selectedMonthIndex.value == index) return;
     selectedMonthIndex.value = index;
-    _getAttendanceReport();
+    getAttendanceReport();
   }
 
   getAttendanceLog() {
@@ -93,7 +119,7 @@ class AttendanceController extends GetxController {
     }
     // isLogExpanded.value = false;
     if (attendanceReportList.isEmpty) {
-      _getAttendanceReport();
+      getAttendanceReport();
     }
   }
 
@@ -102,7 +128,7 @@ class AttendanceController extends GetxController {
     isLogExpanded.toggle();
   }
 
-  _getAttendanceReport() async {
+  getAttendanceReport() async {
     isAttendanceReportLoading.value = true;
 
     var reportList = [];
@@ -163,8 +189,8 @@ class AttendanceController extends GetxController {
   setAttendanceDashboard() {}
 
   //--------
-  getInitialAttendanceDetails() async {
-    // if (attendanceDetails.value != null) return;
+  getInitialAttendanceDetails({bool force = false}) async {
+    if (attendanceDetails.value != null && !force) return;
     isAttendanceDetailsIsLoading.value = true;
     isAddrsFetchLoading.value = true;
     var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
@@ -241,7 +267,7 @@ class AttendanceController extends GetxController {
           LogService.writeLog(message: dsData.toString());
           attendanceDetails.value = AttendanceDetailsModel.fromJson(dsData);
           if (attendanceDetails.value != null) {
-            await _setAttendanceStatus(attendanceDetails.value!);
+            await setAttendanceStatus(attendanceDetails.value!);
           } else {
             attendanceState.value = AttendanceState.error;
           }
@@ -253,15 +279,16 @@ class AttendanceController extends GetxController {
     }
 
     isAttendanceDetailsIsLoading.value = false;
+    attendancePendingAction.value = AttendancePendingAction.none;
   }
 
   String clockedInTimeStatus(String timeStr, String expectedTimeStr) {
     try {
       DateTime now = DateTime.now();
 
-      DateTime expected = _parseTime(expectedTimeStr, now);
+      DateTime expected = parseTime(expectedTimeStr, now);
 
-      DateTime actual = _parseTime(timeStr, now);
+      DateTime actual = parseTime(timeStr, now);
 
       Duration diff = actual.difference(expected);
 
@@ -286,7 +313,7 @@ class AttendanceController extends GetxController {
     }
   }
 
-  DateTime _parseTime(String timeStr, DateTime refDate) {
+  DateTime parseTime(String timeStr, DateTime refDate) {
     String input = timeStr.trim().toUpperCase();
 
     List<String> parts = input.split(' ');
@@ -370,7 +397,7 @@ class AttendanceController extends GetxController {
     }
   }
 
-  _setAttendanceStatus(AttendanceDetailsModel attendance) async {
+  setAttendanceStatus(AttendanceDetailsModel attendance) async {
     if (attendance.intime == null && attendance.outtime == null) {
       if (attendance.message.toLowerCase().contains("leave")) {
         attendanceState.value = AttendanceState.leave;
@@ -391,17 +418,22 @@ class AttendanceController extends GetxController {
         message: "Punch status : ${attendanceState.value.name}");
 
     if (attendanceState.value == AttendanceState.notPunchedIn) {
-      _showPunchInDialog(message: attendance.message);
+      showPunchInDialog(message: attendance.message);
     }
 
-    // await _setLocationDetails(attendance);
+    await setLocationDetails(attendance);
   }
 
   showDLG() {
-    _showTimeSheetDialog("");
+    showTimeSheetDialog("", '');
   }
 
-  _showTimeSheetDialog(String message) {
+  showTimeSheetDialog(String message, String scriptName) {
+    var actionName =
+        attendancePendingAction.value == AttendancePendingAction.punchIn
+            ? "Clock Inn"
+            : "Clock Out";
+
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -441,22 +473,49 @@ class AttendanceController extends GetxController {
                       label: "Fill Worksheet",
                       color: AppColors.chipCardWidgetColorBlue,
                       onTap: () {
+                        if (scriptName == Const.SCRIPT_PUNCH_INN) {
+                          attendancePendingAction.value =
+                              AttendancePendingAction.punchIn;
+                        } else {
+                          attendancePendingAction.value =
+                              AttendancePendingAction.punchOut;
+                        }
                         openWorkSheet();
                         Get.back();
                       },
                     ),
                   ),
                 ],
-              )
+              ),
+              10.verticalSpace,
+              attendancePendingAction.value == AttendancePendingAction.none
+                  ? SizedBox.shrink()
+                  : Row(
+                      children: [
+                        Expanded(
+                          child: FlatButtonWidget(
+                            width: 100.w,
+                            label: "Will do $actionName later",
+                            color: AppColors.leaveWidgetColorPink,
+                            onTap: () {
+                              attendancePendingAction.value =
+                                  AttendancePendingAction.none;
+
+                              Get.back();
+                            },
+                          ),
+                        ),
+                      ],
+                    )
             ],
           ),
         ),
       ),
-      barrierDismissible: true, // Prevent closing by tapping outside
+      barrierDismissible: false, // Prevent closing by tapping outside
     );
   }
 
-  _showPunchInDialog({required String message}) {
+  showPunchInDialog({required String message}) {
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -545,12 +604,13 @@ class AttendanceController extends GetxController {
   }
 
   openLeavePage() {
+    attendancePendingAction.value = AttendancePendingAction.leave;
     var url =
         "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=tLeave";
     webViewController.openWebView(url: url);
   }
 
-  _setLocationDetails(AttendanceDetailsModel value) async {
+  setLocationDetails(AttendanceDetailsModel value) async {
     if (attendanceState.value == AttendanceState.notPunchedIn ||
         attendanceState.value == AttendanceState.punchedIn) {
       await getCurrentAddress();
@@ -620,8 +680,14 @@ class AttendanceController extends GetxController {
   }
 
   doPunchInPunchOut(scriptName) async {
+    var isRefreshAttendanceWidget = false;
     isAttendanceDetailsIsLoading.value = true;
     var url = Const.getFullARMUrl(ServerConnections.API_AXSCRIPT);
+    var position = await LocationUtils.getCurrentPosition();
+
+    var lat = position?.latitude ?? "";
+    var lon = position?.longitude ?? "";
+    LogService.writeLog(message: "$position");
     var body = {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "script": scriptName,
@@ -629,7 +695,13 @@ class AttendanceController extends GetxController {
       "name": "punch",
       "recordid": "0",
       "trace": false,
-      "apiparams": {"username": "${globalVariableController.USER_NAME.value}~c"}
+      "apiparams": {
+        "username": "${globalVariableController.USER_NAME.value}~c",
+        "latitude": "$lat~c",
+        "longitude": "$lon~c"
+        // "latitude": "0~c",
+        // "longitude": "0~c"
+      }
     };
     var dsResp = await serverConnections.postToServer(
         url: url, isBearer: true, body: jsonEncode(body));
@@ -642,23 +714,32 @@ class AttendanceController extends GetxController {
         if (innerResultJSON['message']
             .toString()
             .contains("Punched in successfully")) {
-          await getInitialAttendanceDetails();
+          attendancePendingAction.value = AttendancePendingAction.none;
+          isRefreshAttendanceWidget = true;
+          // await getInitialAttendanceDetails(force: true);
           AppSnackBar.showSuccess("Punched in successfully", "message");
         } else if (innerResultJSON['message']
             .toString()
             .contains("Punched out successfully")) {
-          await getInitialAttendanceDetails();
+          attendancePendingAction.value = AttendancePendingAction.none;
+          isRefreshAttendanceWidget = true;
+
+          // await getInitialAttendanceDetails(force: true);
           AppSnackBar.showSuccess("Punched out successfully", "message");
         } else if (innerResultJSON['message']
             .toString()
             .contains("timesheet")) {
-          _showTimeSheetDialog(innerResultJSON['message'][0]["msg"]);
+          showTimeSheetDialog(innerResultJSON['message'][0]["msg"], scriptName);
         } else {
           if (innerResultJSON['message'].toString().contains("Exceptions")) {
+            attendancePendingAction.value = AttendancePendingAction.none;
+
             //remove "Exception later"
             AppSnackBar.showError(
                 "title", innerResultJSON['message'][0]["msg"]);
           } else {
+            attendancePendingAction.value = AttendancePendingAction.none;
+
             AppSnackBar.showInfo("title", innerResultJSON['message'][0]["msg"]);
           }
         }
@@ -667,17 +748,23 @@ class AttendanceController extends GetxController {
         //     snackPosition: SnackPosition.BOTTOM,
         //     backgroundColor: Colors.redAccent,
         //     colorText: Colors.white);
+        attendancePendingAction.value = AttendancePendingAction.none;
 
         AppSnackBar.showError("Error ", jsonDSResp["result"]["message"]);
       }
     }
 
     isAttendanceDetailsIsLoading.value = false;
+    await getInitialAttendanceDetails(force: isRefreshAttendanceWidget);
   }
 
   openWorkSheet() {
     var url =
         "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=ttimes";
+    var url2 =
+        "https://agileqa.agilecloud.biz/qaaxpert11.4base/aspx/AxMain.aspx?authKey=AXPERT-ARM-agilespaceqa-8756c1cc-0d62-4ce8-8e5e-b974ea7726e5&pname=ttimes";
+
+    LogService.writeLog(message: "URL-1: $url\nURL-2: $url2");
     webViewController.openWebView(url: url);
   }
 }

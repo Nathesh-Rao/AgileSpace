@@ -84,12 +84,12 @@ class TaskController extends GetxController {
     showHistoryContent.toggle();
   }
 
-  loadInitialData() async {
+  loadInitialData({bool force = false}) async {
     int newPage = taskListPageViewController.page?.round() ?? 0;
     if (newPage != taskListPageViewIndex.value) {
       taskListPageViewIndex.value = newPage;
     }
-    // if (taskList.isNotEmpty) return;
+    if (taskList.isNotEmpty && !force) return;
     isTaskListLoading.value = true;
     isTaskOverviewLoading.value = true;
     await _getUserProfile();
