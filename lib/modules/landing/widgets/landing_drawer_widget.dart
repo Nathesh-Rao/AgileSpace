@@ -60,6 +60,8 @@ class LandingDrawerWidget extends GetView<LandingController> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       AutoSizeText(
+                        minFontSize: 8,
+                        maxFontSize: 18,
                         globalVariableController.NICK_NAME.value,
                         style: AppStyles.appBarTitleTextStyle.copyWith(
                           fontWeight: FontWeight.bold,
