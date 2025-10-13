@@ -22,13 +22,17 @@ class LogService {
   static getVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     var version = packageInfo.version;
-    Const.APP_VERSION = version;
+    Const.APP_VERSION =
+        "v$version${Const.APP_RELEASE_ID}_release${Const.APP_RELEASE_DATE}";
+
+    return Const.APP_VERSION;
   }
 
   static initLogs() async {
     var file = await _localFile();
     try {
-      var isTraceOn = await AppStorage().retrieveValue(AppStorage.isLogEnabled) ?? false;
+      var isTraceOn =
+          await AppStorage().retrieveValue(AppStorage.isLogEnabled) ?? false;
       Const.isLogEnabled = isTraceOn;
 
       var isExists = await file.exists();
@@ -36,12 +40,18 @@ class LogService {
         if (Const.APP_VERSION == "") {
           await getVersion();
         }
-        await file.writeAsString('Axpert Android Log File\n', mode: FileMode.write, flush: true);
-        await file.writeAsString('App Version: ${Const.APP_VERSION}\n', mode: FileMode.append, flush: true);
-        await file.writeAsString('File Creation Date: ${DateFormat("dd-MMM-yyyy HH:mm:ss").format(DateTime.now())}\n',
+        await file.writeAsString('Axpert Android Log File\n',
+            mode: FileMode.write, flush: true);
+        await file.writeAsString('App Version: ${Const.APP_VERSION}\n',
             mode: FileMode.append, flush: true);
-        await file.writeAsString('------------------------------------------------------------------- \n\n',
-            mode: FileMode.append, flush: true);
+        await file.writeAsString(
+            'File Creation Date: ${DateFormat("dd-MMM-yyyy HH:mm:ss").format(DateTime.now())}\n',
+            mode: FileMode.append,
+            flush: true);
+        await file.writeAsString(
+            '------------------------------------------------------------------- \n\n',
+            mode: FileMode.append,
+            flush: true);
       }
     } catch (e) {}
   }
@@ -54,9 +64,11 @@ class LogService {
     _logWithColor(message, yellow);
     if (Const.isLogEnabled) {
       final file = await _localFile();
-      var formatedDateTime = DateFormat("dd-MMM-yyyy HH:mm:ss:SSS").format(DateTime.now());
+      var formatedDateTime =
+          DateFormat("dd-MMM-yyyy HH:mm:ss:SSS").format(DateTime.now());
       try {
-        await file.writeAsString('$formatedDateTime: $message\n', mode: FileMode.append);
+        await file.writeAsString('$formatedDateTime: $message\n',
+            mode: FileMode.append);
       } catch (e) {}
     }
   }
@@ -82,9 +94,11 @@ class LogService {
   }) async {
     if (Const.isLogEnabled) {
       final file = await _localFile();
-      var formatedDateTime = DateFormat("dd-MMM-yyyy HH:mm:ss:SSS").format(DateTime.now());
+      var formatedDateTime =
+          DateFormat("dd-MMM-yyyy HH:mm:ss:SSS").format(DateTime.now());
       try {
-        await file.writeAsString('$formatedDateTime: $log\n', mode: FileMode.append);
+        await file.writeAsString('$formatedDateTime: $log\n',
+            mode: FileMode.append);
       } catch (e) {}
     }
 

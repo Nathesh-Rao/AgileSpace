@@ -1,3 +1,4 @@
+import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:axpert_space/modules/auth/controllers/auth_controller.dart';
@@ -48,19 +49,61 @@ class AuthLoginFooterButtonsWidget extends GetView<AuthController> {
         //   ],
         // ),
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Powered by Axpert",
-              style: GoogleFonts.poppins(),
-            ),
-            5.horizontalSpace,
-            Image.asset(
-              "assets/images/common/axpert_03.png",
-              width: 25,
-            )
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Column(
+            spacing: 10.h,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Powered by ",
+                    style: GoogleFonts.poppins(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Image.asset(
+                    "assets/images/common/axpert_03.png",
+                    width: 25,
+                  ),
+                  Text(
+                    " Axpert",
+                    style: GoogleFonts.poppins(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Spacer(),
+                  FutureBuilder(
+                      future: LogService.getVersion(),
+                      builder: (context, snapShot) {
+                        var value = '';
+
+                        if (snapShot.hasData) {
+                          value = snapShot.data.toString();
+                        }
+
+                        return Text(
+                          value,
+                          style: GoogleFonts.poppins(
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w600,
+                            color:
+                                AppColors.primarySubTitleTextColorBlueGreyLight,
+                          ),
+                        );
+                      }),
+                ],
+              ),
+            ],
+          ),
         )
       ],
     );

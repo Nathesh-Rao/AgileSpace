@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:get/get.dart';
 
 import '../../common/common.dart';
@@ -15,6 +17,9 @@ class Const {
   // static const String CONST_ARM_URL = "https://alpha.agilecloud.biz/arm";
   // static const String CONST_PROJECTNAME = "agilespace";
 
+  static String APP_VERSION = '';
+  static const String APP_RELEASE_ID = '.01';
+  static const String APP_RELEASE_DATE = '08102025';
   static const String BASE_WEB_URL =
       "https://agileqa.agilecloud.biz/qaaxpert11.4base";
   static const String CONST_ARM_URL =
@@ -34,7 +39,7 @@ class Const {
 
   static bool isLogEnabled = false;
 
-  static var APP_VERSION = '0.01';
+  // static var APP_VERSION = '0.01';
 
   static String getFullARMUrl(String Entrypoint) {
     print("getFullARMUrl => ${globalVariableController.ARM_URL.value}");
