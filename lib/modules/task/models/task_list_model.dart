@@ -35,12 +35,10 @@ class TaskListModel {
         messageCount: json["message_count"] ?? 0,
         caption: json["taskname"] ?? "",
         description: (json["taskdescription"] ?? '')
-                .replaceAll(RegExp(r'<[^>]*>'), '')
-                .trim() ??
-            "",
-        dueDate: DateTime.parse(json["due_date"] ?? DateTime.now().toString()),
-        createdOn:
-            DateTime.parse(json["createdon"] ?? DateTime.now().toString()),
+            .replaceAll(RegExp(r'<[^>]*>'), '')
+            .trim(),
+        dueDate: DateTime.tryParse(json["duedate"] ?? "") ?? DateTime.now(),
+        createdOn: DateTime.tryParse(json["createdon"] ?? "") ?? DateTime.now(),
         priority: json["priority"] ?? "",
         taskCategory: json["taskcategory"] ?? json["task_category"] ?? "",
         participantCount: json["participant_count"] ?? 0,
