@@ -1,6 +1,7 @@
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/modules.dart';
+import 'package:axpert_space/modules/task/widgets/task_details_widgets/task_details_description_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,7 +28,9 @@ class TaskDetailsLastActionWidget extends GetView<TaskController> {
 
       return Container(
         margin: EdgeInsets.only(top: 10.h),
-        padding: EdgeInsets.symmetric(vertical: 10.h),
+        padding: EdgeInsets.symmetric(
+          vertical: 10.h,
+        ),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.r),
             color: Color(0xffD9D9D9).withAlpha(20),
@@ -58,8 +61,11 @@ class TaskDetailsLastActionWidget extends GetView<TaskController> {
             height: 1,
           ),
           10.verticalSpace,
-          HistoryToolTipWidget(
-            history: lastHistory,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: TaskDetailsDescriptionWidget(
+              description: lastHistory.message,
+            ),
           ),
         ]),
       );

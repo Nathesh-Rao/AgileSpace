@@ -80,4 +80,15 @@ class DateUtilsHelper {
       return '';
     }
   }
+
+  static String formatDateTimeForHistory(String dateTimeStr) {
+    try {
+      final dateTime = DateTime.parse(dateTimeStr);
+      final datePart = DateFormat("dd MMM yyyy").format(dateTime).toUpperCase();
+      final timePart = DateFormat("h:mm a").format(dateTime);
+      return "$datePart - $timePart";
+    } catch (e) {
+      return "--"; // fallback for invalid or null date strings
+    }
+  }
 }

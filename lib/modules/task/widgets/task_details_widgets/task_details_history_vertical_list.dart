@@ -27,7 +27,7 @@ class TaskDetailsHistoryVerticalListWidget extends GetView<TaskController> {
   }
 
   _historyTile(history, hideToUser, index) => SizedBox(
-        height: 140.h,
+        height: 150.h,
         child: Row(
           // mainAxisSize: MainAxisSize.min,
           children: [
@@ -91,18 +91,27 @@ class TaskDetailsHistoryVerticalListWidget extends GetView<TaskController> {
                               )
                             : SizedBox.shrink(),
                         Spacer(),
-                        Text(
-                          history.modifiedon,
-                          style: AppStyles.taskHistoryUserNameStyle,
-                        ),
                       ],
                     ),
                   ),
                   // 20.verticalSpace,
                   5.verticalSpace,
-                  ChipCardWidget(
-                      label: history.status,
-                      color: AppColors.getHistoryColor(history.status)),
+                  Row(
+                    children: [
+                      ChipCardWidget(
+                          label: history.status,
+                          color: AppColors.getHistoryColor(history.status)),
+                      Spacer(),
+                      Text(
+                        DateUtilsHelper.formatDateTimeForHistory(
+                            history.modifiedon),
+                        // history.modifiedon,
+                        style: AppStyles.taskHistoryUserNameStyle.copyWith(
+                          fontSize: 8.sp,
+                        ),
+                      ),
+                    ],
+                  ),
                   5.verticalSpace,
 
                   // 5.verticalSpace,

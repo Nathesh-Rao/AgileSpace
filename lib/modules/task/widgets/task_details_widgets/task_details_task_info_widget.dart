@@ -1,5 +1,6 @@
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/modules/task/models/models.dart';
+import 'package:axpert_space/modules/task/widgets/task_details_widgets/task_details_description_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -170,22 +171,8 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
             ],
           ),
           10.verticalSpace,
-          Row(
-            children: [
-              Flexible(
-                child: Text(
-                  taskModel.description,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.secondarySubTitleTextColorGreyLight,
-                  ),
-                ),
-              ),
-              50.horizontalSpace,
-            ],
+          TaskDetailsDescriptionWidget(
+            description: taskModel.description,
           ),
           15.verticalSpace,
           Row(
