@@ -34,8 +34,9 @@ class LeaveController extends GetxController {
 
   _setLeaveCountRatio() {
     if (leaveActivity.value == null) return;
-    leaveCountRatio.value =
-        leaveActivity.value!.totalLeave == 0 ? 0 : leaveActivity.value!.balanceLeave / leaveActivity.value!.totalLeave;
+    leaveCountRatio.value = leaveActivity.value!.totalLeave == 0
+        ? 0
+        : leaveActivity.value!.balanceLeave / leaveActivity.value!.totalLeave;
   }
 
   getLeaveDetails() async {
@@ -44,7 +45,8 @@ class LeaveController extends GetxController {
     isLeaveDetailsLoading.value = true;
     await Future.delayed(Duration(seconds: 2));
     leaveDetails.value = LeaveDetailsModel.tempData;
-    leaveDivisionsValue.value = calculateLeavePercentages(leaveDetails.value!.leaveBreakup);
+    leaveDivisionsValue.value =
+        calculateLeavePercentages(leaveDetails.value!.leaveBreakup);
     isLeaveDetailsLoading.value = false;
   }
 
@@ -69,23 +71,30 @@ class LeaveController extends GetxController {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
       "datasource": DataSourceServices.DS_GETLEAVEHISTORY,
-      "sqlParams": {"username": globalVariableController.NICK_NAME.value}
+      "sqlParams": {"username": globalVariableController.USER_NAME.value}
     };
-    var dsResp = await serverConnections.postToServer(url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
 
     if (dsResp != "") {
       var jsonDSResp = jsonDecode(dsResp);
       if (jsonDSResp['result']['success'].toString() == "true") {
+        leaveHistoryList.value = [];
         var dsDataList = jsonDSResp['result']['data'];
+
+        List<LeaveHistoryModel> temLeaveHistoryList = [];
+
         for (var item in dsDataList) {
           try {
             if (item != null) {
-              leaveHistoryList.add(LeaveHistoryModel.fromJson(item));
+              temLeaveHistoryList.add(LeaveHistoryModel.fromJson(item));
             }
           } catch (e) {
             debugPrint(" $e");
           }
         }
+
+        leaveHistoryList.value = temLeaveHistoryList;
       }
     }
 
