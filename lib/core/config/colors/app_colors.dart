@@ -66,19 +66,42 @@ class AppColors {
       case 'created':
         return historyCreated;
       case 'reassigned':
-        return historyAssigned;
+        return const Color(0xFFFFB300);
       case 'completed':
         return historyCompleted;
       case 'forwarded':
         return historyAssigned;
       case 'accepted':
-        return historyCompleted;
+        return const Color(0xFF26A69A);
       case 'closed':
-        return historyCompleted;
+        return const Color(0xFF2E7D32);
+      case 'returned':
+        return const Color(0xFFFFB300);
       default:
         return historyCreated;
     }
   }
+
+  // static Color getHistoryColor(String status) {
+  //   switch (status.toLowerCase()) {
+  //     case 'created':
+  //       return const Color(0xFF42A5F5);
+  //     case 'reassigned':
+  //       return const Color(0xFFFFB300);
+  //     case 'completed':
+  //       return const Color(0xFF66BB6A);
+  //     case 'forwarded':
+  //       return const Color(0xFF5C6BC0);
+  //     case 'accepted':
+  //       return const Color(0xFF26A69A);
+  //     case 'closed':
+  //       return const Color(0xFF2E7D32);
+  //     case 'returned':
+  //       return const Color(0xFFEF5350);
+  //     default:
+  //       return const Color(0xFF9E9E9E);
+  //   }
+  // }
 
   static Color getStatusColor(String status) {
     switch (status.toLowerCase()) {

@@ -16,8 +16,11 @@ class TaskDetailsHistoryVerticalListWidget extends GetView<TaskController> {
         itemCount: controller.taskHistoryList.length,
         itemBuilder: (context, index) {
           var history = controller.taskHistoryList[index];
-          var hideToUser =
-              history.status.toString().toLowerCase().contains("accepted");
+          var hideToUser = (history.status
+                  .toString()
+                  .toLowerCase()
+                  .contains("accepted") ||
+              history.status.toString().toLowerCase().contains("completed"));
           return _historyTile(history, hideToUser, index);
           // return Container(color: Colors.amber, height: 20.h);
         });
@@ -115,11 +118,10 @@ class TaskDetailsHistoryVerticalListWidget extends GetView<TaskController> {
                           : SizedBox(),
                       Row(
                         children: [
-                          HistoryToolTipWidget(
-                            history: history,
-                          ),
-                          Spacer(
-                            flex: 2,
+                          Flexible(
+                            child: HistoryToolTipWidget(
+                              history: history,
+                            ),
                           ),
                         ],
                       ),
