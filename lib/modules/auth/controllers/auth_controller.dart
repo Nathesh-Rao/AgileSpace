@@ -572,7 +572,7 @@ class AuthController extends GetxController {
                               onTap: () async {
                                 callSignInAPI();
                               },
-                              label: "yes",
+                              label: "Yes",
                             ),
                           ),
                         ],

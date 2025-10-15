@@ -50,6 +50,8 @@ class _TaskDetailsDescriptionWidgetState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AnimatedCrossFade(
+              firstCurve: Curves.decelerate,
+              secondCurve: Curves.decelerate,
               firstChild: Text(
                 widget.description,
                 maxLines: 3,
