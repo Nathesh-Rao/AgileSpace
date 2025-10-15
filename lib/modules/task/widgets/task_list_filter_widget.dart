@@ -128,14 +128,16 @@ class TaskListFilterWidget extends GetView<TaskController> {
             ],
           ),
           5.verticalSpace,
-          PrimaryDropdownField(
-            value: controller.taskFilterShowTask.value,
-            items: controller.taskFilterShowTaskList,
-            onChanged: (value) {
-              if (value != null) {
-                controller.taskFilterShowTask.value = value;
-              }
-            },
+          Obx(
+            () => PrimaryDropdownField(
+              value: controller.taskFilterShowTask.value,
+              items: controller.taskFilterShowTaskList,
+              onChanged: (value) {
+                if (value != null) {
+                  controller.taskFilterShowTask.value = value;
+                }
+              },
+            ),
           ),
           10.verticalSpace,
           Row(
@@ -170,14 +172,16 @@ class TaskListFilterWidget extends GetView<TaskController> {
             ],
           ),
           5.verticalSpace,
-          PrimaryDropdownField(
-            value: controller.taskFilterPriority.value,
-            items: controller.taskFilterPriorityList,
-            onChanged: (value) {
-              if (value != null) {
-                controller.taskFilterPriority.value = value;
-              }
-            },
+          Obx(
+            () => PrimaryDropdownField(
+              value: controller.taskFilterPriority.value,
+              items: controller.taskFilterPriorityList,
+              onChanged: (value) {
+                if (value != null) {
+                  controller.taskFilterPriority.value = value;
+                }
+              },
+            ),
           ),
           10.verticalSpace,
           Row(

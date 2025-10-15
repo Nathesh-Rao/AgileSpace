@@ -16,31 +16,64 @@ import '../../../core/core.dart';
 import '../models/Attendance_detail_model.dart';
 
 class AttendanceController extends GetxController {
-  var attendanceAppbarSwitchValue = false.obs;
+  AppStorage appStorage = AppStorage();
   var attendanceAppbarSwitchIsLoading = false.obs;
+  var attendanceAppbarSwitchValue = false.obs;
   var attendanceClockInWidgetCallBackValue = false.obs;
-  var isAttendanceDetailsIsLoading = false.obs;
-  var isAddrsFetchLoading = false.obs;
-  var attendanceDetails = Rxn<AttendanceDetailsModel>();
-  var isClockedIn = false.obs;
-  var isClockedOut = false.obs;
-  var clockInLocation = ''.obs;
-  var clockOutLocation = ''.obs;
-//----
-  var onCloseRefreshAttendance = false.obs;
 //----
   var attendanceDashboardIsLoading = false.obs;
-  var attendanceState = AttendanceState.notPunchedIn.obs;
+
+  var attendanceDetails = Rxn<AttendanceDetailsModel>();
   var attendancePendingAction = AttendancePendingAction.none.obs;
 //-----
   var attendanceReportList = [].obs;
+
+  var attendanceState = AttendanceState.notPunchedIn.obs;
+  var clockInLocation = ''.obs;
+  var clockOutLocation = ''.obs;
+  var isAddrsFetchLoading = false.obs;
+  var isAttendanceDetailsIsLoading = false.obs;
   var isAttendanceReportLoading = false.obs;
+  var isClockedIn = false.obs;
+  var isClockedOut = false.obs;
   var isLogExpanded = false.obs;
   var isLogExpandedAssist = false.obs;
+  var months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
 
+//----
+  var onCloseRefreshAttendance = false.obs;
+
+  var selectedMonthIndex = DateTime.now().month.obs;
+  var selectedYear = DateFormat("yyyy").format(DateTime.now()).obs;
   ServerConnections serverConnections = ServerConnections();
-  AppStorage appStorage = AppStorage();
   WebViewController webViewController = Get.find();
+  var years = [
+    '2014',
+    '2015',
+    '2016',
+    '2017',
+    '2018',
+    '2019',
+    '2020',
+    '2021',
+    '2022',
+    '2023',
+    '2024',
+    '2025',
+  ];
 
   @override
   void onInit() {
@@ -78,43 +111,13 @@ class AttendanceController extends GetxController {
   }
 
   handleOnClosePunchinPunchOut(String url) {
-    onCloseRefreshAttendance.value = true;
-    LogService.writeLog(
-        message:
-            "handleOnClosePunchinPunchOut : $handleOnClosePunchinPunchOut");
+    if (url.contains("tpunch") ||
+        url.contains("itaskslst") ||
+        url.contains("ttimes")) {
+      onCloseRefreshAttendance.value = true;
+      LogService.writeLog(message: "handleOnClosePunchinPunchOut : $url");
+    }
   }
-
-  var months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-  var years = [
-    '2014',
-    '2015',
-    '2016',
-    '2017',
-    '2018',
-    '2019',
-    '2020',
-    '2021',
-    '2022',
-    '2023',
-    '2024',
-    '2025',
-  ];
-
-  var selectedMonthIndex = DateTime.now().month.obs;
-  var selectedYear = DateFormat("yyyy").format(DateTime.now()).obs;
 
   updateSelectedYear(dynamic date) {
     if (selectedYear.value == years[date]) return;
