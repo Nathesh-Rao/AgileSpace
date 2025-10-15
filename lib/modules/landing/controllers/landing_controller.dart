@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'package:axpert_space/modules/attendance/attendance.dart';
 import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
 import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:axpert_space/core/utils/internet_connections/internet_connectivity.dart';
@@ -23,6 +24,7 @@ class LandingController extends GetxController {
   ServerConnections serverConnections = ServerConnections();
   WebViewController webViewController = Get.find();
   InternetConnectivity internetConnectivity = Get.find();
+  AttendanceController attendanceController = Get.find();
   final ScrollController drawerScrollController = ScrollController();
   var drawerScrollProgress = 0.0.obs;
   var drawerHeadExpandSwitch = false.obs;
@@ -249,6 +251,8 @@ class LandingController extends GetxController {
   void openItemClick(itemModel) async {
     if (await internetConnectivity.connectionStatus) {
       if (itemModel.url != "") {
+        attendanceController.handleOnClosePunchinPunchOut(itemModel.url);
+
         webViewController.openWebView(url: Const.getFullWebUrl(itemModel.url));
       }
     }

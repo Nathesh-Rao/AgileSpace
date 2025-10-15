@@ -7,13 +7,10 @@ import 'package:axpert_space/data/data_source/datasource_services.dart';
 import 'package:axpert_space/modules/attendance/models/AttendanceReportModel.dart';
 import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/core.dart';
 import '../models/Attendance_detail_model.dart';
@@ -29,7 +26,8 @@ class AttendanceController extends GetxController {
   var isClockedOut = false.obs;
   var clockInLocation = ''.obs;
   var clockOutLocation = ''.obs;
-
+//----
+  var onCloseRefreshAttendance = false.obs;
 //----
   var attendanceDashboardIsLoading = false.obs;
   var attendanceState = AttendanceState.notPunchedIn.obs;
@@ -52,11 +50,12 @@ class AttendanceController extends GetxController {
 
   handleWebViewIndexChange(int index) async {
     if (index == 0) {
+      // For doiung pending action from punchin punchout widget
       LogService.writeLog(message: "${attendancePendingAction.value}");
 
       switch (attendancePendingAction.value) {
         case AttendancePendingAction.none:
-          return;
+          break;
         case AttendancePendingAction.punchIn:
           await doPunchInPunchOut(Const.SCRIPT_PUNCH_INN);
           break;
@@ -66,7 +65,23 @@ class AttendanceController extends GetxController {
           await getInitialAttendanceDetails(force: true);
           break;
       }
+
+      //For updating attendance data after coming back from my task and timesheet
+      if (onCloseRefreshAttendance.value) {
+        onCloseRefreshAttendance.value = false;
+        LogService.writeLog(
+            message:
+                "handleOnClosePunchinPunchOut||handleWebViewIndexChange : $handleOnClosePunchinPunchOut");
+        await getInitialAttendanceDetails(force: true);
+      }
     }
+  }
+
+  handleOnClosePunchinPunchOut(String url) {
+    onCloseRefreshAttendance.value = true;
+    LogService.writeLog(
+        message:
+            "handleOnClosePunchinPunchOut : $handleOnClosePunchinPunchOut");
   }
 
   var months = [
