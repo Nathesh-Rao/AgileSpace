@@ -49,7 +49,7 @@ class TaskDetailsHistoryHorizontalListWidget extends GetView<TaskController> {
               ),
               5.horizontalSpace,
               Text(
-                controller.taskHistoryList[index].fromUser,
+                controller.taskHistoryList[index].username,
                 style: AppStyles.taskHistoryUserNameStyle,
               ),
               5.horizontalSpace,

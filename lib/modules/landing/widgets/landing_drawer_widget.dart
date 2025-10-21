@@ -275,6 +275,18 @@ class LandingDrawerWidget extends GetView<LandingController> {
           onTap: () {
             Get.toNamed(AppRoutes.notification);
           }),
+      _bottomBarListTile1(
+          defaultIndex: 5,
+          currentIndex: controller.currentBottomBarIndex.value,
+          label: "Active list",
+          leadingIcon: "assets/icons/common/active_list.png",
+          trailing: "899",
+          trailingBgColor: AppColors.blue9,
+          trailingColor: Colors.white,
+          onTap: () {
+            controller.landingDrawerController.toggleDrawer();
+            Get.toNamed(AppRoutes.activeList);
+          }),
     ];
   }
 
@@ -325,8 +337,9 @@ class LandingDrawerWidget extends GetView<LandingController> {
             Spacer(),
             trailing != null
                 ? Container(
-                    height: 20.h,
-                    width: 20.h,
+                    // height: 20.h,
+                    // width: 20.h,
+                    padding: EdgeInsets.all(5.h),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(3.r),
                       color: trailingBgColor ?? Color(0xffB5EBCD),

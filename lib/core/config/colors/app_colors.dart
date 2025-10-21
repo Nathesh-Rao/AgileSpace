@@ -60,7 +60,17 @@ class AppColors {
   static const leaveWidgetColorGreen = Color(0xff379785);
   static const leaveWidgetColorPink = Color(0xffDA5077);
   static const leaveWidgetColorGreenLite = Color(0xff5BBBA9);
-
+  static const Color grey = Color(0xFF808080);
+  static const Color grey1 = Color(0xFFd9d5d5);
+  static const Color grey1bg = Color(0xFF1f1f2e);
+  static const Color grey2 = Color(0xFFF6F7F9);
+  static const Color grey3 = Color(0xFF787878);
+  static const Color grey4 = Color(0xFF3F3F3F);
+  static const Color grey5 = Color(0xFFB6B6B6);
+  static const Color grey6 = Color(0xFF999999);
+  static const Color grey7 = Color(0xFFb3b3b3);
+  static const Color grey8 = Color(0xFFf6f7f9);
+  static const Color grey9 = Color(0xFF575E65);
   static Color getHistoryColor(String status) {
     switch (status.toLowerCase()) {
       case 'created':

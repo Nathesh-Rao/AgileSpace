@@ -49,7 +49,7 @@ class TaskDetailsLastActionWidget extends GetView<TaskController> {
               ),
               Spacer(),
               Text(
-                lastHistory.fromUser.toUpperCase(),
+                lastHistory.username.toUpperCase(),
                 style: AppStyles.taskHistoryUserNameStyle,
               ),
               20.horizontalSpace,

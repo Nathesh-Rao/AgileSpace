@@ -300,4 +300,50 @@ class ServerConnections {
       }
     }
   }
+
+  static String activeList_CreateURL_MAKE(activeList) {
+    var url = "";
+    if (activeList.recordid.toString().toLowerCase() == "" ||
+        activeList.recordid.toString().toLowerCase() == "null") {
+      url = "aspx/AxMain.aspx?pname=t" +
+          activeList.transid.toString() +
+          "&authKey=AXPERT-" +
+          AppStorage().retrieveValue(AppStorage.SESSIONID) +
+          "&params=^act=open^" +
+          activeList.keyfield.toString() +
+          "=" +
+          activeList.keyvalue.toString();
+    } else {
+      url = "aspx/AxMain.aspx?pname=t" +
+          activeList.transid.toString() +
+          "&authKey=AXPERT-" +
+          AppStorage().retrieveValue(AppStorage.SESSIONID) +
+          "&params=^act=load^recordid=" +
+          activeList.recordid.toString();
+    }
+    return url;
+  }
+
+  static String activeList_CreateURL_MESSAGE(
+    activeList,
+  ) {
+    var url = "";
+    var msgType = activeList.msgtype.toString().toUpperCase().trim();
+    if (msgType == "MESSAGE" ||
+        msgType == "FORM NOTIFICATION" ||
+        msgType == "PERIODIC NOTIFICATION" ||
+        msgType == "CACHED SAVE") {
+      var hlink_TRANID = activeList.hlink_transid.toString();
+      var hlink_PARAMS = activeList.hlink_params.toString().startsWith("^")
+          ? activeList.hlink_params.toString()
+          : "^" + activeList.hlink_params.toString();
+      url = "aspx/AxMain.aspx?pname=" +
+          hlink_TRANID +
+          "&authKey=AXPERT-" +
+          AppStorage().retrieveValue(AppStorage.SESSIONID) +
+          "&params=" +
+          hlink_PARAMS;
+    }
+    return url;
+  }
 }

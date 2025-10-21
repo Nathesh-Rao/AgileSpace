@@ -1,3 +1,4 @@
+import 'package:axpert_space/modules/active_list/screens/active_list_screen.dart';
 import 'package:axpert_space/modules/landing/landing.dart';
 import 'package:axpert_space/modules/leaves/screens/leave_details_screen.dart';
 import 'package:axpert_space/modules/notifications/screen/notification_screen.dart';
@@ -89,6 +90,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.notification,
       page: () => NotificationScreen(),
+      transition: Transition.rightToLeft,
+      curve: Curves.decelerate,
+    ),
+    GetPage(
+      name: AppRoutes.activeList,
+      page: () => ActiveListScreen(),
       transition: Transition.rightToLeft,
       curve: Curves.decelerate,
     ),

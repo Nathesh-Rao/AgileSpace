@@ -18,6 +18,7 @@ class LandingController extends GetxController {
   var payAttendanceIcon = "assets/icons/bottom_nav/pay_attendance_icon.png";
   var calendarIcon = "assets/icons/bottom_nav/calendar_icon.png";
   var settingsIcon = "assets/icons/bottom_nav/settings_icon.png";
+  var activeTaskIcon = "assets/icons/common/active_list.png";
 
   PageController landingPageViewController = PageController();
   AppStorage appStorage = AppStorage();
@@ -34,6 +35,7 @@ class LandingController extends GetxController {
   var landingPageTabs = [
     LandingTaskTab(),
     LandingPayAndAttendanceTab(),
+    LandingActiveTaskTab(),
     LandingCalendarTab(),
     LandingSettingsTab()
   ];

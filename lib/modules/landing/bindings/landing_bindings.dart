@@ -1,3 +1,4 @@
+import 'package:axpert_space/modules/active_list/controller/active_list_controller.dart';
 import 'package:axpert_space/modules/news_events/controller/news_events_controller.dart';
 import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
 import 'package:axpert_space/modules/auth/controllers/auth_controller.dart';
@@ -26,5 +27,6 @@ class LandingBindings extends Bindings {
     Get.lazyPut<AuthController>(() => AuthController());
     Get.lazyPut<NewsEventsController>(() => NewsEventsController());
     Get.lazyPut<WorkCalendarController>(() => WorkCalendarController());
+    Get.put<ActiveListController>(ActiveListController(), permanent: true);
   }
 }

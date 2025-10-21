@@ -14,4 +14,5 @@ class AppRoutes {
   static const String leaveDetails = '/leaveDetails';
   static const String payRollDetails = '/payRollDetails';
   static const String notification = '/notification';
+  static const String activeList = '/activeList';
 }

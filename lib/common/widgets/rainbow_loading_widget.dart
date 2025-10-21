@@ -7,7 +7,8 @@ class RainbowLoadingWidget extends StatefulWidget {
   State<RainbowLoadingWidget> createState() => _RainbowLoadingWidgetState();
 }
 
-class _RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with SingleTickerProviderStateMixin {
+class _RainbowLoadingWidgetState extends State<RainbowLoadingWidget>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -37,7 +38,7 @@ class _RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with Single
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 2.5,
       width: double.infinity,
       child: AnimatedBuilder(
@@ -52,12 +53,12 @@ class _RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with Single
                 tileMode: TileMode.mirror,
               ).createShader(bounds);
             },
+            blendMode: BlendMode.srcIn,
             child: LinearProgressIndicator(
               backgroundColor: Colors.transparent,
               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               minHeight: 2.5,
             ),
-            blendMode: BlendMode.srcIn,
           );
         },
       ),
