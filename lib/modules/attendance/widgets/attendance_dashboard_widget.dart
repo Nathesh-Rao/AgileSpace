@@ -1,10 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:axpert_space/routes/app_routes.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:one_clock/one_clock.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../common/common.dart';
 import '../../../core/core.dart';
 import '../attendance.dart';
@@ -27,21 +29,25 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
             mainAxisSize: MainAxisSize.min,
             children: [
               _dashboardHeadWidget(),
-              Container(
-                padding: EdgeInsets.all(10.w),
-                width: double.infinity,
-                height: 200.h,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(
-                      color: AppColors.violetBorder,
-                    )),
-                child: Column(
-                  children: [
-                    Obx(() => _getAttendanceStateWidget(controller.attendanceState.value)),
-                    _bottomInfoWidget(),
-                  ],
-                ),
+              Obx(
+                () => Container(
+                  padding: EdgeInsets.all(10.w),
+                  width: double.infinity,
+                  height: 200.h,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.r),
+                      border: Border.all(
+                        color: AppColors.violetBorder,
+                      )),
+                  child: Column(
+                    children: [
+                      Obx(() => _getAttendanceStateWidget(
+                          controller.attendanceState.value)),
+                      _bottomInfoWidget(),
+                    ],
+                  ),
+                ).skeletonLoading(
+                    controller.isAttendanceDetailsIsLoading.value),
               ),
             ],
           )
@@ -51,7 +57,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
   }
 
   Widget _leaveWidget() {
-    var message = controller.attendanceDetails.value?.message.toLowerCase() ?? '';
+    var message =
+        controller.attendanceDetails.value?.message.toLowerCase() ?? '';
     var text = "";
     var image = "assets/lotties/relaxing.json";
     if (message.contains("sick")) {
@@ -175,7 +182,9 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
   }
 
   Widget _actionButton(String text) {
-    Color color = text.toLowerCase().contains('inn') ? AppColors.chipCardWidgetColorGreen : AppColors.baseRed;
+    Color color = text.toLowerCase().contains('inn')
+        ? AppColors.chipCardWidgetColorGreen
+        : AppColors.baseRed;
 
     return SizedBox(
       width: double.infinity,
@@ -202,7 +211,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
 
             Text(
               text,
-              style: AppStyles.textButtonStyleNormal.copyWith(color: color, fontSize: 14.sp, fontWeight: FontWeight.w500),
+              style: AppStyles.textButtonStyleNormal.copyWith(
+                  color: color, fontSize: 14.sp, fontWeight: FontWeight.w500),
             ),
             Image.asset(
               "assets/images/common/clock_inn.png",
@@ -218,7 +228,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
   Widget _noDetailsAvailableWidget() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(CupertinoIcons.clear_circled_solid, color: AppColors.baseRed),
+          const Icon(CupertinoIcons.clear_circled_solid,
+              color: AppColors.baseRed),
           10.horizontalSpace,
           const Text("No data found"),
         ],
@@ -226,14 +237,17 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
 
   Widget _dashboardHeadWidget() => Obx(
         () => Visibility(
-          visible: (controller.attendanceState.value == AttendanceState.punchedIn ||
+          visible: (controller.attendanceState.value ==
+                  AttendanceState.punchedIn ||
               controller.attendanceState.value == AttendanceState.punchedOut),
           child: Container(
             height: 23.h,
             width: double.infinity,
             margin: EdgeInsets.symmetric(horizontal: 11.w),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(topRight: Radius.circular(10.r), topLeft: Radius.circular(10.r)),
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10.r),
+                  topLeft: Radius.circular(10.r)),
               gradient: LinearGradient(
                 colors: [
                   AppColors.gradientBlue,
@@ -264,7 +278,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
     var text = '';
     switch (controller.attendanceState.value) {
       case AttendanceState.punchedIn:
-        text = controller.clockTimeStatus("${controller.attendanceDetails.value?.actualOuttime}");
+        text = controller.clockTimeStatus(
+            "${controller.attendanceDetails.value?.actualOuttime}");
         break;
       case AttendanceState.punchedOut:
         text = "Punched out at ${controller.attendanceDetails.value?.outtime}";
@@ -276,12 +291,15 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
         text = "On Leave";
         break;
       default:
-        text = controller.clockTimeStatus("${controller.attendanceDetails.value?.actualIntime}");
+        text = controller.clockTimeStatus(
+            "${controller.attendanceDetails.value?.actualIntime}");
     }
 
     controller.attendanceState.value == AttendanceState.punchedIn
-        ? controller.clockTimeStatus("${controller.attendanceDetails.value?.actualOuttime}")
-        : controller.clockTimeStatus("${controller.attendanceDetails.value?.actualIntime}");
+        ? controller.clockTimeStatus(
+            "${controller.attendanceDetails.value?.actualOuttime}")
+        : controller.clockTimeStatus(
+            "${controller.attendanceDetails.value?.actualIntime}");
     return text;
   }
 
@@ -290,7 +308,9 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
       child: ZoomIn(
         duration: Duration(milliseconds: 400),
         child: Container(
-          decoration: BoxDecoration(border: Border.all(color: Colors.black26), borderRadius: BorderRadius.circular(10.r)),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black26),
+              borderRadius: BorderRadius.circular(10.r)),
           padding: EdgeInsets.all(8.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,7 +352,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
                       children: [
                         TextSpan(
                           text: "",
-                          style: AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 12.sp),
+                          style: AppStyles.attendanceWidgetTimeStyle
+                              .copyWith(fontSize: 12.sp),
                         )
                       ])),
               Row(
@@ -356,7 +377,9 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
 
   Widget _getAttendanceInfoSecondWidget() {
     var signInWidget = Container(
-      decoration: BoxDecoration(border: Border.all(color: Colors.black26), borderRadius: BorderRadius.circular(10.r)),
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black26),
+          borderRadius: BorderRadius.circular(10.r)),
       padding: EdgeInsets.all(8.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -393,7 +416,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
             () => Text(
               // "${controller.clockInLocation.value.split("\n")[0].replaceFirst("Name:", "").trim()}\n${controller.clockInLocation.value.split("\n")[4].replaceFirst("Postal code:", "").trim()}",
               controller.clockInLocation.value,
-              style: AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 10.sp),
+              style:
+                  AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 10.sp),
             ),
           ),
           5.verticalSpace,
@@ -402,7 +426,9 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
     );
 
     var signOutWidget = Container(
-      decoration: BoxDecoration(border: Border.all(color: Colors.black26), borderRadius: BorderRadius.circular(10.r)),
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black26),
+          borderRadius: BorderRadius.circular(10.r)),
       padding: EdgeInsets.all(8.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -443,7 +469,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
                   children: [
                     TextSpan(
                       text: "",
-                      style: AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 12.sp),
+                      style: AppStyles.attendanceWidgetTimeStyle
+                          .copyWith(fontSize: 12.sp),
                     )
                   ])),
           Row(
@@ -462,20 +489,95 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
       ),
     );
 
-    if (controller.isClockedOut.value) {
-      return Expanded(
-        child: ZoomIn(
-          duration: Duration(milliseconds: 400),
-          child: signOutWidget,
+    var noLocationWidget = Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: AppColors.baseRed.withAlpha(50)),
+          borderRadius: BorderRadius.circular(10.r)),
+      padding: EdgeInsets.all(1.w),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.r),
+          color: AppColors.baseRed.withAlpha(20),
         ),
-      );
-    }
-
-    return Expanded(
-      child: ZoomIn(
-        duration: Duration(milliseconds: 400),
-        child: signInWidget,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                CupertinoIcons.location_circle,
+                color: AppColors.baseRed,
+              ),
+              10.verticalSpace,
+              Text(
+                "Location is disabled",
+                style: AppStyles.actionButtonStyle.copyWith(
+                  color: AppColors.baseRed,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
+    );
+
+    var loadingWidget = Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: AppColors.blue10.withAlpha(50)),
+          borderRadius: BorderRadius.circular(10.r)),
+      padding: EdgeInsets.all(1.w),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.r),
+          color: AppColors.blue10.withAlpha(20),
+        ),
+        child: Center(
+          child: CupertinoActivityIndicator(
+            color: AppColors.blue10,
+          ),
+        ),
+      ),
+    );
+
+    return FutureBuilder<PermissionStatus>(
+      future: Permission.location.status,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return loadingWidget; // ⏳ while checking permission
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text("Error checking location permission"));
+        }
+
+        if (snapshot.hasData) {
+          final status = snapshot.data!;
+
+          if (status.isDenied ||
+              status.isRestricted ||
+              status.isPermanentlyDenied) {
+            // 🚫 Show your "no location" widget
+            return noLocationWidget;
+          }
+
+          if (controller.isClockedOut.value) {
+            return Expanded(
+              child: ZoomIn(
+                duration: const Duration(milliseconds: 400),
+                child: signOutWidget,
+              ),
+            );
+          }
+
+          return Expanded(
+            child: ZoomIn(
+              duration: const Duration(milliseconds: 400),
+              child: signInWidget,
+            ),
+          );
+        }
+
+        return loadingWidget;
+      },
     );
   }
 
@@ -523,7 +625,9 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
                     margin: EdgeInsets.zero,
                     key: ValueKey(controller.attendanceAppbarSwitchValue.value),
                     isLoading: controller.attendanceAppbarSwitchIsLoading.value,
-                    onPressed: controller.onAttendanceClockInCardClick,
+                    onPressed: () {
+                      controller.onAttendanceClockInCardClick(false);
+                    },
                     label: "ClockInn 🌞",
                     backgroundColor: AppColors.taskClockInWidgetColorPurple,
                     labelStyle: AppStyles.textButtonStyle.copyWith(
@@ -583,8 +687,9 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
           : controller.attendanceState.value == AttendanceState.punchedOut
               ? SizedBox.shrink()
               : Container(
-                  decoration:
-                      BoxDecoration(color: AppColors.violetBorder.withAlpha(50), borderRadius: BorderRadius.circular(5.r)),
+                  decoration: BoxDecoration(
+                      color: AppColors.violetBorder.withAlpha(50),
+                      borderRadius: BorderRadius.circular(5.r)),
                   padding: EdgeInsets.symmetric(vertical: 5.h),
                   margin: EdgeInsets.only(top: 20.h),
                   child: Row(
@@ -592,7 +697,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
                     children: [
                       Text(
                         "Update your work sheet before clock out",
-                        style: GoogleFonts.poppins(fontSize: 11.sp, fontWeight: FontWeight.w600),
+                        style: GoogleFonts.poppins(
+                            fontSize: 11.sp, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),

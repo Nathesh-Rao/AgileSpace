@@ -31,4 +31,5 @@ class DataSourceServices {
   static const DS_GETLEAVEHISTORY = "DS_GETLEAVEHISTORY";
 
   static const DS_GETUSERPROFILE = "DS_GETUSERPROFILE";
+  static const DS_GETOFFDAYS = "DS_GETOFFDAYS";
 }

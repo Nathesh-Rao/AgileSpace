@@ -1,4 +1,5 @@
 import 'package:axpert_space/common/common.dart';
+import 'package:axpert_space/modules/modules.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,7 @@ import '../../../routes/app_routes.dart';
 import '../models/models.dart';
 import 'task_tile_action_button_widget.dart';
 
-class TaskListSingleTileWidget extends StatelessWidget {
+class TaskListSingleTileWidget extends GetView<TaskController> {
   const TaskListSingleTileWidget({super.key, required this.taskModel});
   final TaskListModel taskModel;
 
@@ -58,9 +59,9 @@ class TaskListSingleTileWidget extends StatelessWidget {
             10.verticalSpace,
             Row(
               children: [
-                Text(
+                controller.highlightedText(
                   "TID : ${taskModel.id}",
-                  style: GoogleFonts.poppins(
+                  GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: AppColors.primaryTitleTextColorBlueGrey,
@@ -72,15 +73,15 @@ class TaskListSingleTileWidget extends StatelessWidget {
             Row(
               children: [
                 Flexible(
-                  child: Text(
+                  child: controller.highlightedText(
                     taskModel.caption,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
+                    GoogleFonts.poppins(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w700,
                       color: AppColors.primaryActionColorDarkBlue,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 50.horizontalSpace,

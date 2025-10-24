@@ -1,6 +1,4 @@
-import 'package:animated_switcher_plus/animated_switcher_plus.dart';
 import 'package:axpert_space/modules/active_list/controller/active_list_details_controller.dart';
-import 'package:axpert_space/modules/web_view/screen/inapp_webview_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';

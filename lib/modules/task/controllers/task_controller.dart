@@ -627,7 +627,12 @@ class TaskController extends GetxController {
     webViewController.navigateToCreateTask();
   }
 
-  Widget highlightedText(String text, TextStyle style, {int maxLines = 2}) {
+  Widget highlightedText(
+    String text,
+    TextStyle style, {
+    int maxLines = 2,
+    TextOverflow? overflow,
+  }) {
     if (taskSearchText.value.isEmpty) {
       return Text(
         text,

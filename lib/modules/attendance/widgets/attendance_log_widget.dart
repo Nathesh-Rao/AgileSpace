@@ -1,6 +1,8 @@
+import 'package:animated_switcher_plus/animated_switcher_plus.dart';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/core/config/config.dart';
 import 'package:axpert_space/modules/attendance/attendance.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,6 +18,8 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
       controller.getAttendanceLog();
     });
 
+    var buttonStyle = AppStyles.actionButtonStyle;
+
     return Column(
       children: [
         Padding(
@@ -30,17 +34,17 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
               ),
             ),
             Spacer(),
-            Obx(
-              () => TextButton.icon(
-                onPressed: controller.switchLogExpandValue,
-                label: controller.isLogExpanded.value
-                    ? Text("See less")
-                    : Text("See more"),
-                icon: controller.isLogExpanded.value
-                    ? Icon(Icons.keyboard_arrow_down_outlined)
-                    : Icon(Icons.keyboard_arrow_up_outlined),
-              ),
-            ),
+            Obx(() => InkWell(
+                onTap: controller.switchLogExpandValue,
+                child: AnimatedSwitcherPlus.revealY(
+                    duration: Duration(milliseconds: 500),
+                    child: !controller.isLogExpanded.value
+                        ? Icon(
+                            key: ValueKey("rectangle_compress_vertical"),
+                            CupertinoIcons.rectangle_compress_vertical)
+                        : Icon(
+                            key: ValueKey("rectangle_expand_vertical"),
+                            CupertinoIcons.rectangle_expand_vertical)))),
           ]),
         ),
         15.verticalSpace,
