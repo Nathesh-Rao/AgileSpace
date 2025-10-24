@@ -40,6 +40,7 @@ class TaskController extends GetxController {
   var taskFilterPriority = 'ALL'.obs;
   var taskFilterTaskIdController = TextEditingController(text: "ALL");
   RxList<String> taskFilterUserNameList = <String>[].obs;
+  final TextEditingController paramFilter_searchController = TextEditingController();
   var taskFilterShowTaskList = [
     'ALL',
     'Completed by',

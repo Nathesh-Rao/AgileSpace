@@ -256,7 +256,7 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              "Clocked Inn at :",
+                              "Clocked In at :",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
                                 fontSize: 7.sp,

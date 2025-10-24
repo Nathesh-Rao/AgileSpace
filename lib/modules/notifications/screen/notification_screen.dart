@@ -60,7 +60,7 @@ class NotificationScreen extends GetView<NotificationController> {
             () => controller.list.isEmpty
                 ? Center(
                     child: EmptyWidget(
-                    label: "No norification found",
+                    label: "No notification found",
                   ))
                 : ListView.separated(
                     padding: EdgeInsets.zero,

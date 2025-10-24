@@ -24,7 +24,7 @@ class AuthLoginActionFooterWidget extends GetView<AuthController> {
                       activeColor: Color(0xff5BBBA9),
                       value: controller.rememberMe.value,
                       onChanged: (bool? newValue) {
-                        controller.rememberMe.toggle;
+                        controller.rememberMe.toggle();
                       },
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       visualDensity: VisualDensity.compact,

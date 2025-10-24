@@ -1,5 +1,6 @@
 import 'package:axpert_space/common/common.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
@@ -8,12 +9,14 @@ class PrimaryDropdownField extends StatelessWidget {
   final String? value;
   final List<String> items;
   final ValueChanged<String?>? onChanged;
+  final TextEditingController? searchController;
 
   const PrimaryDropdownField({
     super.key,
     required this.value,
     required this.items,
     this.onChanged,
+    this.searchController,
   });
 
   @override
@@ -25,6 +28,8 @@ class PrimaryDropdownField extends StatelessWidget {
         width: 1,
       ),
     );
+
+    final sController = searchController ?? TextEditingController(); // fallback
 
     return DropdownButtonFormField2<String>(
       isExpanded: true,
@@ -64,6 +69,72 @@ class PrimaryDropdownField extends StatelessWidget {
           borderRadius: BorderRadius.circular(5.r),
         ),
       ),
+
+// Add Search inside the dropdown
+      dropdownSearchData: DropdownSearchData(
+        searchController: sController,
+        searchInnerWidgetHeight: 35,
+        searchInnerWidget: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: sController,
+            builder: (context, valueText, child) {
+              return TextFormField(
+                controller: sController,
+                decoration: InputDecoration(
+                  hintText: 'Search...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: Colors.grey, // border color
+                      width: 1, // smaller border width
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                      width: 0.5,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: AppColors.chipCardWidgetColorViolet, // border color when focused
+                      width: 0.5,
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.primarySearchFieldBGColorGrey,
+                  suffixIcon: valueText.text.isEmpty
+                      ? const Icon(Icons.search,color: AppColors.snackBarInfoColorGrey,)
+                      : GestureDetector(
+                          onTap: () {
+                            sController.clear();
+                          },
+                          child: const Icon(CupertinoIcons.clear_circled,color: AppColors.chipCardWidgetColorViolet,),
+                        ),
+                ),
+              );
+            },
+          ),
+        ),
+        searchMatchFn: (item, searchValue) {
+          return item.value.toString().toLowerCase().contains(searchValue.toLowerCase());
+        },
+      ),
+
+      // Clear search field when dropdown closes
+      onMenuStateChange: (isOpen) {
+        if (!isOpen) {
+          sController.clear();
+        }
+      },
+
       items: items
           .map((p) => DropdownMenuItem(
                 value: p,
