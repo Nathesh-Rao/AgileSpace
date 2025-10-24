@@ -110,7 +110,7 @@ class TaskController extends GetxController {
         .where((task) =>
             (task.caption.toLowerCase().contains(searchText.toLowerCase()) ||
                 task.id.toLowerCase().contains(searchText.toLowerCase())) ||
-            task.projectName.toLowerCase().contains(searchText.toLowerCase()))
+            task.project.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
   }
 

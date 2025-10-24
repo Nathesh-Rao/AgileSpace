@@ -6,6 +6,7 @@ import 'package:axpert_space/modules/payroll/screens/payroll_details_page.dart';
 import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
 import 'package:axpert_space/modules/modules.dart';
+import '../modules/active_list/screens/active_list_details_screen.dart';
 import '../modules/attendance/attendance.dart';
 import 'app_routes.dart';
 
@@ -96,6 +97,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.activeList,
       page: () => ActiveListScreen(),
+      transition: Transition.rightToLeft,
+      curve: Curves.decelerate,
+    ),
+    GetPage(
+      name: AppRoutes.activeListDetails,
+      page: () => ActiveListDetailsScreen(),
       transition: Transition.rightToLeft,
       curve: Curves.decelerate,
     ),

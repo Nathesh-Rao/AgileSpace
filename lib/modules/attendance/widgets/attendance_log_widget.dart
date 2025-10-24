@@ -386,6 +386,7 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
       height: 40,
       child: Center(
         child: ListView.separated(
+          controller: controller.monthScrollController,
           padding: EdgeInsets.symmetric(horizontal: 15),
           physics: BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,

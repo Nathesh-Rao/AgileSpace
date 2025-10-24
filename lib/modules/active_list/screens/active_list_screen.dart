@@ -72,6 +72,7 @@ class ActiveListScreen extends GetView<ActiveListController> {
                       var currentList = controller.activeTaskMap[key];
 
                       return ExpandedTile(
+                        key: ValueKey(key),
                         contentseparator: 0,
                         theme: ExpandedTileThemeData(
                           titlePadding: EdgeInsets.all(0),

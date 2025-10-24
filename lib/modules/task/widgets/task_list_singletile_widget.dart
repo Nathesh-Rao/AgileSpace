@@ -1,5 +1,4 @@
 import 'package:axpert_space/common/common.dart';
-import 'package:axpert_space/core/config/config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,7 +36,7 @@ class TaskListSingleTileWidget extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      taskModel.projectName,
+                      taskModel.project,
                       style: AppStyles.textButtonStyle.copyWith(
                         fontSize: 13.sp,
                       ),

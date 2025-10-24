@@ -38,8 +38,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
                     )),
                 child: Column(
                   children: [
-                    Obx(() => _getAttendanceStateWidget(
-                        controller.attendanceState.value)),
+                    Obx(() => _getAttendanceStateWidget(controller.attendanceState.value)),
                     _bottomInfoWidget(),
                   ],
                 ),
@@ -52,8 +51,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
   }
 
   Widget _leaveWidget() {
-    var message =
-        controller.attendanceDetails.value?.message.toLowerCase() ?? '';
+    var message = controller.attendanceDetails.value?.message.toLowerCase() ?? '';
     var text = "";
     var image = "assets/lotties/relaxing.json";
     if (message.contains("sick")) {
@@ -99,6 +97,32 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
     );
   }
 
+  Widget _punchedOutWidget() => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(10.w),
+            child: Lottie.asset("assets/lotties/cycle.json"),
+          ),
+          10.horizontalSpace,
+          Expanded(
+              child: Container(
+            padding: EdgeInsets.all(10.w),
+            decoration: BoxDecoration(
+              color: AppColors.baseYellow.withAlpha(10),
+            ),
+            child: Center(
+              child: Text(
+                "You have been successfully Clocked Out! 🚌",
+                style: GoogleFonts.poppins(
+                  color: AppColors.baseYellow,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          )),
+        ],
+      );
   Widget _holidayWidget() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -139,21 +163,19 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
                 _getAttendanceInfoSecondWidget(),
               ],
             ));
+      case AttendanceState.punchedOut:
+        return Expanded(child: _punchedOutWidget());
       case AttendanceState.leave:
         return Expanded(child: _leaveWidget());
       case AttendanceState.holiday:
         return Expanded(child: _holidayWidget());
       case AttendanceState.error:
         return Expanded(child: _noDetailsAvailableWidget());
-      default:
-        return Expanded(child: _noDetailsAvailableWidget());
     }
   }
 
   Widget _actionButton(String text) {
-    Color color = text.toLowerCase().contains('inn')
-        ? AppColors.chipCardWidgetColorGreen
-        : AppColors.baseRed;
+    Color color = text.toLowerCase().contains('inn') ? AppColors.chipCardWidgetColorGreen : AppColors.baseRed;
 
     return SizedBox(
       width: double.infinity,
@@ -180,8 +202,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
 
             Text(
               text,
-              style: AppStyles.textButtonStyleNormal.copyWith(
-                  color: color, fontSize: 14.sp, fontWeight: FontWeight.w500),
+              style: AppStyles.textButtonStyleNormal.copyWith(color: color, fontSize: 14.sp, fontWeight: FontWeight.w500),
             ),
             Image.asset(
               "assets/images/common/clock_inn.png",
@@ -197,8 +218,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
   Widget _noDetailsAvailableWidget() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(CupertinoIcons.clear_circled_solid,
-              color: AppColors.baseRed),
+          const Icon(CupertinoIcons.clear_circled_solid, color: AppColors.baseRed),
           10.horizontalSpace,
           const Text("No data found"),
         ],
@@ -206,17 +226,14 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
 
   Widget _dashboardHeadWidget() => Obx(
         () => Visibility(
-          visible: (controller.attendanceState.value ==
-                  AttendanceState.punchedIn ||
+          visible: (controller.attendanceState.value == AttendanceState.punchedIn ||
               controller.attendanceState.value == AttendanceState.punchedOut),
           child: Container(
             height: 23.h,
             width: double.infinity,
             margin: EdgeInsets.symmetric(horizontal: 11.w),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(10.r),
-                  topLeft: Radius.circular(10.r)),
+              borderRadius: BorderRadius.only(topRight: Radius.circular(10.r), topLeft: Radius.circular(10.r)),
               gradient: LinearGradient(
                 colors: [
                   AppColors.gradientBlue,
@@ -230,11 +247,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
               children: [
                 10.horizontalSpace,
                 Text(
-                  controller.attendanceState.value == AttendanceState.punchedIn
-                      ? controller.clockTimeStatus(
-                          "${controller.attendanceDetails.value?.actualOuttime}")
-                      : controller.clockTimeStatus(
-                          "${controller.attendanceDetails.value?.actualIntime}"),
+                  _getAttendanceInfoHeadText(),
                   style: GoogleFonts.poppins(
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w500,
@@ -247,14 +260,37 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
         ),
       );
 
+  _getAttendanceInfoHeadText() {
+    var text = '';
+    switch (controller.attendanceState.value) {
+      case AttendanceState.punchedIn:
+        text = controller.clockTimeStatus("${controller.attendanceDetails.value?.actualOuttime}");
+        break;
+      case AttendanceState.punchedOut:
+        text = "Punched out at ${controller.attendanceDetails.value?.outtime}";
+        break;
+      case AttendanceState.holiday:
+        text = "HOLIDAY";
+        break;
+      case AttendanceState.leave:
+        text = "On Leave";
+        break;
+      default:
+        text = controller.clockTimeStatus("${controller.attendanceDetails.value?.actualIntime}");
+    }
+
+    controller.attendanceState.value == AttendanceState.punchedIn
+        ? controller.clockTimeStatus("${controller.attendanceDetails.value?.actualOuttime}")
+        : controller.clockTimeStatus("${controller.attendanceDetails.value?.actualIntime}");
+    return text;
+  }
+
   Widget _getAttendanceInfoMainWidget() {
     return Expanded(
       child: ZoomIn(
         duration: Duration(milliseconds: 400),
         child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black26),
-              borderRadius: BorderRadius.circular(10.r)),
+          decoration: BoxDecoration(border: Border.all(color: Colors.black26), borderRadius: BorderRadius.circular(10.r)),
           padding: EdgeInsets.all(8.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,8 +332,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
                       children: [
                         TextSpan(
                           text: "",
-                          style: AppStyles.attendanceWidgetTimeStyle
-                              .copyWith(fontSize: 12.sp),
+                          style: AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 12.sp),
                         )
                       ])),
               Row(
@@ -321,9 +356,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
 
   Widget _getAttendanceInfoSecondWidget() {
     var signInWidget = Container(
-      decoration: BoxDecoration(
-          border: Border.all(color: Colors.black26),
-          borderRadius: BorderRadius.circular(10.r)),
+      decoration: BoxDecoration(border: Border.all(color: Colors.black26), borderRadius: BorderRadius.circular(10.r)),
       padding: EdgeInsets.all(8.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,8 +393,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
             () => Text(
               // "${controller.clockInLocation.value.split("\n")[0].replaceFirst("Name:", "").trim()}\n${controller.clockInLocation.value.split("\n")[4].replaceFirst("Postal code:", "").trim()}",
               controller.clockInLocation.value,
-              style:
-                  AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 10.sp),
+              style: AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 10.sp),
             ),
           ),
           5.verticalSpace,
@@ -370,9 +402,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
     );
 
     var signOutWidget = Container(
-      decoration: BoxDecoration(
-          border: Border.all(color: Colors.black26),
-          borderRadius: BorderRadius.circular(10.r)),
+      decoration: BoxDecoration(border: Border.all(color: Colors.black26), borderRadius: BorderRadius.circular(10.r)),
       padding: EdgeInsets.all(8.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,8 +443,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
                   children: [
                     TextSpan(
                       text: "",
-                      style: AppStyles.attendanceWidgetTimeStyle
-                          .copyWith(fontSize: 12.sp),
+                      style: AppStyles.attendanceWidgetTimeStyle.copyWith(fontSize: 12.sp),
                     )
                   ])),
           Row(
@@ -551,23 +580,23 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
     return Obx(
       () => controller.attendanceState.value == AttendanceState.holiday
           ? _actionButton("Clock Inn")
-          : Container(
-              decoration: BoxDecoration(
-                  color: AppColors.violetBorder.withAlpha(50),
-                  borderRadius: BorderRadius.circular(5.r)),
-              padding: EdgeInsets.symmetric(vertical: 5.h),
-              margin: EdgeInsets.only(top: 20.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Update your work sheet before clock out",
-                    style: GoogleFonts.poppins(
-                        fontSize: 11.sp, fontWeight: FontWeight.w600),
+          : controller.attendanceState.value == AttendanceState.punchedOut
+              ? SizedBox.shrink()
+              : Container(
+                  decoration:
+                      BoxDecoration(color: AppColors.violetBorder.withAlpha(50), borderRadius: BorderRadius.circular(5.r)),
+                  padding: EdgeInsets.symmetric(vertical: 5.h),
+                  margin: EdgeInsets.only(top: 20.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Update your work sheet before clock out",
+                        style: GoogleFonts.poppins(fontSize: 11.sp, fontWeight: FontWeight.w600),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
     );
   }
 }

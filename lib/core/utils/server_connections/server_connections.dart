@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../common/log_service/log_services.dart';
-import '../../app_storage/app_storage.dart';
 import '../../core.dart';
 import '../internet_connections/internet_connectivity.dart';
 

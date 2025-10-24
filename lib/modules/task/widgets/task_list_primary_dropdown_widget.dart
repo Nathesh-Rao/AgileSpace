@@ -8,20 +8,21 @@ class PrimaryDropdownField extends StatelessWidget {
   final String? value;
   final List<String> items;
   final ValueChanged<String?>? onChanged;
-
+  final Color? borderColor;
   const PrimaryDropdownField({
     super.key,
     required this.value,
     required this.items,
     this.onChanged,
+    this.borderColor,
   });
 
   @override
   Widget build(BuildContext context) {
     final borderStyle = OutlineInputBorder(
       borderRadius: BorderRadius.circular(5.r),
-      borderSide: const BorderSide(
-        color: Colors.blueAccent,
+      borderSide: BorderSide(
+        color: borderColor ?? Colors.blueAccent,
         width: 1,
       ),
     );
@@ -42,7 +43,8 @@ class PrimaryDropdownField extends StatelessWidget {
         border: borderStyle,
         enabledBorder: borderStyle,
         focusedBorder: borderStyle.copyWith(
-          borderSide: const BorderSide(color: Colors.deepPurple, width: 1),
+          borderSide:
+              BorderSide(color: borderColor ?? Colors.deepPurple, width: 1),
         ),
         contentPadding: EdgeInsets.only(right: 12.w),
       ),
@@ -51,13 +53,13 @@ class PrimaryDropdownField extends StatelessWidget {
           radius: Radius.circular(50.r),
           crossAxisMargin: 5,
           mainAxisMargin: 5,
-          thumbColor: WidgetStatePropertyAll(Colors.deepPurple),
+          thumbColor: WidgetStatePropertyAll(borderColor ?? Colors.deepPurple),
         ),
         offset: const Offset(0, -10),
         maxHeight: 300.h,
         decoration: BoxDecoration(
           border: Border.all(
-            color: AppColors.chipCardWidgetColorViolet,
+            color: borderColor ?? AppColors.chipCardWidgetColorViolet,
             width: 1,
           ),
           color: Colors.white,

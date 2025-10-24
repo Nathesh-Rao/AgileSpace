@@ -1,3 +1,4 @@
+import 'package:axpert_space/common/common.dart';
 import 'package:flutter/material.dart';
 
 class RainbowLoadingWidget extends StatefulWidget {
@@ -10,12 +11,11 @@ class RainbowLoadingWidget extends StatefulWidget {
 class _RainbowLoadingWidgetState extends State<RainbowLoadingWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     )..repeat();
   }
@@ -39,25 +39,20 @@ class _RainbowLoadingWidgetState extends State<RainbowLoadingWidget>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 2.5,
-      width: double.infinity,
+      height: 2.5.h,
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
-          return ShaderMask(
-            shaderCallback: (Rect bounds) {
-              return LinearGradient(
-                colors: rainbowColors,
+          return Container(
+            height: 2.5.h,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
                 begin: Alignment(-1 + 2 * _controller.value, 0),
                 end: Alignment(1 + 2 * _controller.value, 0),
-                tileMode: TileMode.mirror,
-              ).createShader(bounds);
-            },
-            blendMode: BlendMode.srcIn,
-            child: LinearProgressIndicator(
-              backgroundColor: Colors.transparent,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              minHeight: 2.5,
+                colors: rainbowColors,
+                tileMode: TileMode.repeated, // ensures no gap
+              ),
             ),
           );
         },

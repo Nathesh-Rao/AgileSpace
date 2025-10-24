@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:axpert_space/core/app_storage/app_storage.dart';
+import 'package:axpert_space/modules/active_list/controller/active_list_details_controller.dart';
 import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
+import 'package:axpert_space/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expanded_tile/flutter_expanded_tile.dart';
 import 'package:get/get.dart';
@@ -418,6 +420,7 @@ class ActiveListController extends GetxController {
   }
 
   void onTaskClick(ActiveTaskListModel task) async {
+    ActiveListDetailsController activeListDetailsController = Get.find();
     var pendingModel = task.toPendingListModel();
 
     debugPrint(pendingModel.tasktype);
@@ -432,11 +435,15 @@ class ActiveListController extends GetxController {
       // break;
       case "CHECK":
       case "APPROVE":
-        // listItemDetailsController.openModel = pendingModel;
+        activeListDetailsController.openModel = pendingModel;
 
         // print("Going to active details page");
-        // //listItemDetailsController.fetchDetails();
-        // await Get.toNamed(Routes.ProjectListingPageDetails);
+        // //to.fetchDetails();
+        activeListDetailsController.isTaskDetailsRowOptionsExpanded.value =
+            false;
+        await Get.toNamed(AppRoutes.activeListDetails);
+        activeListDetailsController.openModel = null;
+
         // print("returned from active details page");
         refreshList();
 
@@ -610,4 +617,6 @@ class ActiveListController extends GetxController {
       }
     }
   }
+
+//Active List Details
 }

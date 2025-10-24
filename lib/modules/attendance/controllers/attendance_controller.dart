@@ -56,7 +56,8 @@ class AttendanceController extends GetxController {
 //----
   var onCloseRefreshAttendance = false.obs;
 
-  var selectedMonthIndex = DateTime.now().month.obs;
+  var selectedMonthIndex = (DateTime.now().month - 1).obs;
+  ScrollController monthScrollController = ScrollController();
   var selectedYear = DateFormat("yyyy").format(DateTime.now()).obs;
   ServerConnections serverConnections = ServerConnections();
   WebViewController webViewController = Get.find();

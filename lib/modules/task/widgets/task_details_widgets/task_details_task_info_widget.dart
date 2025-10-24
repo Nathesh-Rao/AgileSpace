@@ -41,15 +41,9 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
           5.verticalSpace,
           Row(
             children: [
-              ChipCardWidget(
-                  onMaxSize: true,
-                  label: taskModel.status,
-                  color: AppColors.getStatusColor(taskModel.status)),
+              ChipCardWidget(onMaxSize: true, label: taskModel.status, color: AppColors.getStatusColor(taskModel.status)),
               Spacer(),
-              ChipCardWidget(
-                  onMaxSize: true,
-                  label: taskModel.priority,
-                  color: AppColors.getPriorityColor(taskModel.priority)),
+              ChipCardWidget(onMaxSize: true, label: taskModel.priority, color: AppColors.getPriorityColor(taskModel.priority)),
             ],
           ),
           5.verticalSpace,
@@ -73,9 +67,7 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
               Text(
                 StringUtils.formatDate(taskModel.createdOn.toString()),
                 style: GoogleFonts.poppins(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primarySubTitleTextColorBlueGreyLight),
+                    fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
               )
             ],
           ),
@@ -98,31 +90,90 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
               Text(
                 StringUtils.formatDate(taskModel.dueDate.toString()),
                 style: GoogleFonts.poppins(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primarySubTitleTextColorBlueGreyLight),
+                    fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
               )
             ],
           ),
           10.verticalSpace,
-          Row(
-            spacing: 5.w,
-            children: [
-              Text(
-                "Project :",
-                style: AppStyles.textButtonStyle.copyWith(
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
+          Builder(builder: (context) {
+            var isProjectInactive = taskModel.project.toLowerCase().contains("na");
+            var isCustomerInactive = taskModel.customer.toLowerCase().contains("na");
+            var isPartnerInactive = taskModel.partner.toLowerCase().contains("na");
+            var inactiveColor = AppColors.grey7;
+            getFullForm(String val) {
+              if (val.toLowerCase().contains("na")) {
+                return "Info not available";
+              }
+              return val;
+            }
+
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              spacing: 5.h,
+              children: [
+                Row(
+                  spacing: 5.w,
+                  children: [
+                    Text(
+                      "Project :",
+                      style: AppStyles.textButtonStyle.copyWith(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w500,
+                        color: isProjectInactive ? inactiveColor : null,
+                      ),
+                    ),
+                    Text(
+                      getFullForm(taskModel.project),
+                      style: AppStyles.textButtonStyle.copyWith(
+                        fontSize: 13.sp,
+                        color: isProjectInactive ? inactiveColor : null,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                taskModel.projectName,
-                style: AppStyles.textButtonStyle.copyWith(
-                  fontSize: 13.sp,
+                Row(
+                  spacing: 5.w,
+                  children: [
+                    Text(
+                      "Customer :",
+                      style: AppStyles.textButtonStyle.copyWith(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w500,
+                        color: isCustomerInactive ? inactiveColor : null,
+                      ),
+                    ),
+                    Text(
+                      getFullForm(taskModel.customer),
+                      style: AppStyles.textButtonStyle.copyWith(
+                        fontSize: 13.sp,
+                        color: isCustomerInactive ? inactiveColor : null,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
+                Row(
+                  spacing: 5.w,
+                  children: [
+                    Text(
+                      "Partner :",
+                      style: AppStyles.textButtonStyle.copyWith(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w500,
+                        color: isPartnerInactive ? inactiveColor : null,
+                      ),
+                    ),
+                    Text(
+                      getFullForm(taskModel.partner),
+                      style: AppStyles.textButtonStyle.copyWith(
+                        fontSize: 13.sp,
+                        color: isPartnerInactive ? inactiveColor : null,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          }),
           16.verticalSpace,
           ParticipantAvatarStackWidget(
             avatarSize: 35.w,
@@ -145,9 +196,7 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
                   Text(
                     "${taskModel.messageCount} Comments",
                     style: GoogleFonts.poppins(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primarySubTitleTextColorBlueGreyLight),
+                        fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
                   )
                 ],
               ),
@@ -162,9 +211,7 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
                   Text(
                     "${taskModel.attachmentCount} Attachments",
                     style: GoogleFonts.poppins(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primarySubTitleTextColorBlueGreyLight),
+                        fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
                   )
                 ],
               ),
@@ -181,10 +228,7 @@ class TaskDetailsTaskInfoWidget extends StatelessWidget {
                 spacing: 10.w,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ChipCardWidget(
-                      onMaxSize: true,
-                      label: taskModel.taskCategory,
-                      color: AppColors.chipCardWidgetColorViolet),
+                  ChipCardWidget(onMaxSize: true, label: taskModel.taskCategory, color: AppColors.chipCardWidgetColorViolet),
                   // ChipCardWidget(
                   //   onMaxSize: true,
                   //   label: taskModel.priority,

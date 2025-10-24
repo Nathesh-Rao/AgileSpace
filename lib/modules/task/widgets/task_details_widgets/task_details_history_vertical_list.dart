@@ -13,6 +13,7 @@ class TaskDetailsHistoryVerticalListWidget extends GetView<TaskController> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+        shrinkWrap: true,
         padding: EdgeInsets.all(15),
         itemCount: controller.taskHistoryList.length,
         itemBuilder: (context, index) {
@@ -95,13 +96,10 @@ class TaskDetailsHistoryVerticalListWidget extends GetView<TaskController> {
                 5.verticalSpace,
                 Row(
                   children: [
-                    ChipCardWidget(
-                        label: history.status,
-                        color: AppColors.getHistoryColor(history.status)),
+                    ChipCardWidget(label: history.status, color: AppColors.getHistoryColor(history.status)),
                     Spacer(),
                     Text(
-                      DateUtilsHelper.formatDateTimeForHistory(
-                          history.modifiedon),
+                      DateUtilsHelper.formatDateTimeForHistory(history.modifiedon),
                       // history.modifiedon,
                       style: AppStyles.taskHistoryUserNameStyle.copyWith(
                         fontSize: 8.sp,
