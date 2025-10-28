@@ -14,7 +14,7 @@ class BottomBarWidget extends GetView<LandingController> {
         currentIndex: controller.currentBottomBarIndex.value,
         onTap: controller.setBottomBarIndex,
         elevation: 10,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.secondaryButtonBGColorWhite,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         enableFeedback: false,
@@ -23,10 +23,16 @@ class BottomBarWidget extends GetView<LandingController> {
         unselectedFontSize: 0.0,
         type: BottomNavigationBarType.fixed,
         items: [
-          BottomNavigationBarItem(icon: _bottomBarIcon(controller.dashboardIcon, 0), label: ''),
-          BottomNavigationBarItem(icon: _bottomBarIcon(controller.payAttendanceIcon, 1), label: ''),
-          BottomNavigationBarItem(icon: _bottomBarIcon(controller.calendarIcon, 2), label: ''),
-          BottomNavigationBarItem(icon: _bottomBarIcon(controller.settingsIcon, 3), label: ''),
+          BottomNavigationBarItem(
+              icon: _bottomBarIcon(controller.dashboardIcon, 0), label: ''),
+          BottomNavigationBarItem(
+              icon: _bottomBarIcon(controller.payAttendanceIcon, 1), label: ''),
+          BottomNavigationBarItem(
+              icon: _bottomBarIcon(controller.activeTaskIcon, 2), label: ''),
+          BottomNavigationBarItem(
+              icon: _bottomBarIcon(controller.calendarIcon, 3), label: ''),
+          BottomNavigationBarItem(
+              icon: _bottomBarIcon(controller.settingsIcon, 4), label: ''),
         ],
       ),
     );
@@ -36,8 +42,10 @@ class BottomBarWidget extends GetView<LandingController> {
     return SizedBox(
       width: 60.w,
       height: 60.w,
-      child:
-          Image.asset(icon, color: index == controller.currentBottomBarIndex.value ? AppColors.primaryActionIconColorBlue : null),
+      child: Image.asset(icon,
+          color: index == controller.currentBottomBarIndex.value
+              ? AppColors.primaryActionIconColorBlue
+              : null),
     );
   }
 }

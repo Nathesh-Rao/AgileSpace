@@ -5,70 +5,40 @@ import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:axpert_space/common/widgets/flat_button_widget.dart';
 import 'package:axpert_space/data/data_source/datasource_services.dart';
 import 'package:axpert_space/modules/attendance/models/AttendanceReportModel.dart';
+import 'package:axpert_space/modules/landing/controllers/landing_controller.dart';
 import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/core.dart';
 import '../models/Attendance_detail_model.dart';
 
 class AttendanceController extends GetxController {
-  var attendanceAppbarSwitchValue = false.obs;
+  AppStorage appStorage = AppStorage();
   var attendanceAppbarSwitchIsLoading = false.obs;
+  var attendanceAppbarSwitchValue = false.obs;
   var attendanceClockInWidgetCallBackValue = false.obs;
-  var isAttendanceDetailsIsLoading = false.obs;
-  var isAddrsFetchLoading = false.obs;
-  var attendanceDetails = Rxn<AttendanceDetailsModel>();
-  var isClockedIn = false.obs;
-  var isClockedOut = false.obs;
-  var clockInLocation = ''.obs;
-  var clockOutLocation = ''.obs;
-
 //----
   var attendanceDashboardIsLoading = false.obs;
-  var attendanceState = AttendanceState.notPunchedIn.obs;
+
+  var attendanceDetails = Rxn<AttendanceDetailsModel>();
   var attendancePendingAction = AttendancePendingAction.none.obs;
 //-----
   var attendanceReportList = [].obs;
+
+  var attendanceState = AttendanceState.notPunchedIn.obs;
+  var clockInLocation = ''.obs;
+  var clockOutLocation = ''.obs;
+  var isAddrsFetchLoading = false.obs;
+  var isAttendanceDetailsIsLoading = false.obs;
   var isAttendanceReportLoading = false.obs;
+  var isClockedIn = false.obs;
+  var isClockedOut = false.obs;
   var isLogExpanded = false.obs;
   var isLogExpandedAssist = false.obs;
-
-  ServerConnections serverConnections = ServerConnections();
-  AppStorage appStorage = AppStorage();
-  WebViewController webViewController = Get.find();
-
-  @override
-  void onInit() {
-    super.onInit();
-    webViewController.onIndexChanged = handleWebViewIndexChange;
-  }
-
-  handleWebViewIndexChange(int index) async {
-    if (index == 0) {
-      LogService.writeLog(message: "${attendancePendingAction.value}");
-
-      switch (attendancePendingAction.value) {
-        case AttendancePendingAction.none:
-          return;
-        case AttendancePendingAction.punchIn:
-          await doPunchInPunchOut(Const.SCRIPT_PUNCH_INN);
-          break;
-        case AttendancePendingAction.punchOut:
-          await doPunchInPunchOut(Const.SCRIPT_PUNCH_OUT);
-        case AttendancePendingAction.leave:
-          await getInitialAttendanceDetails(force: true);
-          break;
-      }
-    }
-  }
-
   var months = [
     'January',
     'February',
@@ -83,6 +53,15 @@ class AttendanceController extends GetxController {
     'November',
     'December',
   ];
+
+//----
+  var onCloseRefreshAttendance = false.obs;
+
+  var selectedMonthIndex = (DateTime.now().month - 1).obs;
+  ScrollController monthScrollController = ScrollController();
+  var selectedYear = DateFormat("yyyy").format(DateTime.now()).obs;
+  ServerConnections serverConnections = ServerConnections();
+  WebViewController webViewController = Get.find();
   var years = [
     '2014',
     '2015',
@@ -97,9 +76,51 @@ class AttendanceController extends GetxController {
     '2024',
     '2025',
   ];
+// attendance details log
+  var calledFromAttendanceLogScreen = false;
+  @override
+  void onInit() {
+    super.onInit();
+    webViewController.onIndexChanged = handleWebViewIndexChange;
+  }
 
-  var selectedMonthIndex = DateTime.now().month.obs;
-  var selectedYear = DateFormat("yyyy").format(DateTime.now()).obs;
+  handleWebViewIndexChange(int index) async {
+    if (index == 0) {
+      // For doiung pending action from punchin punchout widget
+      LogService.writeLog(message: "${attendancePendingAction.value}");
+
+      switch (attendancePendingAction.value) {
+        case AttendancePendingAction.none:
+          break;
+        case AttendancePendingAction.punchIn:
+          await doPunchInPunchOut(Const.SCRIPT_PUNCH_INN);
+          break;
+        case AttendancePendingAction.punchOut:
+          await doPunchInPunchOut(Const.SCRIPT_PUNCH_OUT);
+        case AttendancePendingAction.leave:
+          await getInitialAttendanceDetails(force: true);
+          break;
+      }
+
+      //For updating attendance data after coming back from my task and timesheet
+      if (onCloseRefreshAttendance.value) {
+        onCloseRefreshAttendance.value = false;
+        LogService.writeLog(
+            message:
+                "handleOnClosePunchinPunchOut||handleWebViewIndexChange : $handleOnClosePunchinPunchOut");
+        await getInitialAttendanceDetails(force: true);
+      }
+    }
+  }
+
+  handleOnClosePunchinPunchOut(String url) {
+    if (url.contains("tpunch") ||
+        url.contains("itaskslst") ||
+        url.contains("ttimes")) {
+      onCloseRefreshAttendance.value = true;
+      LogService.writeLog(message: "handleOnClosePunchinPunchOut : $url");
+    }
+  }
 
   updateSelectedYear(dynamic date) {
     if (selectedYear.value == years[date]) return;
@@ -109,6 +130,12 @@ class AttendanceController extends GetxController {
 
   updateMonthIndex(int index) {
     if (selectedMonthIndex.value == index) return;
+    double itemWidth = 60;
+    monthScrollController.animateTo(
+      index * itemWidth,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOut,
+    );
     selectedMonthIndex.value = index;
     getAttendanceReport();
   }
@@ -173,12 +200,12 @@ class AttendanceController extends GetxController {
     // attendanceAppbarSwitchValue.value = !attendanceAppbarSwitchValue.value;
   }
 
-  onAttendanceClockInCardClick() async {
-    // attendanceAppbarSwitchIsLoading.value = true;
-    // await Future.delayed(Duration(seconds: 2));
-    // attendanceAppbarSwitchIsLoading.value = false;
-    // attendanceClockInWidgetCallBackValue.value = true;
-    // attendanceAppbarSwitchValue.value = !attendanceAppbarSwitchValue.value;
+  onAttendanceClockInCardClick(bool isPunchedInn) {
+    if (!isPunchedInn) {
+      doPunchInPunchOut(Const.SCRIPT_PUNCH_INN);
+    } else {
+      doPunchInPunchOut(Const.SCRIPT_PUNCH_OUT);
+    }
   }
 
   onAttendanceClockInAnimationEnd() {
@@ -713,14 +740,16 @@ class AttendanceController extends GetxController {
         var innerResultJSON = jsonDecode(jsonDSResp['result']['result']);
         if (innerResultJSON['message']
             .toString()
-            .contains("Punched in successfully")) {
+            .toLowerCase()
+            .contains("punched in successfully")) {
           attendancePendingAction.value = AttendancePendingAction.none;
           isRefreshAttendanceWidget = true;
           // await getInitialAttendanceDetails(force: true);
           AppSnackBar.showSuccess("Punched in successfully", "message");
         } else if (innerResultJSON['message']
             .toString()
-            .contains("Punched out successfully")) {
+            .toLowerCase()
+            .contains("punched out successfully")) {
           attendancePendingAction.value = AttendancePendingAction.none;
           isRefreshAttendanceWidget = true;
 
@@ -728,10 +757,14 @@ class AttendanceController extends GetxController {
           AppSnackBar.showSuccess("Punched out successfully", "message");
         } else if (innerResultJSON['message']
             .toString()
+            .toLowerCase()
             .contains("timesheet")) {
           showTimeSheetDialog(innerResultJSON['message'][0]["msg"], scriptName);
         } else {
-          if (innerResultJSON['message'].toString().contains("Exceptions")) {
+          if (innerResultJSON['message']
+              .toString()
+              .toLowerCase()
+              .contains("exceptions")) {
             attendancePendingAction.value = AttendancePendingAction.none;
 
             //remove "Exception later"
@@ -759,6 +792,11 @@ class AttendanceController extends GetxController {
   }
 
   openWorkSheet() {
+    if (calledFromAttendanceLogScreen) {
+      calledFromAttendanceLogScreen = false;
+      Get.back();
+    }
+
     var url =
         "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=ttimes";
     var url2 =
@@ -766,5 +804,26 @@ class AttendanceController extends GetxController {
 
     LogService.writeLog(message: "URL-1: $url\nURL-2: $url2");
     webViewController.openWebView(url: url);
+  }
+
+  void onAttendanceLogInit() {
+    selectedMonthIndex.value = (DateTime.now().month - 1);
+
+    double itemWidth = 55.w;
+    monthScrollController.animateTo(
+      selectedMonthIndex.value * itemWidth,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeIn,
+    );
+    getAttendanceLog();
+  }
+
+  void onAttendnaceLogClockButtonClick(bool isPunchInn) {
+    calledFromAttendanceLogScreen = true;
+    if (!isPunchInn) {
+      doPunchInPunchOut(Const.SCRIPT_PUNCH_INN);
+    } else {
+      doPunchInPunchOut(Const.SCRIPT_PUNCH_OUT);
+    }
   }
 }

@@ -211,7 +211,7 @@ class AuthController extends GetxController {
     return AuthType.none;
   }
 
-  callSignInAPI() async {
+  callSignInAPI({bool isSnackBarActive = false}) async {
     if (validateForm()) {
       isLoginLoading.value = true;
       var signInBody = {
@@ -237,6 +237,9 @@ class AuthController extends GetxController {
         var json = jsonDecode(response);
         if (json["result"]["success"].toString().toLowerCase() == "true") {
           if (json["result"]["message"].toString() == "Login Successful.") {
+            if (isSnackBarActive) {
+              Get.back();
+            }
             await processSignInDataResponse(json["result"]);
           } else if (json["result"]?.containsKey("OTPLoginKey")) {
             // OTPPage
@@ -524,14 +527,14 @@ class AuthController extends GetxController {
               Text(
                 "Duplicate Session",
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
                   color: AppColors.baseBlue,
                 ),
                 textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: 16),
+              16.verticalSpace,
 
               // Message
               Text(
@@ -540,7 +543,7 @@ class AuthController extends GetxController {
                 textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: 24),
+              24.verticalSpace,
 
               // Buttons
               Obx(
@@ -549,7 +552,7 @@ class AuthController extends GetxController {
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Flexible(
+                          Expanded(
                             child: FlatButtonWidget(
                               color: AppColors.baseRed,
                               onTap: () {
@@ -559,7 +562,8 @@ class AuthController extends GetxController {
                             ),
                           ),
                           // Confirm button
-                          Flexible(
+                          20.horizontalSpace,
+                          Expanded(
                             child: FlatButtonWidget(
                               color: AppColors.baseBlue,
                               // style: ElevatedButton.styleFrom(
@@ -573,9 +577,9 @@ class AuthController extends GetxController {
                               //   elevation: 3,
                               // ),
                               onTap: () async {
-                                callSignInAPI();
+                                callSignInAPI(isSnackBarActive: true);
                               },
-                              label: "yes",
+                              label: "Yes",
                             ),
                           ),
                         ],

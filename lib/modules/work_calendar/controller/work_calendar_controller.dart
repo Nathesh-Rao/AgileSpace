@@ -1,33 +1,81 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:axpert_space/core/utils/date_utils.dart';
+import 'package:axpert_space/modules/work_calendar/model/off_days_model.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/core.dart';
+import '../../../data/data_source/datasource_services.dart';
+
 class WorkCalendarController extends GetxController {
+  var appStorage = AppStorage();
+  var serverConnections = ServerConnections();
+  var isOffDaysLoading = false.obs;
   var dateClicked = false.obs;
   var dateInfo = ''.obs;
   Timer? _timer;
 
   DateTime selectedDate = DateTime.now();
 
+  List<OffDaysModel> offDaysList = [];
+  Map<DateTime, String> karnatakaHolidays = {};
+
   Map<DateTime, int> calendarMap = {
-    DateTime(2025, 1, 1): 3,
-    DateTime(2025, 1, 14): 3,
-    DateTime(2025, 2, 26): 3,
-    DateTime(2025, 4, 14): 3,
-    DateTime(2025, 5, 1): 3,
-    DateTime(2025, 8, 15): 3,
-    DateTime(2025, 8, 27): 3,
-    DateTime(2025, 10, 1): 3,
-    DateTime(2025, 10, 2): 3,
-    DateTime(2025, 10, 20): 3,
-    DateTime(2025, 1, 26): 3,
-    DateTime(2025, 3, 30): 3,
-    DateTime(2025, 6, 7): 3,
-    DateTime(2025, 7, 6): 3,
-    DateTime(2025, 11, 1): 3,
-    ...generateWeekendData(2025, 1),
+    ...generateWeekendData(DateTime.now().year, 1),
   };
+  initializeOffDays() async {
+    if (karnatakaHolidays.isNotEmpty) return;
+    isOffDaysLoading.value = true;
+    offDaysList = [];
+    offDaysList = await getAllOffDays();
+    _parseOffDaysList();
+    isOffDaysLoading.value = false;
+  }
+
+  Future<List<OffDaysModel>> getAllOffDays() async {
+    List<OffDaysModel> offDaysList = [];
+
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": DataSourceServices.DS_GETOFFDAYS,
+      "sqlParams": {"year": "2025"}
+    };
+
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        var dsDataList = jsonDSResp['result']['data'];
+        try {
+          for (var i in dsDataList) {
+            offDaysList.add(OffDaysModel.fromJson(i));
+          }
+        } catch (e) {
+          debugPrint(e.toString());
+        }
+      }
+    }
+
+    return offDaysList;
+  }
+
+  DateTime parseDate(String dateString) {
+    final parts = dateString.split('-');
+    if (parts.length != 3) {
+      throw FormatException('Invalid date format, expected dd-MM-yyyy');
+    }
+
+    final day = int.parse(parts[0]);
+    final month = int.parse(parts[1]);
+    final year = int.parse(parts[2]);
+
+    return DateTime(year, month, day);
+  }
 
   static Map<DateTime, int> generateWeekendData(int year, int value) {
     final Map<DateTime, int> weekendData = {};
@@ -43,25 +91,6 @@ class WorkCalendarController extends GetxController {
 
     return weekendData;
   }
-
-  final Map<DateTime, String> karnatakaHolidays = {
-    DateTime(2025, 1, 1): "New Year",
-    DateTime(2025, 1, 14):
-        "Uttarayana / Punya Kala / Makara Sankranti Festival",
-    DateTime(2025, 2, 26): "Maha Shivaratri",
-    DateTime(2025, 4, 14): "New Year for Tamil and Malayalam",
-    DateTime(2025, 5, 1): "Labour Day",
-    DateTime(2025, 8, 15): "Independence Day",
-    DateTime(2025, 8, 27): "Varasiddhi Vinayaka Vratha / Ganesh Chaturthi",
-    DateTime(2025, 10, 1): "Maha Navami / Ayudh Pooja",
-    DateTime(2025, 10, 2): "Mahatma Gandhi’s Birthday / Vijayadashami",
-    DateTime(2025, 10, 20): "Deepavali",
-    DateTime(2025, 1, 26): "Republic Day (National Day)",
-    DateTime(2025, 3, 30): "Ugadi Festival",
-    DateTime(2025, 6, 7): "Bakrid (Feast of Sacrifice)",
-    DateTime(2025, 7, 6): "Muharram",
-    DateTime(2025, 11, 1): "Kannada Rajyothsava",
-  };
 
   onDateClick(DateTime value, {bool cancelTimer = false}) {
     selectedDate = value;
@@ -88,5 +117,21 @@ class WorkCalendarController extends GetxController {
     _timer = Timer(Duration(seconds: 3), () {
       dateClicked.value = false;
     });
+  }
+
+  void _parseOffDaysList() {
+    karnatakaHolidays.clear();
+    calendarMap.clear();
+
+    for (final offDay in offDaysList) {
+      final date = offDay.toDateTime();
+
+      karnatakaHolidays[date] = offDay.event;
+      calendarMap[date] =
+          3; // 3 is your “holiday” color intensity or marker value
+    }
+
+    // Optionally add weekends
+    calendarMap.addAll(generateWeekendData(2025, 1));
   }
 }

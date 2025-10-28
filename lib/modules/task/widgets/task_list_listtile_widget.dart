@@ -1,3 +1,4 @@
+import 'package:axpert_space/modules/task/controllers/task_controller.dart';
 import 'package:axpert_space/modules/task/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,7 @@ import '../../../core/core.dart';
 import '../../../routes/app_routes.dart';
 import '../models/models.dart';
 
-class TaskListListTileWidget extends StatelessWidget {
+class TaskListListTileWidget extends GetView<TaskController> {
   const TaskListListTileWidget({super.key, required this.taskModel});
   final TaskListModel taskModel;
   @override
@@ -31,15 +32,15 @@ class TaskListListTileWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                  child: Text(
+                  child: controller.highlightedText(
                     taskModel.caption,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
+                    GoogleFonts.poppins(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
                       color: AppColors.primaryActionColorDarkBlue,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 20.horizontalSpace,
@@ -100,9 +101,9 @@ class TaskListListTileWidget extends StatelessWidget {
                   ],
                 ),
                 Spacer(),
-                Text(
+                controller.highlightedText(
                   "TID : ${taskModel.id}",
-                  style: GoogleFonts.poppins(
+                  GoogleFonts.poppins(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: AppColors.primaryTitleTextColorBlueGrey,

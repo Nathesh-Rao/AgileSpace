@@ -1,3 +1,4 @@
+import 'package:axpert_space/common/widgets/rainbow_loading_widget.dart';
 import 'package:axpert_space/modules/attendance/attendance.dart';
 import 'package:axpert_space/modules/attendance/widgets/attendance_log_header_widget.dart';
 import 'package:axpert_space/modules/attendance/widgets/attendance_log_widget.dart';
@@ -10,7 +11,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.getAttendanceLog();
+      controller.onAttendanceLogInit();
     });
     return Scaffold(
       appBar: AppBar(
@@ -20,6 +21,9 @@ class AttendanceScreen extends GetView<AttendanceController> {
         ),
       ),
       body: Column(children: [
+        Obx(() => controller.isAttendanceDetailsIsLoading.value
+            ? RainbowLoadingWidget()
+            : SizedBox.shrink()),
         AttendanceLogHeaderWidget(),
         Expanded(child: AttendanceLogWidget()),
       ]),

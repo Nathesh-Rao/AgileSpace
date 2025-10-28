@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:axpert_space/common/common.dart';
+import 'package:axpert_space/common/widgets/empty_widget.dart';
 import 'package:axpert_space/core/config/colors/app_colors.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/news_events/controller/news_events_controller.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
   const NewsEventsDashboardWidget({super.key});
@@ -32,27 +34,30 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
         //       pageSnapping: false,
         //       scrollDirection: Axis.vertical,
         //     )),
-        SizedBox(
-          height: 265.h,
-          child: Stack(
-            children: [
-              PageView.builder(
-                controller: controller.pageController,
-                scrollDirection: Axis.vertical,
-                itemCount: controller.announcementList.length,
-                itemBuilder: (context, index) =>
-                    newsEventTile(controller.announcementList[index]),
-                onPageChanged: (v) {
-                  controller.currentIndex.value = v;
-                },
-              ),
-              Positioned(
-                right: 20.w,
-                top: 80.h,
-                child: _pageIndicator(),
-              ),
-            ],
-          ),
+        Obx(
+          () => SizedBox(
+            height: 265.h,
+            child: controller.announcementList.isEmpty
+                ? _emptyWidget()
+                : Stack(
+                    children: [
+                      PageView.builder(
+                        controller: controller.pageController,
+                        scrollDirection: Axis.vertical,
+                        itemCount: controller.announcementList.length,
+                        itemBuilder: (context, index) =>
+                            newsEventTile(controller.announcementList[index]),
+                        onPageChanged: (v) {
+                          controller.currentIndex.value = v;
+                        },
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: _pageIndicator(),
+                      ),
+                    ],
+                  ),
+          ).skeletonLoading(controller.isEventsLoading.value),
         )
       ],
     );
@@ -74,7 +79,8 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                     filterQuality: FilterQuality.none,
-                    image: AssetImage(announcement.image),
+                    image: AssetImage(controller
+                        .getImageFromEventType(announcement.eventType)),
                     fit: BoxFit.cover),
                 borderRadius: BorderRadius.circular(10.r),
               ),
@@ -117,12 +123,14 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
                     child: Row(
                       children: [
                         CircleAvatar(
-                          radius: 22,
+                          radius: 22.r,
                           backgroundColor: Colors.white,
+                          foregroundColor: AppColors.baseBlue,
                           child: CircleAvatar(
-                            radius: 21,
-                            backgroundImage: AssetImage(
-                                "assets/icons/common/profile_female.png"),
+                            radius: 21.r,
+                            // backgroundImage: AssetImage(
+                            //     "assets/icons/common/.png"),
+                            child: Icon(Symbols.person_filled_rounded),
                           ),
                         ),
                         10.horizontalSpace,
@@ -131,14 +139,15 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              announcement.op,
+                              announcement.employee.capitalize ??
+                                  announcement.employee,
                               style: GoogleFonts.poppins(
                                 color: AppColors.primaryButtonFGColorWhite,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             Text(
-                              announcement.opDesignation,
+                              announcement.designation,
                               style: GoogleFonts.poppins(
                                 color: AppColors.primaryButtonFGColorWhite,
                                 fontWeight: FontWeight.w600,
@@ -156,7 +165,7 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          announcement.caption,
+                          announcement.eventType,
                           style: GoogleFonts.poppins(
                             color: AppColors.primaryButtonFGColorWhite,
                             fontWeight: FontWeight.w600,
@@ -185,7 +194,8 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
                         Text(
                           // "DEC",
                           DateUtilsHelper.getShortMonthName(
-                                  DateTime.now().toString())
+                                  DateUtilsHelper.convertToIso(
+                                      announcement.eventDate))
                               .toUpperCase(),
                           style: GoogleFonts.poppins(
                             height: 1.1,
@@ -196,7 +206,8 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
                         ),
                         Text(
                           DateUtilsHelper.getDateNumber(
-                              DateTime.now().toString()),
+                              DateUtilsHelper.convertToIso(
+                                  announcement.eventDate)),
                           style: GoogleFonts.poppins(
                             height: 1.1,
                             fontSize: 24.sp,
@@ -229,7 +240,7 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
                               ),
                               8.horizontalSpace,
                               Text(
-                                "Office - Bangalore",
+                                announcement.location,
                                 style: GoogleFonts.poppins(
                                   fontSize: 10.sp,
                                   fontWeight: FontWeight.w600,
@@ -240,7 +251,7 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
                           5.verticalSpace,
                           Flexible(
                             child: AutoSizeText(
-                              "Notice of position for “Marsha Leanetha” from Jr. Backend developer becomes Sr. Backend developer following is the attachment to the letter",
+                              announcement.message,
                               maxFontSize: 10,
                               minFontSize: 8,
                               style: GoogleFonts.poppins(),
@@ -260,14 +271,67 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
   Widget _pageIndicator() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 3.w),
+      margin: EdgeInsets.only(right: 20.w),
       decoration: BoxDecoration(
         color: AppColors.primaryButtonFGColorWhite.withAlpha(50),
         borderRadius: BorderRadius.circular(50.r),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: List.generate(5, (index) => _indicatorWidget(index: index)),
+        children: List.generate(controller.announcementList.length,
+            (index) => _indicatorWidget(index: index)),
       ),
+
+      // child: Obx(
+      //   () => FlipInX(
+      //     key: ValueKey("${controller.currentIndex.value}-value"),
+      //     duration: Duration(milliseconds: 300),
+      //     curve: Curves.easeIn,
+      //     child: Column(
+      //       mainAxisSize: MainAxisSize.min,
+      //       children: [
+      //         Container(
+      //           width: 5.w,
+      //           height: 5.w,
+      //           margin: EdgeInsets.symmetric(vertical: 5.w),
+      //           decoration: BoxDecoration(
+      //             // shape: BoxShape.circle,
+      //             borderRadius: BorderRadius.circular(100),
+      //             color: AppColors.primaryButtonFGColorWhite,
+      //           ),
+      //         ),
+      //         Container(
+      //           width: 17.w,
+      //           height: 17.w,
+      //           decoration: BoxDecoration(
+      //             // shape: BoxShape.circle,
+      //             borderRadius: BorderRadius.circular(100),
+      //             color: AppColors.primaryButtonFGColorWhite,
+      //           ),
+      //           child: Center(
+      //             child: Text(
+      //               (controller.currentIndex.value + 1).toString(),
+      //               style: AppStyles.appBarTitleTextStyle.copyWith(
+      //                   fontSize: 7.sp,
+      //                   color: AppColors.baseRed,
+      //                   fontWeight: FontWeight.bold),
+      //             ),
+      //           ),
+      //         ),
+      //         Container(
+      //           width: 5.w,
+      //           height: 5.w,
+      //           margin: EdgeInsets.symmetric(vertical: 5.w),
+      //           decoration: BoxDecoration(
+      //             // shape: BoxShape.circle,
+      //             borderRadius: BorderRadius.circular(100),
+      //             color: AppColors.primaryButtonFGColorWhite,
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
     );
   }
 
@@ -291,6 +355,19 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
           ),
         );
       },
+    );
+  }
+
+  Widget _emptyWidget() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.grey1.withAlpha(50),
+        borderRadius: BorderRadius.circular(15.sp),
+      ),
+      child: Center(
+          child: EmptyWidget(
+        label: "No events found for this month",
+      )),
     );
   }
 }

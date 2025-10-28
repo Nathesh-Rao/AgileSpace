@@ -1,7 +1,9 @@
 class TaskListModel {
   String id;
   String status;
-  String projectName;
+  String project;
+  String partner;
+  String customer;
   int attachmentCount;
   int messageCount;
   String caption;
@@ -15,7 +17,9 @@ class TaskListModel {
   TaskListModel({
     required this.id,
     required this.status,
-    required this.projectName,
+    required this.project,
+    required this.partner,
+    required this.customer,
     required this.attachmentCount,
     required this.messageCount,
     required this.caption,
@@ -30,17 +34,17 @@ class TaskListModel {
   factory TaskListModel.fromJson(Map<String, dynamic> json) => TaskListModel(
         id: json["taskid"] ?? "",
         status: json["status"] ?? "",
-        projectName: json["project_name"] ?? "--",
+        project: json["project"] ?? "--",
+        partner: json["partner"] ?? "--",
+        customer: json["customer"] ?? "--",
         attachmentCount: json["attachment_count"] ?? 0,
         messageCount: json["message_count"] ?? 0,
         caption: json["taskname"] ?? "",
         description: (json["taskdescription"] ?? '')
-                .replaceAll(RegExp(r'<[^>]*>'), '')
-                .trim() ??
-            "",
-        dueDate: DateTime.parse(json["due_date"] ?? DateTime.now().toString()),
-        createdOn:
-            DateTime.parse(json["createdon"] ?? DateTime.now().toString()),
+            .replaceAll(RegExp(r'<[^>]*>'), '')
+            .trim(),
+        dueDate: DateTime.tryParse(json["duedate"] ?? "") ?? DateTime.now(),
+        createdOn: DateTime.tryParse(json["createdon"] ?? "") ?? DateTime.now(),
         priority: json["priority"] ?? "",
         taskCategory: json["taskcategory"] ?? json["task_category"] ?? "",
         participantCount: json["participant_count"] ?? 0,
@@ -49,7 +53,9 @@ class TaskListModel {
   Map<String, dynamic> toJson() => {
         "id": id,
         "status": status,
-        "project_name": projectName,
+        "project": project,
+        "partner": partner,
+        "customer": customer,
         "attachment_count": attachmentCount,
         "message_count": messageCount,
         "caption": caption,
@@ -68,7 +74,7 @@ class TaskListModel {
     {
       "id": "13434",
       "status": "pending",
-      "project_name": "Axpert Dashboard",
+      "project": "Axpert Dashboard",
       "attachment_count": 2,
       "message_count": 8,
       "caption": "Build header section",
@@ -83,7 +89,7 @@ class TaskListModel {
     {
       "id": "21343",
       "status": "in_progress",
-      "project_name": "Auth API Integration",
+      "project": "Auth API Integration",
       "attachment_count": 1,
       "message_count": 3,
       "caption": "Login/Logout",
@@ -98,7 +104,7 @@ class TaskListModel {
     {
       "id": "32134",
       "status": "completed",
-      "project_name": "Task Management",
+      "project": "Task Management",
       "attachment_count": 0,
       "message_count": 10,
       "caption": "Create task model",
@@ -113,7 +119,7 @@ class TaskListModel {
     {
       "id": "42134",
       "status": "pending",
-      "project_name": "Notification Module",
+      "project": "Notification Module",
       "attachment_count": 2,
       "message_count": 4,
       "caption": "Push setup",
@@ -128,7 +134,7 @@ class TaskListModel {
     {
       "id": "52134",
       "status": "in_progress",
-      "project_name": "Analytics Setup",
+      "project": "Analytics Setup",
       "attachment_count": 1,
       "message_count": 6,
       "caption": "Dashboard metrics",

@@ -11,9 +11,11 @@ class TaskDetailsHistoryHorizontalListWidget extends GetView<TaskController> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+        // shrinkWrap: true,
         padding: EdgeInsets.all(15),
         itemCount: controller.taskHistoryList.length,
         scrollDirection: Axis.horizontal,
+
         // scrollDirection: controller.showHistoryContent.value ? Axis.vertical : Axis.horizontal,
         separatorBuilder: (context, index) {
           var history = controller.taskHistoryList[index];
@@ -49,7 +51,7 @@ class TaskDetailsHistoryHorizontalListWidget extends GetView<TaskController> {
               ),
               5.horizontalSpace,
               Text(
-                controller.taskHistoryList[index].fromUser,
+                controller.taskHistoryList[index].username,
                 style: AppStyles.taskHistoryUserNameStyle,
               ),
               5.horizontalSpace,

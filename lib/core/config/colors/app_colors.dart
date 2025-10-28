@@ -60,25 +60,58 @@ class AppColors {
   static const leaveWidgetColorGreen = Color(0xff379785);
   static const leaveWidgetColorPink = Color(0xffDA5077);
   static const leaveWidgetColorGreenLite = Color(0xff5BBBA9);
-
+  static const Color grey = Color(0xFF808080);
+  static const Color grey1 = Color(0xFFd9d5d5);
+  static const Color grey1bg = Color(0xFF1f1f2e);
+  static const Color grey2 = Color(0xFFF6F7F9);
+  static const Color grey3 = Color(0xFF787878);
+  static const Color grey4 = Color(0xFF3F3F3F);
+  static const Color grey5 = Color(0xFFB6B6B6);
+  static const Color grey6 = Color(0xFF999999);
+  static const Color grey7 = Color(0xFFb3b3b3);
+  static const Color grey8 = Color(0xFFf6f7f9);
+  static const Color grey9 = Color(0xFF575E65);
   static Color getHistoryColor(String status) {
     switch (status.toLowerCase()) {
       case 'created':
         return historyCreated;
       case 'reassigned':
-        return historyAssigned;
+        return const Color(0xFFFFB300);
       case 'completed':
         return historyCompleted;
       case 'forwarded':
         return historyAssigned;
       case 'accepted':
-        return historyCompleted;
+        return const Color(0xFF26A69A);
       case 'closed':
-        return historyCompleted;
+        return const Color(0xFF2E7D32);
+      case 'returned':
+        return const Color(0xFFFFB300);
       default:
         return historyCreated;
     }
   }
+
+  // static Color getHistoryColor(String status) {
+  //   switch (status.toLowerCase()) {
+  //     case 'created':
+  //       return const Color(0xFF42A5F5);
+  //     case 'reassigned':
+  //       return const Color(0xFFFFB300);
+  //     case 'completed':
+  //       return const Color(0xFF66BB6A);
+  //     case 'forwarded':
+  //       return const Color(0xFF5C6BC0);
+  //     case 'accepted':
+  //       return const Color(0xFF26A69A);
+  //     case 'closed':
+  //       return const Color(0xFF2E7D32);
+  //     case 'returned':
+  //       return const Color(0xFFEF5350);
+  //     default:
+  //       return const Color(0xFF9E9E9E);
+  //   }
+  // }
 
   static Color getStatusColor(String status) {
     switch (status.toLowerCase()) {
@@ -113,16 +146,30 @@ class AppColors {
   }
 
   static final List<Color> _colorPalette = [
-    Color(0xFF8371EC),
-    Color(0xFFFF9B00),
-    Color(0xFF0271F2),
-    Color(0xFF9764DA),
-    Color(0xFF3764FC),
-    Color(0xFF9C27B0),
-    Color(0xFF9764DA),
-    Color(0xFF0271F2),
-    Color(0xFFFF9B00),
-    Color(0xFF8371EC),
+    // Color(0xFF8371EC),
+    // Color(0xFFFF9B00),
+    // Color(0xFF0271F2),
+    // Color(0xFF9764DA),
+    // Color(0xFF3764FC),
+    // Color(0xFF9C27B0),
+    // Color(0xFF9764DA),
+    // Color(0xFF0271F2),
+    // Color(0xFFFF9B00),
+    // Color(0xFF8371EC),
+    AppColors.chipCardWidgetColorViolet,
+    AppColors.chipCardWidgetColorGreen,
+    AppColors.baseYellow,
+    AppColors.baseBlue,
+    Colors.teal,
+    Colors.blue,
+    Colors.orange,
+    Colors.cyan,
+    Colors.lime,
+    Colors.brown,
+    Colors.pink,
+    Colors.deepOrange,
+    Colors.lightGreen,
+    Colors.deepPurple,
   ];
 
   static int _currentIndex = 0;
@@ -145,15 +192,8 @@ class AppColors {
       Colors.purple,
       Colors.green,
       Colors.amber,
-      Colors.red,
-      Colors.indigo,
       Colors.blue,
-      Colors.orange,
-      Colors.cyan,
       Colors.teal,
-      Colors.lime,
-      Colors.brown,
-      Colors.pink,
       Colors.deepOrange,
       Colors.lightGreen,
       Colors.deepPurple,

@@ -111,7 +111,7 @@ class TaskController extends GetxController {
         .where((task) =>
             (task.caption.toLowerCase().contains(searchText.toLowerCase()) ||
                 task.id.toLowerCase().contains(searchText.toLowerCase())) ||
-            task.projectName.toLowerCase().contains(searchText.toLowerCase()))
+            task.project.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
   }
 
@@ -628,7 +628,12 @@ class TaskController extends GetxController {
     webViewController.navigateToCreateTask();
   }
 
-  Widget highlightedText(String text, TextStyle style, {int maxLines = 2}) {
+  Widget highlightedText(
+    String text,
+    TextStyle style, {
+    int maxLines = 2,
+    TextOverflow? overflow,
+  }) {
     if (taskSearchText.value.isEmpty) {
       return Text(
         text,

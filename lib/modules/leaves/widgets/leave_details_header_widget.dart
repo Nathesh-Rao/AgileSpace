@@ -17,14 +17,17 @@ class LeaveDetailsHeaderWidget extends GetView<LeaveController> {
       margin: EdgeInsets.symmetric(horizontal: 23, vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15.r),
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF3334A0),
-            Color(0xFF12133A),
-          ],
-        ),
+        color: AppColors.baseGray.withAlpha(150),
+        // color: AppColors.snackBarNotificationColorBlue.withAlpha(100),
+
+        // gradient: LinearGradient(
+        //   begin: Alignment.topCenter,
+        //   end: Alignment.bottomCenter,
+        //   colors: [
+        //     Color(0xFF3334A0),
+        //     Color(0xFF12133A),
+        //   ],
+        // ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -34,10 +37,9 @@ class LeaveDetailsHeaderWidget extends GetView<LeaveController> {
             children: [
               20.horizontalSpace,
               Text(
-                "June 25",
-                style: GoogleFonts.poppins(
-                  color: Colors.white,
-                ),
+                DateUtilsHelper.getTodayFormattedDate(),
+                style: AppStyles.actionButtonStyle
+                    .copyWith(color: AppColors.blue10),
               ),
             ],
           ),
@@ -46,8 +48,13 @@ class LeaveDetailsHeaderWidget extends GetView<LeaveController> {
             height: 125.h,
             margin: EdgeInsets.symmetric(horizontal: 20.w),
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(50),
-              borderRadius: BorderRadius.circular(10.r),
+              color: AppColors.secondaryButtonBGColorWhite,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(10.r),
+                topLeft: Radius.circular(100.r),
+                bottomRight: Radius.circular(10.r),
+                bottomLeft: Radius.circular(100.r),
+              ),
             ),
             child: Row(
               children: [
@@ -65,31 +72,30 @@ class LeaveDetailsHeaderWidget extends GetView<LeaveController> {
                               PieChartData(
                                 sectionsSpace: 4,
                                 centerSpaceRadius: 30.h,
-                                sections: List.generate(controller.leaveDivisionsValue.length,
-                                    (index) => _pieCrumbs(controller.leaveDivisionsValue[index])),
+                                sections: List.generate(
+                                    controller.leaveDivisionsValue.length,
+                                    (index) => _pieCrumbs(index)),
                               ),
                             ),
                             Text(
-                              DateUtilsHelper.getShortMonthName(controller.leaveDetails.value?.date),
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              DateUtilsHelper.getShortMonthName(
+                                  DateTime.now().toString()),
+                              style: AppStyles.actionButtonStyle,
                             )
                           ],
                         ),
                       ),
                     )),
                 Expanded(
-                    flex: 4,
+                    flex: 5,
                     child: Padding(
                       padding: EdgeInsets.only(left: 10.w),
                       child: Wrap(
                         spacing: 20.w,
                         runSpacing: 20.w,
-                        children: List.generate(controller.leaveDetails.value?.leaveBreakup.length ?? 0,
-                            (index) => _breakTile(controller.leaveDetails.value!.leaveBreakup[index])),
+                        children: List.generate(
+                            controller.leaveDetailsList.length,
+                            (index) => _breakTile(index)),
                       ),
                     )),
               ],
@@ -99,17 +105,25 @@ class LeaveDetailsHeaderWidget extends GetView<LeaveController> {
           Row(
             children: [
               20.horizontalSpace,
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50.r),
-                  color: Colors.white,
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-                child: Text(
-                  "Apply for Leave",
-                  style: GoogleFonts.poppins(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w600,
+              InkWell(
+                onTap: () {
+                  Get.back();
+                  controller.applyForLeave();
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50.r),
+                    color: Colors.white,
+                    // AppColors.snackBarNotificationColorBlue.withAlpha(150),
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+                  child: Text(
+                    "Apply for Leave",
+                    style: GoogleFonts.poppins(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.blue10),
                   ),
                 ),
               ),
@@ -121,44 +135,76 @@ class LeaveDetailsHeaderWidget extends GetView<LeaveController> {
     );
   }
 
-  PieChartSectionData _pieCrumbs(double value) {
+  PieChartSectionData _pieCrumbs(int index) {
+    double value = controller.leaveDivisionsValue[index];
+    Color color = controller.getColorList()[index];
     return PieChartSectionData(
-      color: AppColors.getNextColor(),
+      color: color,
       value: value,
       showTitle: false,
       radius: 20,
     );
   }
 
-  Widget _breakTile(LeaveBreakup leave) {
+  Widget _breakTile(int index) {
+    LeaveDetailsModel leave = controller.leaveDetailsList[index];
+    Color color = controller.getColorList()[index];
     return Row(
       mainAxisSize: MainAxisSize.min,
-      spacing: 10.w,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 5.w,
       children: [
-        Icon(
-          Icons.circle,
-          size: 16.w,
-          color: Color(0xff0271F2),
+        Padding(
+          padding: EdgeInsets.only(top: 2),
+          child: Icon(
+            Icons.circle,
+            size: 12.sp,
+            color: color,
+          ),
         ),
         Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              leave.name.split(" ")[0],
+              leave.leaveType.split(" ")[0],
               style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontSize: 10.sp,
-              ),
-            ),
-            Text(
-              leave.leaveNo.toString(),
-              style: GoogleFonts.poppins(
-                color: Colors.white,
                 fontWeight: FontWeight.w600,
-                fontSize: 10.sp,
+                fontSize: 11.sp,
               ),
             ),
+            RichText(
+              text: TextSpan(
+                  text: (leave.totalLeaves - leave.leavesTaken)
+                      .toInt()
+                      .toString(),
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 10.sp,
+                    color: AppColors.primaryActionColorDarkBlue,
+                    // color: color,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: "  ",
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 7.sp,
+                        color: AppColors.text2,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "(${leave.totalLeaves.toInt().toString()})",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 9.sp,
+                            color: AppColors.text2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ]),
+            )
           ],
         ),
       ],

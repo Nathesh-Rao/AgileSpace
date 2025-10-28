@@ -63,6 +63,18 @@ class DateUtilsHelper {
     }
   }
 
+  static String convertToIso(String dateStr) {
+    try {
+      var parts = dateStr.split('-');
+      if (parts.length == 3) {
+        return "${parts[2]}-${parts[1]}-${parts[0]}"; // yyyy-MM-dd
+      }
+    } catch (e) {
+      return '';
+    }
+    return dateStr;
+  }
+
   static String getTodayFormattedDate({DateTime? date}) {
     return DateFormat("MMM d, y").format(date ?? DateTime.now());
   }
@@ -78,6 +90,17 @@ class DateUtilsHelper {
       return DateFormat('yyyy/MM/dd').format(date);
     } catch (e) {
       return '';
+    }
+  }
+
+  static String formatDateTimeForHistory(String dateTimeStr) {
+    try {
+      final dateTime = DateTime.parse(dateTimeStr);
+      final datePart = DateFormat("dd MMM yyyy").format(dateTime).toUpperCase();
+      final timePart = DateFormat("h:mm a").format(dateTime);
+      return "$datePart - $timePart";
+    } catch (e) {
+      return "--"; // fallback for invalid or null date strings
     }
   }
 }

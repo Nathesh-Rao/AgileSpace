@@ -11,6 +11,9 @@ class LeaveDashBoardEventWidget extends GetView<LeaveController> {
 
   @override
   Widget build(BuildContext context) {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   controller.getLeaveOverview();
+    // });
     return Expanded(
         flex: 4,
         child: Obx(
@@ -20,66 +23,72 @@ class LeaveDashBoardEventWidget extends GetView<LeaveController> {
               LeaveDashBoardEventUpcomingWidget(),
               _pendingWidget(),
             ],
-          ).skeletonLoading(controller.isLeaveActivityLoading.value),
+          ).skeletonLoading(controller.isLeaveOverviewLoading.value),
         ));
   }
 
-  _pendingWidget() => Expanded(
-        child: _baseContainer(
-          Column(
-            children: [
-              Row(
+  _pendingWidget() {
+    var pendingCount = controller.leaveOverviewList.isEmpty
+        ? 0
+        : controller.leaveOverviewList.first.pendingLeaves;
+
+    return Expanded(
+      child: _baseContainer(
+        Column(
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Icon(
+                    Icons.pie_chart,
+                    size: 15.w,
+                    color: AppColors.leaveWidgetColorPink,
+                  ),
+                ),
+                Text(
+                  "Pending Leave Requests",
+                  style: GoogleFonts.poppins(
+                    fontSize: 8.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Icon(
-                      Icons.pie_chart,
-                      size: 15.w,
-                      color: AppColors.leaveWidgetColorPink,
+                  10.horizontalSpace,
+                  CircleAvatar(
+                    radius: 25,
+                    backgroundColor: AppColors.leaveWidgetColorPink,
+                    child: Text(
+                      pendingCount.toString(),
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15.sp,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                  Text(
-                    "Pending Leave Requests",
+                  10.horizontalSpace,
+                  Flexible(
+                      child: Text(
+                    "You have $pendingCount leave requests pending for approval",
                     style: GoogleFonts.poppins(
                       fontSize: 8.sp,
                       fontWeight: FontWeight.w600,
                     ),
-                  ),
+                  )),
+                  10.horizontalSpace,
                 ],
               ),
-              Expanded(
-                child: Row(
-                  children: [
-                    10.horizontalSpace,
-                    CircleAvatar(
-                      radius: 25,
-                      backgroundColor: AppColors.leaveWidgetColorPink,
-                      child: Text(
-                        "${controller.leaveActivity.value?.pendingLeaveCount.toString()}",
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15.sp,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    10.horizontalSpace,
-                    Flexible(
-                        child: Text(
-                      "You have ${controller.leaveActivity.value?.pendingLeaveCount} leave requests pending approval",
-                      style: GoogleFonts.poppins(
-                        fontSize: 8.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )),
-                    10.horizontalSpace,
-                  ],
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
-      );
+      ),
+    );
+  }
 
   Widget _baseContainer(Widget child) => Container(
         decoration: BoxDecoration(

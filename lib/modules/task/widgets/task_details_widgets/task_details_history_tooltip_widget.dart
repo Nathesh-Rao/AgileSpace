@@ -88,7 +88,7 @@ class _HistoryToolTipWidgetState extends State<HistoryToolTipWidget> {
                         Row(
                           children: [
                             Text(
-                              widget.history.fromUser.toUpperCase(),
+                              widget.history.username.toUpperCase(),
                               style: AppStyles.taskHistoryUserNameStyle,
                             ),
                           ],

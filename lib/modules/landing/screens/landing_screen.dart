@@ -61,7 +61,7 @@ class LandingScreen extends GetView<LandingController> {
               drawer: LandingDrawerWidget(),
               child: Scaffold(
                 body: PageView.builder(
-                    itemCount: 4,
+                    itemCount: controller.landingPageTabs.length,
                     controller: controller.landingPageViewController,
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {

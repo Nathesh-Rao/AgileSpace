@@ -14,6 +14,9 @@ class WorkCalendarDashboardWidget extends GetView<WorkCalendarController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.initializeOffDays();
+    });
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -46,33 +49,35 @@ class WorkCalendarDashboardWidget extends GetView<WorkCalendarController> {
           ],
         ),
         10.verticalSpace,
-        Container(
-          decoration: BoxDecoration(
-              border:
-                  Border.all(color: AppColors.historyAssigned.withAlpha(100)),
-              borderRadius: BorderRadius.circular(10)),
-          padding: EdgeInsets.all(5.w),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              HeatMapCalendar(
-                defaultColor: Colors.white,
-                flexible: true,
-                colorMode: ColorMode.color,
-                textColor: AppColors.primaryActionColorDarkBlue,
-                showColorTip: false,
-                datasets: controller.calendarMap,
-                colorsets: {
-                  1: AppColors.blue10.withAlpha(50),
-                  3: AppColors.historyAssigned.withAlpha(150),
-                },
-                onClick: (value) {
-                  controller.onDateClick(value);
-                },
-              ),
-              _dateInfoBox(),
-            ],
-          ),
+        Obx(
+          () => Container(
+            decoration: BoxDecoration(
+                border:
+                    Border.all(color: AppColors.historyAssigned.withAlpha(100)),
+                borderRadius: BorderRadius.circular(10)),
+            padding: EdgeInsets.all(5.w),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                HeatMapCalendar(
+                  defaultColor: Colors.white,
+                  flexible: true,
+                  colorMode: ColorMode.color,
+                  textColor: AppColors.primaryActionColorDarkBlue,
+                  showColorTip: false,
+                  datasets: controller.calendarMap,
+                  colorsets: {
+                    1: AppColors.blue10.withAlpha(50),
+                    3: AppColors.historyAssigned.withAlpha(150),
+                  },
+                  onClick: (value) {
+                    controller.onDateClick(value);
+                  },
+                ),
+                _dateInfoBox(),
+              ],
+            ),
+          ).skeletonLoading(controller.isOffDaysLoading.value),
         ),
       ],
     );
