@@ -1,4 +1,5 @@
 import 'package:axpert_space/common/common.dart';
+import 'package:axpert_space/modules/landing/landing.dart';
 import 'package:axpert_space/routes/app_routes.dart';
 
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import '../../../../core/core.dart';
 import '../../../settings/settings.dart';
 import '../../widgets/widgets.dart';
 
-class LandingSettingsTab extends StatelessWidget {
+class LandingSettingsTab extends GetView<LandingController> {
   const LandingSettingsTab({super.key});
 
   @override
@@ -138,9 +139,7 @@ class LandingSettingsTab extends StatelessWidget {
                       width: 100.w,
                       label: "Log Out",
                       color: AppColors.chipCardWidgetColorRed,
-                      onTap: () {
-                        Get.offAllNamed(AppRoutes.splash);
-                      },
+                      onTap: controller.startLogOut,
                     ),
                   ),
                 ],

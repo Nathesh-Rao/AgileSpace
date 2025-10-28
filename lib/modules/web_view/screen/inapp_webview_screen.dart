@@ -509,8 +509,7 @@ class _InApplicationWebViewerState extends State<InApplicationWebViewer> {
   }
 
   void showSignOutDialog() {
-    widget.webViewController
-        .signOut(url: Const.getFullWebUrl("aspx/AxMain.aspx?signout=true"));
+    widget.webViewController.signOut();
 
     Get.dialog(
       barrierColor: Colors.black26,

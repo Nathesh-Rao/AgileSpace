@@ -166,7 +166,7 @@ class LandingDrawerWidget extends GetView<LandingController> {
                                           ),
                                           5.horizontalSpace,
                                           Text(
-                                            "${5} Notifications",
+                                            "${0} Notifications",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 12.sp,
                                                 fontWeight: FontWeight.w600,
@@ -271,8 +271,8 @@ class LandingDrawerWidget extends GetView<LandingController> {
           currentIndex: controller.currentBottomBarIndex.value,
           label: "Notification",
           leadingIcon: "assets/icons/bottom_nav/notification_bell_icon.png",
-          trailing: "3",
-          trailingBgColor: AppColors.chipCardWidgetColorRed,
+          // trailing: "3",
+          // trailingBgColor: AppColors.chipCardWidgetColorRed,
           trailingColor: Colors.white,
           onTap: () {
             Get.toNamed(AppRoutes.notification);
@@ -282,8 +282,8 @@ class LandingDrawerWidget extends GetView<LandingController> {
           currentIndex: controller.currentBottomBarIndex.value,
           label: "Active list",
           leadingIcon: "assets/icons/common/active_list.png",
-          trailing: "899",
-          trailingBgColor: AppColors.blue9,
+          // trailing: "899",
+          // trailingBgColor: AppColors.blue9,
           trailingColor: Colors.white,
           onTap: () {
             controller.landingDrawerController.toggleDrawer();

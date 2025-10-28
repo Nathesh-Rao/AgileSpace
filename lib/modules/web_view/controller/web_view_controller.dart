@@ -66,20 +66,20 @@ class WebViewController extends GetxController {
     isProgressBarActive.value = true;
   }
 
-  signOut({required String url}) async {
+  Future<void> signOut() async {
     // currentUrl.value = url;
 
     await inAppWebViewController.value!
         .loadUrl(
           urlRequest: URLRequest(
-            url: WebUri(url),
+            url: WebUri(Const.getFullWebUrl("aspx/AxMain.aspx?signout=true")),
           ),
         )
         .then((_) {});
   }
 
   void showSignOutDialog_sessionExpired() {
-    signOut(url: Const.getFullWebUrl("aspx/AxMain.aspx?signout=true"));
+    signOut();
     // Get.defaultDialog(
     //   backgroundColor: Colors.white,
     //   barrierDismissible: false,
@@ -162,7 +162,7 @@ class WebViewController extends GetxController {
     );
   }
 
-  signOut_withoutDialog() async {
+  Future<void> signOut_withoutDialog() async {
     var body = {'ARMSessionId': appStorage.retrieveValue(AppStorage.SESSIONID)};
     var url = Const.getFullARMUrl(ServerConnections.API_SIGNOUT);
     try {

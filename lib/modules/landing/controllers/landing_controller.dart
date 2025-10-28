@@ -10,6 +10,7 @@ import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:get/get.dart';
 import 'package:material_icons_named/material_icons_named.dart';
 import '../../../core/core.dart';
+import '../../../routes/app_routes.dart';
 import '../models/landing_menu_item_model.dart';
 import '../screens/tabs/tabs.dart';
 
@@ -30,6 +31,8 @@ class LandingController extends GetxController {
   var drawerScrollProgress = 0.0.obs;
   var drawerHeadExpandSwitch = false.obs;
   var switchPage = false.obs;
+  var isSignOutLoading = false.obs;
+
   List<MenuItemModel> menuListMain = [];
   var menuFinalList = [].obs;
   var landingPageTabs = [
@@ -266,5 +269,12 @@ class LandingController extends GetxController {
     drawerScrollController.dispose();
     landingPageViewController.dispose();
     super.dispose();
+  }
+
+  startLogOut() async {
+    isSignOutLoading.value = true;
+    await webViewController.signOut();
+    await webViewController.signOut_withoutDialog();
+    isSignOutLoading.value = false;
   }
 }
