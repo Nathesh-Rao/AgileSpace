@@ -43,17 +43,20 @@ class LeaveDashBoardLeaveCountWidget extends GetView<LeaveController> {
                 LeaveProgressWidget(),
                 Text(
                   "Leave balance for month",
-                  style: AppStyles.leaveActivityMainStyle.copyWith(fontSize: 7.sp),
+                  style:
+                      AppStyles.leaveActivityMainStyle.copyWith(fontSize: 7.sp),
                 ),
                 Text(
-                  DateUtilsHelper.getShortMonthName(controller.leaveActivity.value?.date),
-                  style: AppStyles.leaveActivityMainStyle.copyWith(fontSize: 14.sp),
+                  DateUtilsHelper.getShortMonthName(DateTime.now().toString()),
+                  style: AppStyles.leaveActivityMainStyle
+                      .copyWith(fontSize: 14.sp),
                 ),
                 10.verticalSpace,
               ],
             ),
           ),
-        ).skeletonLoading(controller.isLeaveActivityLoading.value),
+        ).skeletonLoading((controller.isLeaveDetailsLoading.value ||
+            controller.isLeaveOverviewLoading.value)),
       ),
     );
   }

@@ -63,6 +63,18 @@ class DateUtilsHelper {
     }
   }
 
+  static String convertToIso(String dateStr) {
+    try {
+      var parts = dateStr.split('-');
+      if (parts.length == 3) {
+        return "${parts[2]}-${parts[1]}-${parts[0]}"; // yyyy-MM-dd
+      }
+    } catch (e) {
+      return '';
+    }
+    return dateStr;
+  }
+
   static String getTodayFormattedDate({DateTime? date}) {
     return DateFormat("MMM d, y").format(date ?? DateTime.now());
   }

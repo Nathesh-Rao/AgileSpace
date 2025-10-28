@@ -15,29 +15,27 @@ class LeaveDashboardWidget extends GetView<LeaveController> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.getLeaveActivity();
+      controller.initializeLeaveData();
     });
-    return Obx(
-      () => (controller.leaveActivity.value == null && controller.isLeaveActivityLoading.value) ||
-              (controller.leaveActivity.value != null)
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
+    return Visibility(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconLabelWidget(
+              iconColor: Color(0xffE0A47A), label: "Leave Activity"),
+          10.verticalSpace,
+          SizedBox(
+            height: 202.h,
+            child: Row(
+              spacing: 15.w,
               children: [
-                IconLabelWidget(iconColor: Color(0xffE0A47A), label: "Leave Activity"),
-                10.verticalSpace,
-                SizedBox(
-                  height: 202.h,
-                  child: Row(
-                    spacing: 15.w,
-                    children: [
-                      LeaveDashBoardLeaveCountWidget(),
-                      LeaveDashBoardEventWidget(),
-                    ],
-                  ),
-                )
+                LeaveDashBoardLeaveCountWidget(),
+                LeaveDashBoardEventWidget(),
               ],
-            )
-          : SizedBox.shrink(),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

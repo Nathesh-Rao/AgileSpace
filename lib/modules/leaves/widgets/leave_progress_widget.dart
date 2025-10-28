@@ -21,7 +21,9 @@ class LeaveProgressWidget extends GetView<LeaveController> {
             strokeWidth: 7,
             value: 1,
             // strokeCap: StrokeCap.round,
-            color: controller.getLeaveProgressColor(controller.leaveCountRatio.value).withAlpha(70),
+            color: controller
+                .getLeaveProgressColor(controller.leaveCountRatio.value)
+                .withAlpha(70),
           ),
         ),
         TweenAnimationBuilder<double>(
@@ -36,7 +38,8 @@ class LeaveProgressWidget extends GetView<LeaveController> {
                 strokeWidth: 7,
                 value: value,
                 strokeCap: StrokeCap.round,
-                color: controller.getLeaveProgressColor(controller.leaveCountRatio.value),
+                color: controller
+                    .getLeaveProgressColor(controller.leaveCountRatio.value),
               ),
             );
           },
@@ -49,12 +52,13 @@ class LeaveProgressWidget extends GetView<LeaveController> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "${controller.leaveActivity.value?.balanceLeave}",
+                  "${controller.totalLeaveRemainingCount}",
                   style: AppStyles.leaveActivityMainStyle,
                 ),
                 Text(
                   "Leave balance",
-                  style: AppStyles.leaveActivityMainStyle.copyWith(fontSize: 7.sp),
+                  style:
+                      AppStyles.leaveActivityMainStyle.copyWith(fontSize: 7.sp),
                 ),
               ],
             ),

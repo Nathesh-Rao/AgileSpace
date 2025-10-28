@@ -12,7 +12,8 @@ class LeaveDetailsScreen extends GetView<LeaveController> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.getLeaveDetails();
+      AppColors.resetColorIndex();
+
       controller.getLeaveHistory();
     });
 
@@ -25,13 +26,9 @@ class LeaveDetailsScreen extends GetView<LeaveController> {
       ),
       body: Column(
         children: [
-          Obx(() => (controller.leaveDetails.value == null &&
-                      controller.isLeaveDetailsLoading.value) ||
-                  (controller.leaveDetails.value != null)
-              ? LeaveDetailsHeaderWidget().skeletonLoading(
-                  (controller.leaveDetails.value == null)
-                      ? true
-                      : controller.isLeaveDetailsLoading.value)
+          Obx(() => controller.leaveDetailsList.isNotEmpty
+              ? LeaveDetailsHeaderWidget()
+                  .skeletonLoading(controller.isLeaveDetailsLoading.value)
               : SizedBox.shrink()),
           10.verticalSpace,
           Row(
@@ -47,7 +44,7 @@ class LeaveDetailsScreen extends GetView<LeaveController> {
               child: Obx(
             () => ListView.builder(
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    itemCount: controller.leaveHistoryList.value.length,
+                    itemCount: controller.leaveHistoryList.length,
                     itemBuilder: (context, index) =>
                         _historyTile(controller.leaveHistoryList[index]))
                 .skeletonLoading(controller.isLeaveDetailsLoading.value),

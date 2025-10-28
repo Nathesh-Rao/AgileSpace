@@ -4,8 +4,10 @@ import 'package:axpert_space/modules/leaves/models/leave_activity_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../core/core.dart';
+import '../models/leave_overview_model.dart';
 
 class LeaveDashBoardEventUpcomingWidget extends GetView<LeaveController> {
   const LeaveDashBoardEventUpcomingWidget({super.key});
@@ -13,20 +15,24 @@ class LeaveDashBoardEventUpcomingWidget extends GetView<LeaveController> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: CarouselSlider(
-      options: CarouselOptions(
-        height: 500.h,
-        autoPlay: true,
-        scrollDirection: Axis.vertical,
-        reverse: true,
-      ),
-      items: controller.leaveActivity.value?.upcomingLeave.map((leave) {
-        return Builder(
-          builder: (BuildContext context) {
-            return _upcomingEventTile(leave);
-          },
-        );
-      }).toList(),
+        child: Obx(
+      () => controller.leaveOverviewList.isEmpty
+          ? _emptyWidget()
+          : CarouselSlider(
+              options: CarouselOptions(
+                height: 500.h,
+                autoPlay: true,
+                scrollDirection: Axis.vertical,
+                reverse: true,
+              ),
+              items: controller.leaveOverviewList.map((overview) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return _upcomingEventTile(overview);
+                  },
+                );
+              }).toList(),
+            ),
     ));
   }
 
@@ -74,7 +80,7 @@ class LeaveDashBoardEventUpcomingWidget extends GetView<LeaveController> {
   //       ),
   //     );
 
-  _upcomingEventTile(UpcomingLeave leave) => Container(
+  _upcomingEventTile(LeaveOverviewModel leave) => Container(
         margin: EdgeInsets.symmetric(vertical: 5.h, horizontal: 5.w),
         decoration: BoxDecoration(
           color: AppColors.leaveWidgetColorGreenLite,
@@ -123,7 +129,7 @@ class LeaveDashBoardEventUpcomingWidget extends GetView<LeaveController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Total approved: ${leave.daysNo} days",
+                      "Total requested days : ${leave.noDays}",
                       style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w500,
                         fontSize: 6.sp,
@@ -131,7 +137,9 @@ class LeaveDashBoardEventUpcomingWidget extends GetView<LeaveController> {
                       ),
                     ),
                     Text(
-                      leave.approvedBy,
+                      leave.approvedBy.toLowerCase().contains("na")
+                          ? "not approved yet"
+                          : leave.approvedBy,
                       style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w600,
                         fontSize: 9.sp,
@@ -151,6 +159,29 @@ class LeaveDashBoardEventUpcomingWidget extends GetView<LeaveController> {
           ],
         ),
       );
+
+  Widget _emptyWidget() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.chipCardWidgetColorGreen.withAlpha(50),
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      child: Center(
+        child: Column(
+          spacing: 5.h,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Symbols.error, color: AppColors.chipCardWidgetColorGreen),
+            Text(
+              "no pending leaves found",
+              style: AppStyles.actionButtonStyle
+                  .copyWith(color: AppColors.chipCardWidgetColorGreen),
+            )
+          ],
+        ),
+      ),
+    );
+  }
   //
   // Widget _baseContainer(Widget child) => Container(
   //       decoration: BoxDecoration(
