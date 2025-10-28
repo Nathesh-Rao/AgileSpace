@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:developer';
 
-import 'package:axpert_space/core/config/colors/app_colors.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/leaves/models/leave_overview_model.dart';
 import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
@@ -9,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/log_service/log_services.dart';
-import '../../../core/constants/const.dart';
 import '../../../data/data_source/datasource_services.dart';
 import '../leaves.dart';
 
@@ -44,7 +41,7 @@ class LeaveController extends GetxController {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
       "datasource": DataSourceServices.DS_GETLEAVEOVERVIEW,
-      "sqlParams": {"username": "likhitha"}
+      "sqlParams": {"username": globalVariableController.USER_NAME.value}
     };
     var dsResp = await serverConnections.postToServer(
         url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
@@ -76,8 +73,11 @@ class LeaveController extends GetxController {
     int totalLeavesTaken = totalLeaveTakenCount.value =
         leaveDetailsList.fold(0, (sum, item) => sum + item.leavesTaken.toInt());
     totalLeaveRemainingCount.value = totalLeaves - totalLeavesTaken;
-
-    leaveCountRatio.value = (totalLeaves - totalLeavesTaken) / totalLeaves;
+    if (totalLeaves == 0) {
+      leaveCountRatio.value = 0;
+    } else {
+      leaveCountRatio.value = (totalLeaves - totalLeavesTaken) / totalLeaves;
+    }
   }
 
   _getLeaveDetails() async {
@@ -88,7 +88,7 @@ class LeaveController extends GetxController {
       "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
       "appname": globalVariableController.PROJECT_NAME.value,
       "datasource": DataSourceServices.DS_GETLEAVEDETAILS,
-      "sqlParams": {"username": "likhitha"}
+      "sqlParams": {"username": globalVariableController.USER_NAME.value}
     };
     var dsResp = await serverConnections.postToServer(
         url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
@@ -119,7 +119,7 @@ class LeaveController extends GetxController {
         leaveDetailsList.fold(0, (sum, item) => sum + item.totalLeaves.toInt());
 
     if (totalLeaves <= 0) {
-      throw ArgumentError("Total leaves must be greater than zero");
+      // throw ArgumentError("Total leaves must be greater than zero");
     }
 
     return leaveDetailsList.map((item) {

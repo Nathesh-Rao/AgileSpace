@@ -24,14 +24,19 @@ class LeaveDashboardWidget extends GetView<LeaveController> {
           IconLabelWidget(
               iconColor: Color(0xffE0A47A), label: "Leave Activity"),
           10.verticalSpace,
-          SizedBox(
-            height: 202.h,
-            child: Row(
-              spacing: 15.w,
-              children: [
-                LeaveDashBoardLeaveCountWidget(),
-                LeaveDashBoardEventWidget(),
-              ],
+          GestureDetector(
+            onTap: () {
+              Get.toNamed(AppRoutes.leaveDetails);
+            },
+            child: SizedBox(
+              height: 202.h,
+              child: Row(
+                spacing: 15.w,
+                children: [
+                  LeaveDashBoardLeaveCountWidget(),
+                  LeaveDashBoardEventWidget(),
+                ],
+              ),
             ),
           )
         ],

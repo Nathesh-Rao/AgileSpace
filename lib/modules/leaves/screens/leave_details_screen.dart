@@ -5,6 +5,7 @@ import 'package:axpert_space/modules/leaves/leaves.dart';
 import 'package:axpert_space/modules/leaves/widgets/leave_details_header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class LeaveDetailsScreen extends GetView<LeaveController> {
   const LeaveDetailsScreen({super.key});
@@ -29,7 +30,7 @@ class LeaveDetailsScreen extends GetView<LeaveController> {
           Obx(() => controller.leaveDetailsList.isNotEmpty
               ? LeaveDetailsHeaderWidget()
                   .skeletonLoading(controller.isLeaveDetailsLoading.value)
-              : SizedBox.shrink()),
+              : _emptyWidget()),
           10.verticalSpace,
           Row(
             children: [
@@ -96,6 +97,33 @@ class LeaveDetailsScreen extends GetView<LeaveController> {
               color:
                   controller.getColorByLeaveStatus(leave.status).withAlpha(200),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _emptyWidget() {
+    return Container(
+      height: 200.h,
+      margin: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(50.w),
+      decoration: BoxDecoration(
+        color: AppColors.snackBarErrorColorRed.withAlpha(50),
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      child: Center(
+        child: Column(
+          spacing: 10.h,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Symbols.error, color: AppColors.baseRed),
+            Text(
+              "Sorry we coudn't find any leave details or activity for User ${globalVariableController.USER_NAME}",
+              textAlign: TextAlign.center,
+              style: AppStyles.actionButtonStyle
+                  .copyWith(color: AppColors.baseRed),
+            )
           ],
         ),
       ),

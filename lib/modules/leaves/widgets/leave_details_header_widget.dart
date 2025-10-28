@@ -17,8 +17,8 @@ class LeaveDetailsHeaderWidget extends GetView<LeaveController> {
       margin: EdgeInsets.symmetric(horizontal: 23, vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15.r),
-        // color: AppColors.baseGray.withAlpha(100),
-        color: AppColors.snackBarNotificationColorBlue.withAlpha(100),
+        color: AppColors.baseGray.withAlpha(150),
+        // color: AppColors.snackBarNotificationColorBlue.withAlpha(100),
 
         // gradient: LinearGradient(
         //   begin: Alignment.topCenter,
