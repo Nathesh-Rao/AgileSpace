@@ -266,6 +266,7 @@ class AuthController extends GetxController {
   }
 
   void startOTPTimer() {
+    print("Timer Strated");
     var mins = int.parse(otpExpiryTime.value);
     var totalSeconds = mins * 60;
 
@@ -288,6 +289,7 @@ class AuthController extends GetxController {
   }
 
   callVerifyOTP() async {
+    print("callVerifyOTP");
     if (validateOTPField()) {
       // LoadingScreen.show();
       isOtpLoading.value = true;
@@ -306,8 +308,8 @@ class AuthController extends GetxController {
           await processSignInDataResponse(json["result"]);
         } else {
           otpErrorText.value = json["result"]["message"].toString();
-          /* Get.snackbar("Error ", json["result"]["message"],
-              snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.redAccent, colorText: Colors.white);*/
+           Get.snackbar("Error ", json["result"]["message"],
+              snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.redAccent, colorText: Colors.white);
         }
       }
     }
@@ -333,11 +335,11 @@ class AuthController extends GetxController {
     globalVariableController.USER_EMAIL.value = json["email_id"].toString();
     //Save Data
     if (rememberMe.value) {
-      handleRememberMe(userNameController.text, userPasswordController.text);
       rememberCredentials();
     } else {
       dontRememberCredentials();
     }
+    handleRememberMe(userNameController.text, userPasswordController.text);
 
     await _processLoginAndGoToHomePage();
   }
@@ -506,6 +508,7 @@ class AuthController extends GetxController {
   }
 
   void onOtpScreenLoad() {
+    startOTPTimer();
     if (otpErrorText.value.isEmpty && otpFieldController.text.isEmpty) return;
     otpErrorText.value = otpFieldController.text = '';
   }

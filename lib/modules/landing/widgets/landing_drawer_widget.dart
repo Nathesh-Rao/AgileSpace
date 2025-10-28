@@ -54,29 +54,31 @@ class LandingDrawerWidget extends GetView<LandingController> {
                         globalVariableController.PROFILE_PICTURE.value),
                   ),
                 ),
-                Obx(
-                  () => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AutoSizeText(
-                        minFontSize: 8,
-                        maxFontSize: 18,
-                        globalVariableController.NICK_NAME.value,
-                        style: AppStyles.appBarTitleTextStyle.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryActionColorDarkBlue,
+                Expanded(
+                  child: Obx(
+                    () => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AutoSizeText(
+                          minFontSize: 8,
+                          maxFontSize: 18,
+                          globalVariableController.NICK_NAME.value,
+                          style: AppStyles.appBarTitleTextStyle.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryActionColorDarkBlue,
+                          ),
                         ),
-                      ),
-                      AutoSizeText(
-                        globalVariableController.USER_EMAIL.value,
-                        style: AppStyles.appBarTitleTextStyle.copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.primaryActionColorDarkBlue,
-                          fontSize: 11.sp,
+                        AutoSizeText(
+                          globalVariableController.USER_EMAIL.value,
+                          style: AppStyles.appBarTitleTextStyle.copyWith(
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.primaryActionColorDarkBlue,
+                            fontSize: 11.sp,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 )
               ],

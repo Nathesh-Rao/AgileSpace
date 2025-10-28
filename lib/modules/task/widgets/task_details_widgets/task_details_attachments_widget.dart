@@ -40,10 +40,13 @@ class TaskDetailsAttachmentsWidget extends GetView<TaskController> {
                       fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primaryActionColorDarkBlue),
                 ),
                 Spacer(),
-                Icon(
-                  CupertinoIcons.add_circled_solid,
-                  size: 15.w,
-                  color: Color(0xff0D99FF),
+                Visibility(
+                  visible: false,
+                  child: Icon(
+                    CupertinoIcons.add_circled_solid,
+                    size: 15.w,
+                    color: Color(0xff0D99FF),
+                  ),
                 )
               ],
             ),
@@ -84,10 +87,13 @@ class TaskDetailsAttachmentsWidget extends GetView<TaskController> {
             color: AppColors.chipCardWidgetColorRed,
           ),
           5.horizontalSpace,
-          Text(
-            "0 MB",
-            style: GoogleFonts.poppins(
-                fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
+          Visibility(
+            visible: false,
+            child: Text(
+              "0 MB",
+              style: GoogleFonts.poppins(
+                  fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.primarySubTitleTextColorBlueGreyLight),
+            ),
           )
         ],
       ),

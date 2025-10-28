@@ -661,7 +661,7 @@ class AttendanceLogHeaderWidget extends GetView<AttendanceController> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Clocked Inn",
+                    "Clocked In",
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
                       fontSize: 11.sp,
@@ -1084,7 +1084,7 @@ class AttendanceLogHeaderWidget1 extends GetView<AttendanceController> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Clocked Inn",
+                    "Clocked In",
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
                       fontSize: 11.sp,
