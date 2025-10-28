@@ -1,3 +1,4 @@
+import 'package:animated_switcher_plus/animated_switcher_plus.dart';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/modules/landing/landing.dart';
 import 'package:axpert_space/routes/app_routes.dart';
@@ -120,35 +121,57 @@ class LandingSettingsTab extends GetView<LandingController> {
                 textAlign: TextAlign.center,
               ),
               20.verticalSpace,
-              Row(
-                children: [
-                  Expanded(
-                    child: FlatButtonWidget(
-                      width: 100.w,
-                      label: "Close",
-                      color: AppColors.primaryActionColorDarkBlue,
-                      onTap: () {
-                        Get.back();
-                      },
-                    ),
-                  ),
-                  // Spacer(),
-                  20.horizontalSpace,
-                  Expanded(
-                    child: FlatButtonWidget(
-                      width: 100.w,
-                      label: "Log Out",
-                      color: AppColors.chipCardWidgetColorRed,
-                      onTap: controller.startLogOut,
-                    ),
-                  ),
-                ],
-              )
+              Obx(() => AnimatedSwitcherPlus.flipX(
+                    duration: Duration(milliseconds: 400),
+                    child: controller.isSignOutLoading.value
+                        ? _loadingWidget()
+                        : Row(
+                            key: ValueKey("signout-button"),
+                            children: [
+                              Expanded(
+                                child: FlatButtonWidget(
+                                  width: 100.w,
+                                  label: "Close",
+                                  color: AppColors.primaryActionColorDarkBlue,
+                                  onTap: () {
+                                    Get.back();
+                                  },
+                                ),
+                              ),
+                              // Spacer(),
+                              20.horizontalSpace,
+                              Expanded(
+                                child: FlatButtonWidget(
+                                  width: 100.w,
+                                  label: "Log Out",
+                                  color: AppColors.chipCardWidgetColorRed,
+                                  onTap: controller.startLogOut,
+                                ),
+                              ),
+                            ],
+                          ),
+                  ))
             ],
           ),
         ),
       ),
       barrierDismissible: false, // Prevent closing by tapping outside
     );
+  }
+
+  _loadingWidget() {
+    return Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 15.h),
+        decoration: BoxDecoration(
+            color: AppColors.baseRed.withAlpha(50),
+            borderRadius: BorderRadius.circular(10.r)),
+        child: Center(
+          child: Text(
+            "Loging you out.....",
+            style:
+                AppStyles.actionButtonStyle.copyWith(color: AppColors.baseRed),
+          ),
+        ));
   }
 }
