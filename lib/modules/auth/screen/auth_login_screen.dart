@@ -35,7 +35,7 @@ class AuthLoginScreen extends GetView<AuthController> {
                       style: AppStyles.onboardingTitleTextStyle,
                     ),
                     Text(
-                      "Create an account or Login to  Explore\nabout our app",
+                      "Create an account or Login to Explore\nabout our app",
                       textAlign: TextAlign.center,
                       style: AppStyles.onboardingSubTitleTextStyle,
                     ),
