@@ -19,16 +19,19 @@ class Const {
 
   static String APP_VERSION = '';
   static const String APP_RELEASE_ID = '.01';
-  static const String APP_RELEASE_DATE = '08102025';
-  static const String BASE_WEB_URL = "https://agileqa.agilecloud.biz/qaaxpert11.4base";
-  static const String CONST_ARM_URL = "https://agileqa.agilecloud.biz/qaarm11.4base";
+  static const String APP_RELEASE_DATE = '28102025';
+  static const String BASE_WEB_URL =
+      "https://agileqa.agilecloud.biz/qaaxpert11.4base";
+  static const String CONST_ARM_URL =
+      "https://agileqa.agilecloud.biz/qaarm11.4base";
   static const String CONST_PROJECTNAME = "agilespaceqanew";
 
   static const String CLOUD_PROJECT = "axpmobileclient";
   static const String CLOUD_URL = "";
   static final String SEED_V = "1983";
 
-  static String getSQLforClientID(String clientID) => "select * from tblclientMST where clientid = '$clientID'";
+  static String getSQLforClientID(String clientID) =>
+      "select * from tblclientMST where clientid = '$clientID'";
   static String DUMMY_USER = "admin";
   static const String DUMMYUSER_PWD = "a5ca360e803b868680e2b6f7805fcb9e";
 
@@ -63,5 +66,6 @@ class Const {
     }
   }
 
-  static String getAppBody() => "{\"Appname\":\"${globalVariableController.PROJECT_NAME.value}\"}";
+  static String getAppBody() =>
+      "{\"Appname\":\"${globalVariableController.PROJECT_NAME.value}\"}";
 }

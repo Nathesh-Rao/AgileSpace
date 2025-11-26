@@ -32,7 +32,6 @@ class LandingController extends GetxController {
   var drawerHeadExpandSwitch = false.obs;
   var switchPage = false.obs;
   var isSignOutLoading = false.obs;
-
   List<MenuItemModel> menuListMain = [];
   var menuFinalList = [].obs;
   var landingPageTabs = [
