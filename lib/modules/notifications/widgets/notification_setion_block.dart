@@ -1,0 +1,35 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+import '../model/firebase_message_model.dart';
+import 'notification_list_tile.dart';
+
+class NotificationSetionBlock extends StatelessWidget {
+  final String title;
+  final List<FirebaseMessageModel> list;
+
+  const NotificationSetionBlock(this.title, this.list, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
+            ),
+          ),
+        ),
+        ...list.map((msg) => NotificationTile(msg)),
+        SizedBox(height: 10),
+      ],
+    );
+  }
+}

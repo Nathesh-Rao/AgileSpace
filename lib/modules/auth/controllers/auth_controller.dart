@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:axpert_space/common/widgets/flat_button_widget.dart';
+import 'package:axpert_space/modules/notifications/service/notification_service.dart';
 import 'package:axpert_space/routes/app_routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -308,8 +309,10 @@ class AuthController extends GetxController {
           await processSignInDataResponse(json["result"]);
         } else {
           otpErrorText.value = json["result"]["message"].toString();
-           Get.snackbar("Error ", json["result"]["message"],
-              snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.redAccent, colorText: Colors.white);
+          Get.snackbar("Error ", json["result"]["message"],
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.redAccent,
+              colorText: Colors.white);
         }
       }
     }
@@ -330,9 +333,10 @@ class AuthController extends GetxController {
         AppStorage.NICK_NAME, json["nickname"].toString());
 
     globalVariableController.NICK_NAME.value = json["nickname"].toString();
-
     globalVariableController.USER_NAME.value = json["username"].toString();
     globalVariableController.USER_EMAIL.value = json["email_id"].toString();
+    await AppNotificationsService.cacheUserData();
+    await AppNotificationsService().callApiForMobileNotification();
     //Save Data
     if (rememberMe.value) {
       rememberCredentials();

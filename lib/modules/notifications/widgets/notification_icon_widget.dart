@@ -12,7 +12,7 @@ class NotificationIconWidget extends GetView<NotificationController> {
     return Obx(
       () => Badge(
           isLabelVisible: controller.showBadge.value,
-          label: Text(controller.list.length.toString()),
+          label: Text(controller.badgeCount.value.toString()),
           child: InkWell(
               onTap: () {
                 Get.toNamed(AppRoutes.notification);

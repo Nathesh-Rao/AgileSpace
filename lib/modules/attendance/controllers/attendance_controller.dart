@@ -799,10 +799,10 @@ class AttendanceController extends GetxController {
 
     var url =
         "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=ttimes";
-    var url2 =
-        "https://agileqa.agilecloud.biz/qaaxpert11.4base/aspx/AxMain.aspx?authKey=AXPERT-ARM-agilespaceqa-8756c1cc-0d62-4ce8-8e5e-b974ea7726e5&pname=ttimes";
+    // var url2 =
+    //     "https://agileqa.agilecloud.biz/qaaxpert11.4base/aspx/AxMain.aspx?authKey=AXPERT-ARM-agilespaceqa-8756c1cc-0d62-4ce8-8e5e-b974ea7726e5&pname=ttimes";
 
-    LogService.writeLog(message: "URL-1: $url\nURL-2: $url2");
+    LogService.writeLog(message: "URL-1: $url");
     webViewController.openWebView(url: url);
   }
 
