@@ -1,11 +1,16 @@
 import 'dart:convert';
+import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/controller/global_variable_controller.dart';
 import 'package:axpert_space/core/app_storage/app_storage.dart';
 import 'package:axpert_space/modules/notifications/model/firebase_message_model.dart';
 import 'package:axpert_space/modules/notifications/service/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../common/widgets/flat_button_widget.dart';
+import '../../../core/config/config.dart';
 
 class NotificationController extends GetxController {
   notifyPrint(String msg) {
@@ -198,6 +203,130 @@ class NotificationController extends GetxController {
   }
 
   // ---------------- DELETE ALL ----------------
+
+  showClearAllDlg() {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Delete all notifications?",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryActionColorDarkBlue,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              8.verticalSpace,
+              Text(
+                "All your notifications will be deleted and\nYou can't undo this process",
+                style: GoogleFonts.poppins(fontSize: 12, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+              20.verticalSpace,
+              Row(
+                children: [
+                  Expanded(
+                    child: FlatButtonWidget(
+                      width: 100.w,
+                      label: "Cancel",
+                      color: AppColors.grey,
+                      onTap: () {
+                        Get.back();
+                      },
+                    ),
+                  ),
+                  // Spacer(),
+                  20.horizontalSpace,
+                  Expanded(
+                    child: FlatButtonWidget(
+                      width: 100.w,
+                      label: "Delete",
+                      color: AppColors.chipCardWidgetColorRed,
+                      onTap: () async {
+                        await deleteAllNotifications();
+                        Get.back();
+                      },
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false, // Prevent closing by tapping outside
+    );
+  }
+
+  showDeleteSingleDlg(FirebaseMessageModel msg) {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Delete this notification?",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryActionColorDarkBlue,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              8.verticalSpace,
+              Text(
+                "Selected notification will be deleted and\nYou can't undo this process",
+                style: GoogleFonts.poppins(fontSize: 12, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+              20.verticalSpace,
+              Row(
+                children: [
+                  Expanded(
+                    child: FlatButtonWidget(
+                      width: 100.w,
+                      label: "Cancel",
+                      color: AppColors.grey,
+                      onTap: () {
+                        Get.back();
+                      },
+                    ),
+                  ),
+                  // Spacer(),
+                  20.horizontalSpace,
+                  Expanded(
+                    child: FlatButtonWidget(
+                      width: 100.w,
+                      label: "Delete",
+                      color: AppColors.chipCardWidgetColorRed,
+                      onTap: () async {
+                        await deleteNotification(msg);
+                        Get.back();
+                      },
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false, // Prevent closing by tapping outside
+    );
+  }
 
   Future<void> deleteAllNotifications() async {
     String project = globalVariableController.PROJECT_NAME.value;

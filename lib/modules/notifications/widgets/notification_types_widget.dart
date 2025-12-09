@@ -10,19 +10,23 @@ class NotificationTypesWidget extends GetView<NotificationController> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40.h,
-      // color: Colors.amber,
-      child: ListView.separated(
-        padding: EdgeInsets.only(left: 20.w, right: 30.w),
-        // shrinkWrap: true,
-        itemCount: controller.notificationTypeIcons.keys.length,
-        scrollDirection: Axis.horizontal,
+    return Obx(
+      () => controller.notifications.isNotEmpty
+          ? SizedBox(
+              height: 40.h,
+              // color: Colors.amber,
+              child: ListView.separated(
+                padding: EdgeInsets.only(left: 20.w, right: 30.w),
+                // shrinkWrap: true,
+                itemCount: controller.notificationTypeIcons.keys.length,
+                scrollDirection: Axis.horizontal,
 
-        itemBuilder: (context, index) =>
-            _typeWidget(controller.notificationTypeIcons.keys.toList()[index]),
-        separatorBuilder: (context, index) => 10.horizontalSpace,
-      ),
+                itemBuilder: (context, index) => _typeWidget(
+                    controller.notificationTypeIcons.keys.toList()[index]),
+                separatorBuilder: (context, index) => 10.horizontalSpace,
+              ),
+            )
+          : SizedBox.shrink(),
     );
   }
 

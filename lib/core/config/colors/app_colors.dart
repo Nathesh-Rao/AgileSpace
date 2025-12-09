@@ -131,7 +131,7 @@ class AppColors {
     }
   }
 
- static Color getColorByNotificationType(String type) {
+  static Color getColorByNotificationType(String type) {
     type = type.toLowerCase();
 
     switch (type) {
@@ -148,7 +148,7 @@ class AppColors {
         return const Color(0xffE96161); // Red
 
       case "mail":
-        return const Color(0xff9764DA); // Red
+        return statusAccepted; // Red
 
       default:
         return Colors.grey; // fallback

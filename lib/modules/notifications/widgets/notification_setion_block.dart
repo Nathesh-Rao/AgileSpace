@@ -1,4 +1,4 @@
-
+import 'package:axpert_space/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -20,11 +20,13 @@ class NotificationSetionBlock extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 12),
           child: Text(
             title,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
-            ),
+            style: AppStyles.textButtonStyle,
+
+            //  TextStyle(
+            //   fontSize: 17,
+            //   fontWeight: FontWeight.w600,
+            //   color: AppColors.text1,
+            // ),
           ),
         ),
         ...list.map((msg) => NotificationTile(msg)),
