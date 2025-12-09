@@ -2,7 +2,7 @@ class LeaveHistoryModel {
   final String leaveType;
   final DateTime fromDate;
   final DateTime toDate;
-  final int totalDays;
+  final double totalDays;
   final String status;
 
   LeaveHistoryModel({
@@ -18,7 +18,7 @@ class LeaveHistoryModel {
       leaveType: json['leave_type'] as String,
       fromDate: DateTime.parse(json['fromdate'] as String),
       toDate: DateTime.parse(json['todate'] as String),
-      totalDays: json['total_days'] as int,
+      totalDays: json['total_days'] as double,
       status: json['status'] as String,
     );
   }

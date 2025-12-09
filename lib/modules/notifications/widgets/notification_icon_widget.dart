@@ -10,14 +10,15 @@ class NotificationIconWidget extends GetView<NotificationController> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Badge(
-          isLabelVisible: controller.showBadge.value,
-          label: Text(controller.list.length.toString()),
-          child: InkWell(
-              onTap: () {
-                Get.toNamed(AppRoutes.notification);
-              },
-              child: Icon(CupertinoIcons.bell_fill))),
+      () => InkWell(
+        onTap: () {
+          Get.toNamed(AppRoutes.notification);
+        },
+        child: Badge(
+            isLabelVisible: controller.showBadge.value,
+            label: Text(controller.badgeCount.value.toString()),
+            child: Icon(CupertinoIcons.bell_fill)),
+      ),
     );
   }
 }
