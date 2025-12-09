@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -128,7 +127,31 @@ class AppColors {
       case 'forwarded':
         return statusForwarded;
       default:
-        return Colors.grey;
+        return Colors.black;
+    }
+  }
+
+ static Color getColorByNotificationType(String type) {
+    type = type.toLowerCase();
+
+    switch (type) {
+      case "all":
+        return const Color(0xff2A79E4); // Blue
+
+      case "task":
+        return const Color(0xff8E61E9); // Violet
+
+      case "leave":
+        return const Color(0xff01916A); // Green
+
+      case "promotion":
+        return const Color(0xffE96161); // Red
+
+      case "mail":
+        return const Color(0xff9764DA); // Red
+
+      default:
+        return Colors.grey; // fallback
     }
   }
 

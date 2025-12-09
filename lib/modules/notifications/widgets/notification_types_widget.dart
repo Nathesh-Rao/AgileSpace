@@ -27,32 +27,33 @@ class NotificationTypesWidget extends GetView<NotificationController> {
   }
 
   _typeWidget(String type) {
-    return Obx(
-      () {
-        var isSelected = type.toLowerCase() ==
-            controller.selectedNotificationTYpe.value.toLowerCase();
-        return GestureDetector(
-          onTap: () {
-            controller.selectedNotificationTYpe.value = type;
-          },
-          child: Chip(
-            avatar: Icon(
-              controller.notificationTypeIcons[type],
-              color: isSelected ? Colors.white : AppColors.text1,
-            ),
-            backgroundColor: isSelected ? AppColors.baseBlue : Colors.white,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50.r),
-                side: isSelected
-                    ? BorderSide(color: AppColors.baseBlue)
-                    : BorderSide.none),
-            label: Text(type),
-            labelStyle: AppStyles.actionButtonStyle.copyWith(
-              color: isSelected ? Colors.white : AppColors.text1,
-            ),
+    return Obx(() {
+      bool isSelected = type.toLowerCase() ==
+          controller.selectedNotificationTYpe.value.toLowerCase();
+
+      Color typeColor =
+          AppColors.getColorByNotificationType(type.toLowerCase());
+
+      return GestureDetector(
+        onTap: () {
+          controller.filterByType(type);
+        },
+        child: Chip(
+          avatar: Icon(
+            controller.notificationTypeIcons[type],
+            color: isSelected ? Colors.white : typeColor,
           ),
-        );
-      },
-    );
+          backgroundColor: isSelected ? typeColor : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50.r),
+            side: isSelected ? BorderSide(color: typeColor) : BorderSide.none,
+          ),
+          label: Text(type),
+          labelStyle: AppStyles.actionButtonStyle.copyWith(
+            color: isSelected ? Colors.white : AppColors.text1,
+          ),
+        ),
+      );
+    });
   }
 }

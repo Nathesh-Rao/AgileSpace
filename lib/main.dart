@@ -25,7 +25,6 @@ import 'core/core.dart';
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
-
   LogService.writeOnConsole(message: "Main method started.......");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());

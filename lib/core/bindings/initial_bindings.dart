@@ -10,7 +10,7 @@ class InitialBindings extends Bindings {
     // Get.put<GlobalVariableController>(GlobalVariableController(),
     //     permanent: true);
 
-        Get.put<GlobalVariableController>(GlobalVariableController(),
+    Get.put<GlobalVariableController>(GlobalVariableController(),
         permanent: true);
     Get.put<InternetConnectivity>(InternetConnectivity(), permanent: true);
     Get.put<NotificationController>(NotificationController(), permanent: true);

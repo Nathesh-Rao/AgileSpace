@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:get_storage/get_storage.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:platform_device_id_plus/platform_device_id.dart';
@@ -76,7 +75,7 @@ class AppNotificationsService {
     // FirebaseMessaging.onBackgroundMessage(_onBackground);
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-    fcmPrint("🔥 Notification module initialized");
+    fcmPrint("Notification module initialized");
   }
 
   // ---------------------------------------------------------------------------
@@ -102,7 +101,7 @@ class AppNotificationsService {
   Future<void> handleMessage(RemoteMessage msg,
       {bool isBackground = false}) async {
     final data = msg.data;
-    fcmPrint("📩 FCM Data: ${jsonEncode(data)}");
+    fcmPrint("FCM Data: ${jsonEncode(data)}");
 
     if (data.containsKey("type")) {
       await _handleServiceCommand(data, isBackground: isBackground);

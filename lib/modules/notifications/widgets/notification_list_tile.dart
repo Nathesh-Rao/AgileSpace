@@ -1,5 +1,6 @@
-
+import 'package:axpert_space/core/config/config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../model/firebase_message_model.dart';
 
@@ -10,6 +11,30 @@ class NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
+
+
+
+
+    
+    return ListTile(
+      isThreeLine: true,
+      title: Text(
+        msg.title,
+        style: AppStyles.leaveActivityMainStyle.copyWith(fontSize: 14.sp),
+      ),
+      subtitle: Text(
+        msg.body,
+        style: AppStyles.searchFieldTextStyle
+            .copyWith(fontSize: 12.sp, color: AppColors.text1),
+      ),
+      leading: CircleAvatar(
+        backgroundColor:
+            AppColors.getColorByNotificationType(msg.type.toLowerCase()),
+      ),
+    );
+
     return Container(
       padding: EdgeInsets.all(14),
       margin: EdgeInsets.only(bottom: 8),

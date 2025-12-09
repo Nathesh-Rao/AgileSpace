@@ -31,7 +31,7 @@ class LandingPayAndAttendanceTab extends StatelessWidget {
           child: Column(
             spacing: 20.h,
             children: [
-              PayRollDashBoardWidget(),
+              // PayRollDashBoardWidget(),
               NewsEventsDashboardWidget(),
               WorkCalendarDashboardWidget(),
               AttendanceDashBoardWidget(),
