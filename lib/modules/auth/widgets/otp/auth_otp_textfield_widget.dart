@@ -2,6 +2,7 @@ import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/core/config/colors/app_colors.dart';
 import 'package:axpert_space/modules/auth/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
@@ -25,6 +26,8 @@ class AuthOtpTextFieldWidget extends GetView<AuthController> {
               child: Pinput(
                 length: int.parse(controller.otpChars.value),
                 controller: controller.otpFieldController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
                 defaultPinTheme: PinTheme(
                   margin: EdgeInsets.symmetric(horizontal: 7.w),
                   width: 60.w,
