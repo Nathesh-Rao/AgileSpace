@@ -71,8 +71,7 @@ class AuthController extends GetxController {
       userNameController.text = rememberedUsername;
       rememberMe.value = true;
 
-      final rememberedPassword =
-          await _secureStorage.read(key: rememberedUsername) ?? '';
+      final rememberedPassword = await _secureStorage.read(key: rememberedUsername) ?? '';
       userPasswordController.text = rememberedPassword;
     }
   }
@@ -141,8 +140,7 @@ class AuthController extends GetxController {
   }
 
   onLoad() async {
-    currentProjectName.value =
-        await appStorage.retrieveValue(AppStorage.PROJECT_NAME) ?? '';
+    currentProjectName.value = await appStorage.retrieveValue(AppStorage.PROJECT_NAME) ?? '';
   }
 
   startLoginProcess() async {
@@ -185,8 +183,7 @@ class AuthController extends GetxController {
       "UserName": userNameController.text.toString().trim(),
     };
 
-    var response =
-        await serverConnections.postToServer(url: url, body: jsonEncode(body));
+    var response = await serverConnections.postToServer(url: url, body: jsonEncode(body));
     isUserDataLoading.value = false;
     if (response != "") {
       var json = jsonDecode(response);
@@ -230,8 +227,7 @@ class AuthController extends GetxController {
       // LoadingScreen.show();
       var url = Const.getFullARMUrl(ServerConnections.API_SIGNIN);
 
-      var response = await serverConnections.postToServer(
-          url: url, body: jsonEncode(signInBody));
+      var response = await serverConnections.postToServer(url: url, body: jsonEncode(signInBody));
       // LogService.writeLog(message: "[-] LoginController => loginButtonClicked() => LoginResponse : $response");
 
       if (response != "") {
@@ -249,16 +245,12 @@ class AuthController extends GetxController {
             print("Otpmsg: ${otpMsg.value} \nOtpkey: ${otpLoginKey.value}");
             Get.toNamed(AppRoutes.otp);
           }
-        } else if (json["result"]["success"].toString().toLowerCase() ==
-                "false" &&
-            json["result"].containsKey('duplicate_session')) {
+        } else if (json["result"]["success"].toString().toLowerCase() == "false" && json["result"].containsKey('duplicate_session')) {
           isDuplicate_session = true;
           showDialogDuplicateSession(json["result"]["message"].toString());
         } else {
           Get.snackbar("Error ", json["result"]["message"],
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white);
+              snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.redAccent, colorText: Colors.white);
         }
       }
       // LoadingScreen.dismiss();
@@ -301,8 +293,7 @@ class AuthController extends GetxController {
         "OTP": otpFieldController.text.toString().trim(),
       };
 
-      var response = await serverConnections.postToServer(
-          url: url, body: jsonEncode(body));
+      var response = await serverConnections.postToServer(url: url, body: jsonEncode(body));
       if (response != "") {
         var json = jsonDecode(response);
         if (json["result"]["success"].toString().toLowerCase() == "true") {
@@ -310,9 +301,7 @@ class AuthController extends GetxController {
         } else {
           otpErrorText.value = json["result"]["message"].toString();
           Get.snackbar("Error ", json["result"]["message"],
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white);
+              snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.redAccent, colorText: Colors.white);
         }
       }
     }
@@ -325,12 +314,9 @@ class AuthController extends GetxController {
     await appStorage.storeValue(AppStorage.TOKEN, json["token"].toString());
 
     LogService.writeLog(message: "Token : ${json["token"].toString()}");
-    await appStorage.storeValue(
-        AppStorage.SESSIONID, json["ARMSessionId"].toString());
-    await appStorage.storeValue(
-        AppStorage.USER_NAME, userNameController.text.trim());
-    await appStorage.storeValue(
-        AppStorage.NICK_NAME, json["nickname"].toString());
+    await appStorage.storeValue(AppStorage.SESSIONID, json["ARMSessionId"].toString());
+    await appStorage.storeValue(AppStorage.USER_NAME, userNameController.text.trim());
+    await appStorage.storeValue(AppStorage.NICK_NAME, json["nickname"].toString());
 
     globalVariableController.NICK_NAME.value = json["nickname"].toString();
     globalVariableController.USER_NAME.value = json["username"].toString();
@@ -353,18 +339,15 @@ class AuthController extends GetxController {
     try {
       count++;
       var users = appStorage.retrieveValue(AppStorage.USERID) ?? {};
-      users[globalVariableController.PROJECT_NAME.value] =
-          userNameController.text.trim();
+      users[globalVariableController.PROJECT_NAME.value] = userNameController.text.trim();
       appStorage.storeValue(AppStorage.USERID, users);
 
       var passes = appStorage.retrieveValue(AppStorage.USER_PASSWORD) ?? {};
-      passes[globalVariableController.PROJECT_NAME.value] =
-          userPasswordController.text;
+      passes[globalVariableController.PROJECT_NAME.value] = userPasswordController.text;
       appStorage.storeValue(AppStorage.USER_PASSWORD, passes);
 
       var groups = appStorage.retrieveValue(AppStorage.USER_GROUP) ?? {};
-      groups[globalVariableController.PROJECT_NAME.value] =
-          ddSelectedValue.value;
+      groups[globalVariableController.PROJECT_NAME.value] = ddSelectedValue.value;
       appStorage.storeValue(AppStorage.USER_GROUP, groups);
     } catch (e) {
       appStorage.remove(AppStorage.USERID);
@@ -410,18 +393,14 @@ class AuthController extends GetxController {
       'ImeiNo': imei,
     };
     var cUrl = Const.getFullARMUrl(ServerConnections.API_MOBILE_NOTIFICATION);
-    var connectResp = await serverConnections.postToServer(
-        url: cUrl, body: jsonEncode(connectBody), isBearer: true);
+    var connectResp = await serverConnections.postToServer(url: cUrl, body: jsonEncode(connectBody), isBearer: true);
     print("Mobile: " + connectResp);
   }
 
   Future<void> callApiForConnectToAxpert() async {
-    var connectBody = {
-      'ARMSessionId': appStorage.retrieveValue(AppStorage.SESSIONID)
-    };
+    var connectBody = {'ARMSessionId': appStorage.retrieveValue(AppStorage.SESSIONID)};
     var cUrl = Const.getFullARMUrl(ServerConnections.API_CONNECTTOAXPERT);
-    var connectResp = await serverConnections.postToServer(
-        url: cUrl, body: jsonEncode(connectBody), isBearer: true);
+    var connectResp = await serverConnections.postToServer(url: cUrl, body: jsonEncode(connectBody), isBearer: true);
     print(connectResp);
     // getArmMenu
 
@@ -447,8 +426,7 @@ class AuthController extends GetxController {
     var url = Const.getFullARMUrl(ServerConnections.API_RESEND_OTP);
     var body = {"OtpLoginKey": otpLoginKey.value};
 
-    var response =
-        await serverConnections.postToServer(url: url, body: jsonEncode(body));
+    var response = await serverConnections.postToServer(url: url, body: jsonEncode(body));
     isOtpLoading.value = false;
     startOTPTimer();
     if (response != "") {
@@ -512,9 +490,11 @@ class AuthController extends GetxController {
   }
 
   void onOtpScreenLoad() {
-    startOTPTimer();
-    if (otpErrorText.value.isEmpty && otpFieldController.text.isEmpty) return;
-    otpErrorText.value = otpFieldController.text = '';
+    if (!isTimerActive.value) {
+      startOTPTimer();
+      if (otpErrorText.value.isEmpty && otpFieldController.text.isEmpty) return;
+      otpErrorText.value = otpFieldController.text = '';
+    }
   }
 
   void showDialogDuplicateSession(String message) {
