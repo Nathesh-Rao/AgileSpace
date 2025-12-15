@@ -285,8 +285,11 @@ class AppNotificationsService {
 
     List<String> list = prefs.getStringList(AppStorage.BG_NOTIFICATIONS) ?? [];
     // list.add(jsonEncode(data));
-    list.add(
-        jsonEncode({...data, "timestamp": DateTime.now().toIso8601String()}));
+    list.add(jsonEncode({
+      ...data,
+      "timestamp": DateTime.now().toIso8601String(),
+      "is_opened": false
+    }));
 
     await prefs.setStringList(AppStorage.BG_NOTIFICATIONS, list);
   }
@@ -331,6 +334,7 @@ class AppNotificationsService {
     final savedData = {
       ...data,
       "timestamp": DateTime.now().toIso8601String(),
+      "is_opened": false,
     };
 
     Map all = storage.retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
@@ -364,10 +368,12 @@ class AppNotificationsService {
   void _updateControllers() {
     try {
       final c = Get.find<NotificationController>();
+
       c.needRefreshNotification.value = true;
       c.notificationPageRefresh.value = true;
-      c.showBadge.value = true;
-      c.badgeCount.value++;
+
+      // Recalculate unread count from actual data
+      c.setBadgeCount();
 
       fcmPrint("FCM Data: c.badgeCount.value ${c.badgeCount.value}");
     } catch (_) {}
@@ -495,6 +501,48 @@ class AppNotificationsService {
             ),
             const AndroidNotificationAction(
               'task_mark_read',
+              'Mark as Read',
+              showsUserInterface: false,
+            ),
+          ];
+        }
+
+        notification = NotificationDetails(
+            android: AndroidNotificationDetails(
+          'Default', 'Default',
+          icon: 'ic_notify',
+          importance: Importance.max,
+          priority: Priority.high,
+          largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
+          // color: Color(0xff142071),
+          actions: actions,
+        ));
+        break;
+      case "leave":
+        List<AndroidNotificationAction> actions = [];
+        var leaveAction = jsonDecode(data["leave_details"])["leave_action"];
+        if (leaveAction == "requested") {
+          actions = [
+            const AndroidNotificationAction(
+              'leave_accept',
+              'Accept',
+              showsUserInterface: true,
+            ),
+            const AndroidNotificationAction(
+              'leave_reject',
+              'Reject',
+              showsUserInterface: true,
+            ),
+          ];
+        } else if (leaveAction == "approved" || leaveAction == "rejected") {
+          actions = [
+            const AndroidNotificationAction(
+              'leave_view_changes',
+              'View Changes',
+              showsUserInterface: true,
+            ),
+            const AndroidNotificationAction(
+              'leave_mark_read',
               'Mark as Read',
               showsUserInterface: false,
             ),

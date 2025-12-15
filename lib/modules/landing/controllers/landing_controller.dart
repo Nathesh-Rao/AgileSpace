@@ -107,6 +107,7 @@ class LandingController extends GetxController {
       debugPrint("menuResp $menuResp");
       var menuJson = jsonDecode(menuResp);
       if (menuJson['result']['success'].toString() == "true") {
+        debugPrint("getMenuList => ${menuJson['result']["data"]}");
         for (var menuItem in menuJson['result']["data"]) {
           try {
             MenuItemModel mi = MenuItemModel.fromJson(menuItem);
@@ -254,6 +255,7 @@ class LandingController extends GetxController {
 
   void openItemClick(itemModel) async {
     if (await internetConnectivity.connectionStatus) {
+      debugPrint("itemmdel.url => ${itemModel.url}");
       if (itemModel.url != "") {
         attendanceController.handleOnClosePunchinPunchOut(itemModel.url);
 

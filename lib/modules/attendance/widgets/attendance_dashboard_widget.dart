@@ -18,7 +18,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(AppRoutes.attendance);
+        // Get.toNamed(AppRoutes.attendance);
+        controller.openLeavePage();
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,

@@ -2,8 +2,13 @@ import 'dart:convert';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/controller/global_variable_controller.dart';
 import 'package:axpert_space/core/app_storage/app_storage.dart';
+import 'package:axpert_space/core/constants/const.dart';
+import 'package:axpert_space/data/data_source/datasource_services.dart';
 import 'package:axpert_space/modules/notifications/model/firebase_message_model.dart';
 import 'package:axpert_space/modules/notifications/service/notification_service.dart';
+import 'package:axpert_space/modules/task/models/models.dart';
+import 'package:axpert_space/routes/app_routes.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -11,6 +16,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../common/widgets/flat_button_widget.dart';
 import '../../../core/config/config.dart';
+import '../../../core/utils/server_connections/server_connections.dart';
+import '../../task/controllers/task_controller.dart';
 
 class NotificationController extends GetxController {
   notifyPrint(String msg) {
@@ -18,6 +25,7 @@ class NotificationController extends GetxController {
   }
 
   var appStorage = AppStorage();
+  var serverConnections = ServerConnections();
   GlobalVariableController globalVariableController = Get.find();
 
   RxList<FirebaseMessageModel> notifications = <FirebaseMessageModel>[].obs;
@@ -31,6 +39,7 @@ class NotificationController extends GetxController {
   var needRefreshNotification = false.obs;
   var notificationPageRefresh = false.obs;
   var selectedNotificationTYpe = "All".obs;
+  var isNotificationScreenLoading = false.obs;
 
   final Map<String, IconData> notificationTypeIcons = {
     "All": Icons.notifications_active,
@@ -39,6 +48,68 @@ class NotificationController extends GetxController {
     "Promotion": Icons.campaign,
     "Mail": Icons.mail,
   };
+
+  IconData getNotificationIconByTypeAndAction(FirebaseMessageModel msg) {
+    String type = msg.type.toLowerCase();
+
+    if (type == "default") {
+      return Icons.notifications_active;
+    }
+
+    if (type == "promotion") {
+      return Icons.campaign;
+    }
+
+    if (type == "mail") {
+      return Icons.mail;
+    }
+
+    if (type == "task") {
+      try {
+        final details = jsonDecode(msg.raw["task_details"]);
+        final action = details["task_action"].toString().toLowerCase();
+
+        switch (action) {
+          case "created":
+            return Icons.fiber_new;
+          case "forwarded":
+            return Icons.forward;
+          case "updated":
+            return Icons.edit;
+          case "accepted":
+            return Icons.check_circle;
+          case "rejected":
+            return Icons.cancel;
+          default:
+            return Icons.task_alt;
+        }
+      } catch (_) {
+        return Icons.task_alt;
+      }
+    }
+
+    if (type == "leave") {
+      try {
+        final details = jsonDecode(msg.raw["leave_details"]);
+        final action = details["leave_action"].toString().toLowerCase();
+
+        switch (action) {
+          case "requested":
+            return Icons.pending_actions;
+          case "approved":
+            return Icons.thumb_up;
+          case "rejected":
+            return Icons.thumb_down;
+          default:
+            return Icons.event_available;
+        }
+      } catch (_) {
+        return Icons.event_available;
+      }
+    }
+
+    return Icons.notifications;
+  }
 
   @override
   void onInit() {
@@ -88,7 +159,7 @@ class NotificationController extends GetxController {
   Future<void> loadAllNotifications() async {
     await mergeBackgroundNotifications();
     await _loadFromStorage();
-    _setBadgeCount();
+    setBadgeCount();
 
     filterByType(selectedNotificationTYpe.value); // ensure correct view
     groupNotifications();
@@ -117,16 +188,21 @@ class NotificationController extends GetxController {
 
   // ---------------- BADGE COUNT ----------------
 
-  void _setBadgeCount() {
-    String project = globalVariableController.PROJECT_NAME.value;
-    String user = globalVariableController.NICK_NAME.value;
+  void setBadgeCount() {
+    // String project = globalVariableController.PROJECT_NAME.value;
+    // String user = globalVariableController.NICK_NAME.value;
 
-    Map unread = appStorage.retrieveValue(AppStorage.NOTIFICATION_UNREAD) ?? {};
-    Map projUnread = unread[project] ?? {};
-    int count = int.tryParse(projUnread[user] ?? "0") ?? 0;
+    // Map unread = appStorage.retrieveValue(AppStorage.NOTIFICATION_UNREAD) ?? {};
+    // Map projUnread = unread[project] ?? {};
+    // int count = int.tryParse(projUnread[user] ?? "0") ?? 0;
 
-    badgeCount.value = count;
-    showBadge.value = count > 0;
+    // badgeCount.value = count;
+    // showBadge.value = count > 0;
+
+    int unreadCount = notifications.where((n) => n.isOpened == false).length;
+
+    badgeCount.value = unreadCount;
+    showBadge.value = unreadCount > 0;
   }
 
   // ---------------- GROUPING ----------------
@@ -161,6 +237,14 @@ class NotificationController extends GetxController {
 
     groupedNotifications.value = groups;
   }
+
+  // void _setBadgeCount() {
+  //   // Count only those notifications where isOpened == false
+  //   int unreadCount = notifications.where((n) => n.isOpened == false).length;
+
+  //   badgeCount.value = unreadCount;
+  //   showBadge.value = unreadCount > 0;
+  // }
 
   // ---------------- MERGE BG NOTIF ----------------
 
@@ -376,5 +460,199 @@ class NotificationController extends GetxController {
 
     needRefreshNotification.value = true;
     notificationPageRefresh.value = true;
+  }
+
+  String getDateForNotification(FirebaseMessageModel msg) {
+    final DateTime ts = msg.timestamp;
+    final DateTime now = DateTime.now();
+
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final DateTime yesterday = today.subtract(const Duration(days: 1));
+    final DateTime lastWeek = today.subtract(const Duration(days: 7));
+
+    final DateTime dateOnly = DateTime(ts.year, ts.month, ts.day);
+
+    if (dateOnly == today) {
+      return _formatTime(ts);
+    }
+
+    if (dateOnly == yesterday) {
+      return _formatTime(ts);
+    }
+
+    if (dateOnly.isAfter(lastWeek)) {
+      return _getWeekday(ts.weekday);
+    }
+
+    return _formatFullDate(ts);
+  }
+
+  String _formatTime(DateTime time) {
+    int hour = time.hour;
+    final int minute = time.minute;
+    final String ampm = hour >= 12 ? "PM" : "AM";
+
+    hour = hour % 12;
+    if (hour == 0) hour = 12;
+
+    final String minStr = minute.toString().padLeft(2, '0');
+    return "$hour:$minStr $ampm";
+  }
+
+  String _getWeekday(int day) {
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    return days[day - 1];
+  }
+
+  String _formatFullDate(DateTime date) {
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ];
+
+    return "${date.day} ${months[date.month - 1]} ${date.year}";
+  }
+
+  Future<void> onNotificationTileClick(FirebaseMessageModel msg) async {
+    await markNotificationAsOpened(msg);
+    setBadgeCount();
+    await doActionByNotificationClick(msg);
+  }
+
+  Future<void> doActionByNotificationClick(FirebaseMessageModel msg) async {
+    isNotificationScreenLoading.value = true;
+
+    var type = msg.type;
+
+    switch (type.toLowerCase()) {
+      case "task":
+        await _doTaskNotificationAction(msg);
+        break;
+      case "leave":
+        await _doLeaveNotificationAction(msg);
+        break;
+      default:
+        notifyPrint("Unknown notification type: $type");
+        break;
+    }
+
+    isNotificationScreenLoading.value = false;
+  }
+
+  Future _doTaskNotificationAction(FirebaseMessageModel msg) async {
+    notifyPrint(
+      "clicked task-id ${jsonDecode(msg.raw["task_details"])["taskId"]}",
+    );
+
+    try {
+      var taskId = jsonDecode(msg.raw["task_details"])["taskId"];
+
+      var taskModel = await getTaskById(taskId);
+      isNotificationScreenLoading.value = false;
+
+      if (taskModel != null) {
+        Get.toNamed(
+          AppRoutes.tasDetails,
+          arguments: {"taskModel": taskModel},
+        );
+      } else {
+        AppSnackBar.showError(
+          "Task not found : $taskId",
+          "We couldn't find the task with the taskid you provided",
+        );
+      }
+    } catch (e) {
+      isNotificationScreenLoading.value = false;
+    }
+  }
+
+  Future _doLeaveNotificationAction(FirebaseMessageModel msg) async {
+    notifyPrint(
+      "clicked task-id ${jsonDecode(msg.raw["leave_details"])["leaveId"]}",
+    );
+
+    try {
+      var recordId = jsonDecode(msg.raw["leave_details"])["leaveId"];
+      // AppSnackBar.showNotification("leave : $recordId", "message");
+      var url =
+          "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=tLeave";
+      Get.toNamed(
+        AppRoutes.webviewScreenForNotification,
+        arguments: url,
+      );
+    } catch (e) {
+      isNotificationScreenLoading.value = false;
+    }
+  }
+
+  Future<TaskListModel?> getTaskById(String? id) async {
+    TaskListModel? taskListModel;
+    if (id == null) {
+      return taskListModel;
+    }
+    var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
+    var body = {
+      "ARMSessionId": appStorage.retrieveValue(AppStorage.SESSIONID),
+      "appname": globalVariableController.PROJECT_NAME.value,
+      "datasource": DataSourceServices.DS_GETTASKDETAILS,
+      "sqlParams": {"taskid": id}
+    };
+
+    var dsResp = await serverConnections.postToServer(
+        url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
+
+    if (dsResp != "") {
+      var jsonDSResp = jsonDecode(dsResp);
+      if (jsonDSResp['result']['success'].toString() == "true") {
+        List dsDataList = jsonDSResp['result']['data'];
+        if (dsDataList.isNotEmpty) {
+          taskListModel = TaskListModel.fromJson(dsDataList.first);
+        }
+      }
+    }
+
+    return taskListModel;
+  }
+
+  Future<void> markNotificationAsOpened(FirebaseMessageModel msg) async {
+    String project = globalVariableController.PROJECT_NAME.value;
+    String user = globalVariableController.NICK_NAME.value;
+
+    Map all = appStorage.retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
+    List userList = (all[project]?[user] ?? []).cast<String>();
+
+    for (int i = 0; i < userList.length; i++) {
+      try {
+        Map item = jsonDecode(userList[i]);
+
+        if (item["notify_title"] == msg.title &&
+            item["notify_body"] == msg.body &&
+            item["timestamp"] == msg.timestamp.toIso8601String()) {
+          item["is_opened"] = true;
+
+          userList[i] = jsonEncode(item);
+          break;
+        }
+      } catch (_) {}
+    }
+
+    all[project]?[user] = userList;
+    await appStorage.storeValue(AppStorage.NOTIFICATION_LIST, all);
+
+    msg.isOpened = true;
+
+    notifications.refresh();
+    filteredNotifications.refresh();
+    groupedNotifications.refresh();
   }
 }

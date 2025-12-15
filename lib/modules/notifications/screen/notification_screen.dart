@@ -1,3 +1,4 @@
+import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/widgets/empty_widget.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/notifications/controller/notification_controller.dart';
@@ -17,6 +18,7 @@ class NotificationScreen extends GetView<NotificationController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text("Notifications"),
         actions: [
@@ -36,6 +38,11 @@ class NotificationScreen extends GetView<NotificationController> {
         var isListEmpty = controller.filteredNotifications.isEmpty;
         return Column(
           children: [
+            Obx(
+              () => Visibility(
+                  visible: controller.isNotificationScreenLoading.value,
+                  child: RainbowLoadingWidget()),
+            ),
             20.verticalSpace,
             NotificationTypesWidget(),
             Expanded(
@@ -51,7 +58,7 @@ class NotificationScreen extends GetView<NotificationController> {
   Widget _notificationListWidget(
       RxMap<String, List<FirebaseMessageModel>> groups) {
     return ListView(
-      padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
+      padding: EdgeInsets.symmetric(vertical: 20.h),
       children: [
         if (groups["Today"]!.isNotEmpty)
           NotificationSetionBlock("Today", groups["Today"]!),

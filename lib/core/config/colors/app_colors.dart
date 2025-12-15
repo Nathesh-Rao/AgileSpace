@@ -151,7 +151,7 @@ class AppColors {
         return statusAccepted; // Red
 
       default:
-        return Colors.grey; // fallback
+        return AppColors.primaryActionColorDarkBlue; // fallback
     }
   }
 

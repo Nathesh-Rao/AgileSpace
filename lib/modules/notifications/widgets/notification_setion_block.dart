@@ -1,3 +1,4 @@
+import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -17,7 +18,10 @@ class NotificationSetionBlock extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 12),
+          padding: EdgeInsets.symmetric(
+            vertical: 12.h,
+            horizontal: 15.w,
+          ),
           child: Text(
             title,
             style: AppStyles.textButtonStyle,

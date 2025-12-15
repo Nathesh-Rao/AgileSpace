@@ -16,4 +16,6 @@ class AppRoutes {
   static const String notification = '/notification';
   static const String activeList = '/activeList';
   static const String activeListDetails = '/activeListDetails';
+  static const String webviewScreenForNotification =
+      '/webviewScreenForNotification';
 }
