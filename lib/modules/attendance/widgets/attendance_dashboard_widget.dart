@@ -18,8 +18,8 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Get.toNamed(AppRoutes.attendance);
-        controller.openLeavePage();
+        Get.toNamed(AppRoutes.attendance);
+        // controller.openLeavePage();
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -275,7 +275,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
         ),
       );
 
-  _getAttendanceInfoHeadText() {
+  String _getAttendanceInfoHeadText() {
     var text = '';
     switch (controller.attendanceState.value) {
       case AttendanceState.punchedIn:
