@@ -35,7 +35,7 @@ class AppNotificationsService {
 
   // ---------------------------------------------------------------------------
 
-  fcmPrint(String msg) {
+  void fcmPrint(String msg) {
     debugPrint("AppNotificationsService : $msg");
   }
 
@@ -123,7 +123,7 @@ class AppNotificationsService {
     }
   }
 
-  _handleLocationServiceCommand(Map data) async {
+  Future<void> _handleLocationServiceCommand(Map data) async {
     String type = data['type'].toString().toLowerCase();
     if (type == "sendlocation") {
       String identifier = data['identifier'];
@@ -429,13 +429,19 @@ class AppNotificationsService {
     switch (type) {
       case "default":
         notification = NotificationDetails(
-            android: AndroidNotificationDetails('Default', 'Default',
-                icon: 'ic_notify',
-                importance: Importance.max,
-                priority: Priority.high,
-                largeIcon: DrawableResourceAndroidBitmap('ic_launcher')
-                // color: Color(0xff142071),
-                ));
+          android: AndroidNotificationDetails('Default', 'Default',
+              icon: 'ic_notify',
+              importance: Importance.max,
+              priority: Priority.high,
+              largeIcon: DrawableResourceAndroidBitmap('ic_launcher')
+              // color: Color(0xff142071),
+              ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
+        );
         break;
       case "promotion":
         String? bigPictureUrl = data["promotion_image"];
@@ -460,20 +466,34 @@ class AppNotificationsService {
                     largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
                     styleInformation: styleInfo
                     // color: Color(0xff142071),
-                    ));
+                    ),
+                iOS: DarwinNotificationDetails(
+                  presentAlert: true,
+                  presentBadge: true,
+                  presentSound: true,
+                  attachments: [
+                    DarwinNotificationAttachment(bigPicturePath),
+                  ],
+                ));
           }
         } catch (e) {
           fcmPrint(e.toString());
           notification = NotificationDetails(
-              android: AndroidNotificationDetails(
-            'Default', 'Default',
-            icon: 'ic_notify',
-            importance: Importance.max,
-            priority: Priority.high,
-            largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
+            android: AndroidNotificationDetails(
+              'Default', 'Default',
+              icon: 'ic_notify',
+              importance: Importance.max,
+              priority: Priority.high,
+              largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
 
-            // color: Color(0xff142071),
-          ));
+              // color: Color(0xff142071),
+            ),
+            iOS: DarwinNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+            ),
+          );
         }
 
       case "task":
@@ -508,15 +528,21 @@ class AppNotificationsService {
         }
 
         notification = NotificationDetails(
-            android: AndroidNotificationDetails(
-          'Default', 'Default',
-          icon: 'ic_notify',
-          importance: Importance.max,
-          priority: Priority.high,
-          largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
-          // color: Color(0xff142071),
-          actions: actions,
-        ));
+          android: AndroidNotificationDetails(
+            'Default', 'Default',
+            icon: 'ic_notify',
+            importance: Importance.max,
+            priority: Priority.high,
+            largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
+            // color: Color(0xff142071),
+            actions: actions,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
+        );
         break;
       case "leave":
         List<AndroidNotificationAction> actions = [];
@@ -550,25 +576,37 @@ class AppNotificationsService {
         }
 
         notification = NotificationDetails(
-            android: AndroidNotificationDetails(
-          'Default', 'Default',
-          icon: 'ic_notify',
-          importance: Importance.max,
-          priority: Priority.high,
-          largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
-          // color: Color(0xff142071),
-          actions: actions,
-        ));
+          android: AndroidNotificationDetails(
+            'Default', 'Default',
+            icon: 'ic_notify',
+            importance: Importance.max,
+            priority: Priority.high,
+            largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
+            // color: Color(0xff142071),
+            actions: actions,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
+        );
         break;
       default:
         notification = NotificationDetails(
-            android: AndroidNotificationDetails('Default', 'Default',
-                icon: 'ic_notify',
-                importance: Importance.max,
-                priority: Priority.high,
-                largeIcon: DrawableResourceAndroidBitmap('ic_launcher')
-                // color: Color(0xff142071),
-                ));
+          android: AndroidNotificationDetails('Default', 'Default',
+              icon: 'ic_notify',
+              importance: Importance.max,
+              priority: Priority.high,
+              largeIcon: DrawableResourceAndroidBitmap('ic_launcher')
+              // color: Color(0xff142071),
+              ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
+        );
         break;
     }
 
