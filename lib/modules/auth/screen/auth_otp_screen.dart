@@ -18,14 +18,12 @@ class _AuthOtpScreenState extends State<AuthOtpScreen> {
   @override
   void initState() {
     super.initState();
-    controller.onOtpScreenLoad();   // Runs ONE TIME
+    controller.onOtpScreenLoad(); // Runs ONE TIME
   }
-
-
 
   @override
   Widget build(BuildContext context) {
-   /* WidgetsBinding.instance.addPostFrameCallback((_) {
+    /* WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.onOtpScreenLoad();
     });*/
 
@@ -37,7 +35,9 @@ class _AuthOtpScreenState extends State<AuthOtpScreen> {
           height: 1.sh - MediaQuery.of(context).viewPadding.vertical,
           child: Column(
             children: [
-              Obx(() => Visibility(visible: controller.isOtpLoading.value, child: RainbowLoadingWidget())),
+              Obx(() => Visibility(
+                  visible: controller.isOtpLoading.value,
+                  child: RainbowLoadingWidget())),
               // Spacer(),
               20.verticalSpace,
               Column(
