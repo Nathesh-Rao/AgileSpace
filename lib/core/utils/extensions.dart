@@ -2,6 +2,25 @@ import 'package:flutter/material.dart';
 
 import '../../common/common.dart';
 
+// extension DeviceInfoExt on BuildContext {
+//   Size get screenSize => MediaQuery.of(this).size;
+
+//   double get shortestSide {
+//     final size = screenSize;
+//     return size.width < size.height ? size.width : size.height;
+//   }
+
+//   bool get isTablet => shortestSide >= 600;
+
+//   bool get isPortrait =>
+//       MediaQuery.of(this).orientation == Orientation.portrait;
+
+//   bool get isLandscape =>
+//       MediaQuery.of(this).orientation == Orientation.landscape;
+
+//   EdgeInsets get safePadding => MediaQuery.of(this).padding;
+// }
+
 extension SkeletonizeExtension on Widget {
   Widget skeletonLoading(bool enabled) {
     return Skeletonizer(

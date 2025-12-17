@@ -36,7 +36,7 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
         //     )),
         Obx(
           () => SizedBox(
-            height: 265.h,
+            height: context.isTablet ? 465.h : 265.h,
             child: controller.announcementList.isEmpty
                 ? _emptyWidget()
                 : Stack(
@@ -45,8 +45,8 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
                         controller: controller.pageController,
                         scrollDirection: Axis.vertical,
                         itemCount: controller.announcementList.length,
-                        itemBuilder: (context, index) =>
-                            newsEventTile(controller.announcementList[index]),
+                        itemBuilder: (context, index) => newsEventTile(
+                            controller.announcementList[index], context),
                         onPageChanged: (v) {
                           controller.currentIndex.value = v;
                         },
@@ -63,8 +63,9 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
     );
   }
 
-  Widget newsEventTile(AnnouncementModel announcement) => Container(
-        height: 265.h,
+  Widget newsEventTile(AnnouncementModel announcement, BuildContext context) =>
+      Container(
+        height: context.isTablet ? 415.h : 265.h,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.r),
             border: Border.all(
@@ -74,7 +75,7 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
         child: Column(
           children: [
             Container(
-              height: 182.h,
+              height: context.isTablet ? 332.h : 182.h,
               width: double.infinity,
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -335,7 +336,7 @@ class NewsEventsDashboardWidget extends GetView<NewsEventsController> {
     );
   }
 
-  _indicatorWidget({required int index}) {
+  Obx _indicatorWidget({required int index}) {
     return Obx(
       () {
         var isActive = index == controller.currentIndex.value;

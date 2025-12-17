@@ -3,6 +3,7 @@ import 'package:axpert_space/common/widgets/empty_widget.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/notifications/controller/notification_controller.dart';
 import 'package:axpert_space/modules/notifications/model/firebase_message_model.dart';
+import 'package:axpert_space/modules/notifications/service/notification_service.dart';
 import 'package:axpert_space/modules/notifications/widgets/notification_types_widget.dart';
 
 import 'package:flutter/material.dart';
@@ -45,6 +46,7 @@ class NotificationScreen extends GetView<NotificationController> {
             ),
             20.verticalSpace,
             NotificationTypesWidget(),
+            Text(AppNotificationsService().fcmId.toString()),
             Expanded(
                 child: isListEmpty
                     ? _notificationEmptyWidget()

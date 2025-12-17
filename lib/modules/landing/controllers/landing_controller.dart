@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'package:axpert_space/modules/attendance/attendance.dart';
+import 'package:axpert_space/modules/notifications/controller/notification_controller.dart';
 import 'package:axpert_space/modules/web_view/controller/web_view_controller.dart';
 import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:axpert_space/core/utils/internet_connections/internet_connectivity.dart';
@@ -28,6 +29,7 @@ class LandingController extends GetxController {
   InternetConnectivity internetConnectivity = Get.find();
   AttendanceController attendanceController = Get.find();
   final ScrollController drawerScrollController = ScrollController();
+  final NotificationController _notificationController = Get.find();
   var drawerScrollProgress = 0.0.obs;
   var drawerHeadExpandSwitch = false.obs;
   var switchPage = false.obs;
@@ -61,11 +63,11 @@ class LandingController extends GetxController {
     getMenuList();
   }
 
-  resetDrawerHeadSwitch() {
+  void resetDrawerHeadSwitch() {
     drawerHeadExpandSwitch.value = false;
   }
 
-  switchDrawerHeadSwitchValue() {
+  void switchDrawerHeadSwitchValue() {
     drawerHeadExpandSwitch.toggle();
   }
 
@@ -77,13 +79,13 @@ class LandingController extends GetxController {
         maxScroll > 0 ? (currentScroll / maxScroll).clamp(0.1, 1.0) : 0.0;
   }
 
-  onPageViewChange(int newIndex) {
+  void onPageViewChange(int newIndex) {
     currentBottomBarIndex.value = newIndex;
   }
 
   var currentBottomBarIndex = 0.obs;
 
-  setBottomBarIndex(int newIndex) {
+  void setBottomBarIndex(int newIndex) {
     if (currentBottomBarIndex.value == newIndex) return;
 
     if ((currentBottomBarIndex.value - newIndex).abs() == 1) {
@@ -178,7 +180,7 @@ class LandingController extends GetxController {
     return parentTree;
   }
 
-  getDrawerTileList() {
+  List<Widget> getDrawerTileList() {
     List<Widget> menuList = [];
 
     var a = menuFinalList.map(buildInnerListTile).toList();
@@ -272,10 +274,14 @@ class LandingController extends GetxController {
     super.dispose();
   }
 
-  startLogOut() async {
+  Future<void> startLogOut() async {
     isSignOutLoading.value = true;
     await webViewController.signOut();
     await webViewController.signOut_withoutDialog();
     isSignOutLoading.value = false;
+  }
+
+  void onNotificationTileClick() {
+    _notificationController.enableDisableNotification();
   }
 }

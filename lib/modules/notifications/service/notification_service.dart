@@ -39,6 +39,69 @@ class AppNotificationsService {
     debugPrint("AppNotificationsService : $msg");
   }
 
+  List<DarwinNotificationCategory> _iosCategories() {
+    return [
+      DarwinNotificationCategory(
+        'TASK_CREATED',
+        actions: [
+          DarwinNotificationAction.plain(
+            'task_accept',
+            'Accept',
+            options: {DarwinNotificationActionOption.foreground},
+          ),
+          DarwinNotificationAction.plain(
+            'task_reject',
+            'Reject',
+            options: {DarwinNotificationActionOption.foreground},
+          ),
+        ],
+      ),
+      DarwinNotificationCategory(
+        'TASK_UPDATED',
+        actions: [
+          DarwinNotificationAction.plain(
+            'task_view_changes',
+            'View Changes',
+            options: {DarwinNotificationActionOption.foreground},
+          ),
+          DarwinNotificationAction.plain(
+            'task_mark_read',
+            'Mark as Read',
+          ),
+        ],
+      ),
+      DarwinNotificationCategory(
+        'LEAVE_REQUESTED',
+        actions: [
+          DarwinNotificationAction.plain(
+            'leave_accept',
+            'Accept',
+            options: {DarwinNotificationActionOption.foreground},
+          ),
+          DarwinNotificationAction.plain(
+            'leave_reject',
+            'Reject',
+            options: {DarwinNotificationActionOption.foreground},
+          ),
+        ],
+      ),
+      DarwinNotificationCategory(
+        'LEAVE_FINAL',
+        actions: [
+          DarwinNotificationAction.plain(
+            'leave_view_changes',
+            'View Changes',
+            options: {DarwinNotificationActionOption.foreground},
+          ),
+          DarwinNotificationAction.plain(
+            'leave_mark_read',
+            'Mark as Read',
+          ),
+        ],
+      ),
+    ];
+  }
+
   Future<void> init() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
@@ -57,9 +120,16 @@ class AppNotificationsService {
 
     hasPermission =
         settings.authorizationStatus == AuthorizationStatus.authorized;
-
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const ios = DarwinInitializationSettings();
+    var ios = DarwinInitializationSettings(
+      notificationCategories: _iosCategories(),
+    );
     final initSettings = InitializationSettings(android: android, iOS: ios);
 
     await _local.initialize(
@@ -67,7 +137,7 @@ class AppNotificationsService {
       onDidReceiveNotificationResponse: _onNotificationTap,
     );
 
-    fcmId = await messaging.getToken();
+    fcmId = await messaging.getToken() ?? '';
     fcmPrint("FCM ID: $fcmId");
 
     FirebaseMessaging.onMessage.listen(_onForeground);
@@ -93,8 +163,27 @@ class AppNotificationsService {
     AppNotificationsService().handleMessage(msg, isBackground: true);
   }
 
-  void _onNotificationTap(NotificationResponse r) {
-    _openNotificationPage();
+  void _onNotificationTap(NotificationResponse response) {
+    final actionId = response.actionId;
+
+    switch (actionId) {
+      case 'task_accept':
+        // call accept API
+        break;
+
+      case 'task_reject':
+        // call reject API
+        break;
+
+      case 'leave_accept':
+        break;
+
+      case 'leave_reject':
+        break;
+
+      default:
+        _openNotificationPage();
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -189,7 +278,8 @@ class AppNotificationsService {
     bool showNotify =
         await AppStorage().retrieveValue(AppStorage.isShowNotifyEnabled) ??
             true;
-
+    final c = Get.find<NotificationController>();
+    c.showNotify.value = showNotify;
     if (hasPermission && showNotify) {
       await _local.show(
         model.hashCode,
@@ -498,7 +588,15 @@ class AppNotificationsService {
 
       case "task":
         List<AndroidNotificationAction> actions = [];
+        // var taskAction = jsonDecode(data["task_details"])["task_action"];
+        String categoryId = '';
         var taskAction = jsonDecode(data["task_details"])["task_action"];
+
+        if (taskAction == "created") {
+          categoryId = 'TASK_CREATED';
+        } else if (taskAction == "updated") {
+          categoryId = 'TASK_UPDATED';
+        }
         if (taskAction == "created") {
           actions = [
             const AndroidNotificationAction(
@@ -541,12 +639,22 @@ class AppNotificationsService {
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            categoryIdentifier: categoryId,
           ),
         );
         break;
       case "leave":
         List<AndroidNotificationAction> actions = [];
+        // var leaveAction = jsonDecode(data["leave_details"])["leave_action"];
+        String categoryId = '';
         var leaveAction = jsonDecode(data["leave_details"])["leave_action"];
+
+        if (leaveAction == "requested") {
+          categoryId = 'LEAVE_REQUESTED';
+        } else {
+          categoryId = 'LEAVE_FINAL';
+        }
+
         if (leaveAction == "requested") {
           actions = [
             const AndroidNotificationAction(
@@ -589,6 +697,7 @@ class AppNotificationsService {
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            categoryIdentifier: categoryId,
           ),
         );
         break;

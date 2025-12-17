@@ -15,6 +15,7 @@ class TaskListGridviewPage extends GetView<TaskController> {
     return Obx(
       () => (controller.taskList.isEmpty && controller.isTaskListLoading.value)
           ? _gridViewWrapper(
+              context: context,
               itemCount: TaskListModel.tempList.length,
               itemBuilder: (context, index) {
                 return TaskListGridTileWidget(
@@ -22,6 +23,7 @@ class TaskListGridviewPage extends GetView<TaskController> {
                 ).skeletonLoading(true);
               })
           : _gridViewWrapper(
+              context: context,
               itemCount: controller.taskList.length,
               itemBuilder: (context, index) {
                 return Obx(
@@ -34,14 +36,15 @@ class TaskListGridviewPage extends GetView<TaskController> {
     );
   }
 
-  _gridViewWrapper(
+  Widget _gridViewWrapper(
       {required int itemCount,
-      required Widget? Function(BuildContext, int) itemBuilder}) {
+      required Widget? Function(BuildContext, int) itemBuilder,
+      required BuildContext context}) {
     return GridView.builder(
       physics: BouncingScrollPhysics(),
       padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 100.h),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: context.isTablet ? 3 : 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
         childAspectRatio: 0.9,

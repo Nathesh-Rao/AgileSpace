@@ -34,7 +34,7 @@ class AttendanceDashBoardWidget extends GetView<AttendanceController> {
                 () => Container(
                   padding: EdgeInsets.all(10.w),
                   width: double.infinity,
-                  height: 200.h,
+                  height: context.isTablet ? 300.h : 200.h,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
                       border: Border.all(

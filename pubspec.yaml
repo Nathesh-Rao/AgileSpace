@@ -2,7 +2,7 @@ name: axpert_space
 description: A new Flutter project.
 publish_to: "none" # This project is private; remove to publish to pub.dev
 
-version: 1.0.0+1
+version: 1.0.2
 
 environment:
   sdk: ^3.6.1
@@ -136,12 +136,11 @@ flutter:
   ############################################################
   # 🔤 FONTS
   ############################################################
-  # fonts:
-  #   - family: Manrope
-  #     fonts:
-  #       - asset: assets/fonts/Manrope-Regular.ttf
-  #       - asset: assets/fonts/Manrope-Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: Digital7
+      fonts:
+        - asset: assets/fonts/digital-7.monoitalic.ttf
+
 icons_launcher:
   image_path: "assets/images/common/axpert_space.png"
   platforms:

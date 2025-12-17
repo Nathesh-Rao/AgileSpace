@@ -84,7 +84,7 @@ class AttendanceController extends GetxController {
     webViewController.onIndexChanged = handleWebViewIndexChange;
   }
 
-  handleWebViewIndexChange(int index) async {
+  Future<void> handleWebViewIndexChange(int index) async {
     if (index == 0) {
       // For doiung pending action from punchin punchout widget
       LogService.writeLog(message: "${attendancePendingAction.value}");
@@ -113,7 +113,7 @@ class AttendanceController extends GetxController {
     }
   }
 
-  handleOnClosePunchinPunchOut(String url) {
+  void handleOnClosePunchinPunchOut(String url) {
     if (url.contains("tpunch") ||
         url.contains("itaskslst") ||
         url.contains("ttimes")) {
@@ -122,15 +122,15 @@ class AttendanceController extends GetxController {
     }
   }
 
-  updateSelectedYear(dynamic date) {
+  void updateSelectedYear(dynamic date) {
     if (selectedYear.value == years[date]) return;
     selectedYear.value = years[date];
     getAttendanceReport();
   }
 
-  updateMonthIndex(int index) {
+  void updateMonthIndex(int index, bool isTablet) {
     if (selectedMonthIndex.value == index) return;
-    double itemWidth = 60;
+    double itemWidth = isTablet ? 20 : 60;
     monthScrollController.animateTo(
       index * itemWidth,
       duration: const Duration(milliseconds: 400),
@@ -140,7 +140,7 @@ class AttendanceController extends GetxController {
     getAttendanceReport();
   }
 
-  getAttendanceLog() {
+  void getAttendanceLog() {
     if (isLogExpanded.value) {
       switchLogExpandValue();
     }
@@ -150,12 +150,12 @@ class AttendanceController extends GetxController {
     }
   }
 
-  switchLogExpandValue() {
+  void switchLogExpandValue() {
     isLogExpandedAssist.value = true;
     isLogExpanded.toggle();
   }
 
-  getAttendanceReport() async {
+  Future<void> getAttendanceReport() async {
     isAttendanceReportLoading.value = true;
 
     var reportList = [];
@@ -192,7 +192,7 @@ class AttendanceController extends GetxController {
     isAttendanceReportLoading.value = false;
   }
 
-  onAttendanceAppbarSwitch(bool val) async {
+  Future<void> onAttendanceAppbarSwitch(bool val) async {
     // attendanceAppbarSwitchIsLoading.value = true;
     // await Future.delayed(Duration(seconds: 2));
     // attendanceAppbarSwitchIsLoading.value = false;
@@ -200,7 +200,7 @@ class AttendanceController extends GetxController {
     // attendanceAppbarSwitchValue.value = !attendanceAppbarSwitchValue.value;
   }
 
-  onAttendanceClockInCardClick(bool isPunchedInn) {
+  void onAttendanceClockInCardClick(bool isPunchedInn) {
     if (!isPunchedInn) {
       doPunchInPunchOut(Const.SCRIPT_PUNCH_INN);
     } else {
@@ -208,15 +208,15 @@ class AttendanceController extends GetxController {
     }
   }
 
-  onAttendanceClockInAnimationEnd() {
+  void onAttendanceClockInAnimationEnd() {
     attendanceClockInWidgetCallBackValue.value = false;
   }
 
   //--------
-  setAttendanceDashboard() {}
+  void setAttendanceDashboard() {}
 
   //--------
-  getInitialAttendanceDetails({bool force = false}) async {
+  Future<void> getInitialAttendanceDetails({bool force = false}) async {
     if (attendanceDetails.value != null && !force) return;
     isAttendanceDetailsIsLoading.value = true;
     isAddrsFetchLoading.value = true;
@@ -424,7 +424,7 @@ class AttendanceController extends GetxController {
     }
   }
 
-  setAttendanceStatus(AttendanceDetailsModel attendance) async {
+  Future<void> setAttendanceStatus(AttendanceDetailsModel attendance) async {
     if (attendance.intime == null && attendance.outtime == null) {
       if (attendance.message.toLowerCase().contains("leave")) {
         attendanceState.value = AttendanceState.leave;
@@ -451,11 +451,11 @@ class AttendanceController extends GetxController {
     await setLocationDetails(attendance);
   }
 
-  showDLG() {
+  void showDLG() {
     showTimeSheetDialog("", '');
   }
 
-  showTimeSheetDialog(String message, String scriptName) {
+  void showTimeSheetDialog(String message, String scriptName) {
     var actionName =
         attendancePendingAction.value == AttendancePendingAction.punchIn
             ? "Clock Inn"
@@ -542,7 +542,7 @@ class AttendanceController extends GetxController {
     );
   }
 
-  showPunchInDialog({required String message}) {
+  void showPunchInDialog({required String message}) {
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -630,14 +630,14 @@ class AttendanceController extends GetxController {
     );
   }
 
-  openLeavePage() {
+  void openLeavePage() {
     attendancePendingAction.value = AttendancePendingAction.leave;
     var url =
         "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=tLeave";
     webViewController.openWebView(url: url);
   }
 
-  setLocationDetails(AttendanceDetailsModel value) async {
+  Future<void> setLocationDetails(AttendanceDetailsModel value) async {
     if (attendanceState.value == AttendanceState.notPunchedIn ||
         attendanceState.value == AttendanceState.punchedIn) {
       await getCurrentAddress();
@@ -665,7 +665,7 @@ class AttendanceController extends GetxController {
     LogService.writeLog(message: "position : ${clockInLocation.value}");
   }
 
-  getCurrentAddress() async {
+  Future<void> getCurrentAddress() async {
     var permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
       clockOutLocation.value =
@@ -706,7 +706,7 @@ class AttendanceController extends GetxController {
     }
   }
 
-  doPunchInPunchOut(scriptName) async {
+  Future<void> doPunchInPunchOut(scriptName) async {
     var isRefreshAttendanceWidget = false;
     isAttendanceDetailsIsLoading.value = true;
     var url = Const.getFullARMUrl(ServerConnections.API_AXSCRIPT);
@@ -791,7 +791,7 @@ class AttendanceController extends GetxController {
     await getInitialAttendanceDetails(force: isRefreshAttendanceWidget);
   }
 
-  openWorkSheet() {
+  void openWorkSheet() {
     if (calledFromAttendanceLogScreen) {
       calledFromAttendanceLogScreen = false;
       Get.back();

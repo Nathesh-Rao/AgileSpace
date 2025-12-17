@@ -1,7 +1,7 @@
 import 'package:animated_switcher_plus/animated_switcher_plus.dart';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/modules/landing/landing.dart';
-import 'package:axpert_space/routes/app_routes.dart';
+import 'package:axpert_space/modules/notifications/controller/notification_controller.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,13 +9,13 @@ import 'package:lottie/lottie.dart';
 import '../../../../common/widgets/flat_button_widget.dart';
 import '../../../../core/core.dart';
 import '../../../settings/settings.dart';
-import '../../widgets/widgets.dart';
 
 class LandingSettingsTab extends GetView<LandingController> {
   const LandingSettingsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
+    NotificationController n = Get.find();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -30,8 +30,15 @@ class LandingSettingsTab extends GetView<LandingController> {
           20.verticalSpace,
           SettingsTabHeaderWidget(),
           10.verticalSpace,
-          SettingsSwitchTile(
-              icon: Icon(EvaIcons.bell), label: "Notification", value: true),
+          Obx(
+            () => SettingsSwitchTile(
+                onChanged: (_) {
+                  controller.onNotificationTileClick();
+                },
+                icon: Icon(EvaIcons.bell),
+                label: "Notification",
+                value: n.showNotify.value),
+          ),
           SettingsSwitchTile(
               icon: Icon(Icons.track_changes_rounded),
               label: "App Logs",
@@ -89,7 +96,7 @@ class LandingSettingsTab extends GetView<LandingController> {
     );
   }
 
-  _showLogOutDialog() {
+  void _showLogOutDialog() {
     Get.dialog(
       Dialog(
         backgroundColor: Colors.white,
@@ -159,7 +166,7 @@ class LandingSettingsTab extends GetView<LandingController> {
     );
   }
 
-  _loadingWidget() {
+  Container _loadingWidget() {
     return Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 15.h),

@@ -2,6 +2,7 @@ import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:axpert_space/firebase_options.dart';
 import 'package:axpert_space/modules/notifications/service/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -22,11 +23,12 @@ import 'core/core.dart';
 //         ticker: 'ticker'));
 // var hasNotificationPermission = true;
 
-main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   LogService.writeOnConsole(message: "Main method started.......");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(const MyApp());
 }
 
@@ -36,7 +38,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(412, 917),
+      designSize:
+          context.isTablet ? const Size(834, 1194) : const Size(412, 917),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {

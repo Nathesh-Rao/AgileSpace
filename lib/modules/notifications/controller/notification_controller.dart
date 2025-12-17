@@ -20,7 +20,7 @@ import '../../../core/utils/server_connections/server_connections.dart';
 import '../../task/controllers/task_controller.dart';
 
 class NotificationController extends GetxController {
-  notifyPrint(String msg) {
+  void notifyPrint(String msg) {
     debugPrint("NOTIFICATIONCONTROLLER : $msg");
   }
 
@@ -40,7 +40,8 @@ class NotificationController extends GetxController {
   var notificationPageRefresh = false.obs;
   var selectedNotificationTYpe = "All".obs;
   var isNotificationScreenLoading = false.obs;
-
+  var showNotify = false.obs;
+  String fcmID = '';
   final Map<String, IconData> notificationTypeIcons = {
     "All": Icons.notifications_active,
     "Task": Icons.task_alt,
@@ -288,7 +289,7 @@ class NotificationController extends GetxController {
 
   // ---------------- DELETE ALL ----------------
 
-  showClearAllDlg() {
+  void showClearAllDlg() {
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -350,7 +351,7 @@ class NotificationController extends GetxController {
     );
   }
 
-  showDeleteSingleDlg(FirebaseMessageModel msg) {
+  void showDeleteSingleDlg(FirebaseMessageModel msg) {
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -654,5 +655,12 @@ class NotificationController extends GetxController {
     notifications.refresh();
     filteredNotifications.refresh();
     groupedNotifications.refresh();
+  }
+
+  Future<void> enableDisableNotification() async {
+    showNotify.toggle();
+
+    await appStorage.storeValue(
+        AppStorage.isShowNotifyEnabled, showNotify.value);
   }
 }
