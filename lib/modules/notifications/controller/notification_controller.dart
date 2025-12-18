@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:axpert_space/common/common.dart';
-import 'package:axpert_space/common/controller/global_variable_controller.dart';
 import 'package:axpert_space/core/app_storage/app_storage.dart';
 import 'package:axpert_space/core/constants/const.dart';
 import 'package:axpert_space/data/data_source/datasource_services.dart';
@@ -8,16 +7,12 @@ import 'package:axpert_space/modules/notifications/model/firebase_message_model.
 import 'package:axpert_space/modules/notifications/service/notification_service.dart';
 import 'package:axpert_space/modules/task/models/models.dart';
 import 'package:axpert_space/routes/app_routes.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../common/widgets/flat_button_widget.dart';
 import '../../../core/config/config.dart';
 import '../../../core/utils/server_connections/server_connections.dart';
-import '../../task/controllers/task_controller.dart';
 
 class NotificationController extends GetxController {
   void notifyPrint(String msg) {
@@ -42,6 +37,7 @@ class NotificationController extends GetxController {
   var isNotificationScreenLoading = false.obs;
   var showNotify = false.obs;
   String fcmID = '';
+
   final Map<String, IconData> notificationTypeIcons = {
     "All": Icons.notifications_active,
     "Task": Icons.task_alt,
@@ -56,20 +52,16 @@ class NotificationController extends GetxController {
     if (type == "default") {
       return Icons.notifications_active;
     }
-
     if (type == "promotion") {
       return Icons.campaign;
     }
-
     if (type == "mail") {
       return Icons.mail;
     }
-
     if (type == "task") {
       try {
         final details = jsonDecode(msg.raw["task_details"]);
         final action = details["task_action"].toString().toLowerCase();
-
         switch (action) {
           case "created":
             return Icons.fiber_new;
@@ -88,12 +80,10 @@ class NotificationController extends GetxController {
         return Icons.task_alt;
       }
     }
-
     if (type == "leave") {
       try {
         final details = jsonDecode(msg.raw["leave_details"]);
         final action = details["leave_action"].toString().toLowerCase();
-
         switch (action) {
           case "requested":
             return Icons.pending_actions;
@@ -108,7 +98,6 @@ class NotificationController extends GetxController {
         return Icons.event_available;
       }
     }
-
     return Icons.notifications;
   }
 
@@ -116,11 +105,14 @@ class NotificationController extends GetxController {
   void onInit() {
     super.onInit();
     AppNotificationsService().init();
-    ever(globalVariableController.NICK_NAME, (name) {
+    ever(globalVariableController.USER_NAME, (name) {
       if (name.isNotEmpty &&
           globalVariableController.PROJECT_NAME.value.isNotEmpty) {
+        AppNotificationsService.cacheUserData();
         loadAllNotifications();
       }
+      showNotify.value =
+          appStorage.retrieveValue(AppStorage.isShowNotifyEnabled) ?? true;
     });
 
     ever(notifications, (_) {
@@ -136,41 +128,32 @@ class NotificationController extends GetxController {
     });
   }
 
-  // ---------------- FILTER LOGIC ----------------
   void filterByType(String type) {
     selectedNotificationTYpe.value = type;
-
     if (type == "All") {
       filteredNotifications.assignAll(notifications);
       filteredNotifications.refresh();
       return;
     }
-
     filteredNotifications.assignAll(
       notifications.where(
         (n) => n.type.toLowerCase() == type.toLowerCase(),
       ),
     );
-
-    // filteredNotifications.refresh();
   }
-
-  // ---------------- LOAD ALL ----------------
 
   Future<void> loadAllNotifications() async {
     await mergeBackgroundNotifications();
     await _loadFromStorage();
     setBadgeCount();
-
-    filterByType(selectedNotificationTYpe.value); // ensure correct view
+    filterByType(selectedNotificationTYpe.value);
     groupNotifications();
   }
 
   Future<void> _loadFromStorage() async {
     notifications.clear();
-
     String project = globalVariableController.PROJECT_NAME.value;
-    String user = globalVariableController.NICK_NAME.value;
+    String user = globalVariableController.USER_NAME.value;
 
     Map all = appStorage.retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
     Map projMap = all[project] ?? {};
@@ -183,30 +166,14 @@ class NotificationController extends GetxController {
         notifyPrint(e.toString());
       }
     }
-
     notifications.sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 
-  // ---------------- BADGE COUNT ----------------
-
   void setBadgeCount() {
-    // String project = globalVariableController.PROJECT_NAME.value;
-    // String user = globalVariableController.NICK_NAME.value;
-
-    // Map unread = appStorage.retrieveValue(AppStorage.NOTIFICATION_UNREAD) ?? {};
-    // Map projUnread = unread[project] ?? {};
-    // int count = int.tryParse(projUnread[user] ?? "0") ?? 0;
-
-    // badgeCount.value = count;
-    // showBadge.value = count > 0;
-
     int unreadCount = notifications.where((n) => n.isOpened == false).length;
-
     badgeCount.value = unreadCount;
     showBadge.value = unreadCount > 0;
   }
-
-  // ---------------- GROUPING ----------------
 
   void groupNotifications() {
     Map<String, List<FirebaseMessageModel>> groups = {
@@ -235,34 +202,35 @@ class NotificationController extends GetxController {
         groups["Older"]!.add(n);
       }
     }
-
     groupedNotifications.value = groups;
   }
 
-  // void _setBadgeCount() {
-  //   // Count only those notifications where isOpened == false
-  //   int unreadCount = notifications.where((n) => n.isOpened == false).length;
-
-  //   badgeCount.value = unreadCount;
-  //   showBadge.value = unreadCount > 0;
-  // }
-
-  // ---------------- MERGE BG NOTIF ----------------
-
   Future<void> mergeBackgroundNotifications() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
     List<String> bgList =
         prefs.getStringList(AppStorage.BG_NOTIFICATIONS) ?? [];
+    notifyPrint("bgList.isEmpty => ${bgList.isEmpty}");
+    if (bgList.isEmpty) return;
 
     Map allNotifications =
         appStorage.retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
     Map allUnread =
         appStorage.retrieveValue(AppStorage.NOTIFICATION_UNREAD) ?? {};
+    bool dataChanged = false;
 
     for (String item in bgList) {
       try {
         Map<String, dynamic> data = jsonDecode(item);
-        var projectDetails = jsonDecode(data['project_details']);
+
+        var projectDetailsRaw = data['project_details'];
+        Map<String, dynamic> projectDetails;
+
+        if (projectDetailsRaw is String) {
+          projectDetails = jsonDecode(projectDetailsRaw);
+        } else {
+          projectDetails = Map<String, dynamic>.from(projectDetailsRaw);
+        }
 
         String project = projectDetails['projectname'];
         String user = projectDetails['notify_to'];
@@ -270,24 +238,41 @@ class NotificationController extends GetxController {
         Map projMap = allNotifications[project] ?? {};
         List userList = projMap[user] ?? [];
 
-        userList.insert(0, item);
-        projMap[user] = userList;
-        allNotifications[project] = projMap;
+        bool exists = userList.any((e) {
+          try {
+            var existing = jsonDecode(e);
+            return existing['timestamp'] == data['timestamp'] &&
+                existing['notify_body'] == data['notify_body'];
+          } catch (_) {
+            return false;
+          }
+        });
 
-        Map unreadProj = allUnread[project] ?? {};
-        int current = int.tryParse(unreadProj[user] ?? "0") ?? 0;
+        if (!exists) {
+          userList.insert(0, item);
+          projMap[user] = userList;
+          allNotifications[project] = projMap;
 
-        unreadProj[user] = "${current + 1}";
-        allUnread[project] = unreadProj;
-      } catch (_) {}
+          Map unreadProj = allUnread[project] ?? {};
+          int current = int.tryParse(unreadProj[user] ?? "0") ?? 0;
+          unreadProj[user] = "${current + 1}";
+          allUnread[project] = unreadProj;
+
+          dataChanged = true;
+        }
+      } catch (e) {
+        notifyPrint(e.toString());
+      }
     }
 
-    await appStorage.storeValue(AppStorage.NOTIFICATION_LIST, allNotifications);
-    await appStorage.storeValue(AppStorage.NOTIFICATION_UNREAD, allUnread);
+    if (dataChanged) {
+      await appStorage.storeValue(
+          AppStorage.NOTIFICATION_LIST, allNotifications);
+      await appStorage.storeValue(AppStorage.NOTIFICATION_UNREAD, allUnread);
+    }
+
     await prefs.remove(AppStorage.BG_NOTIFICATIONS);
   }
-
-  // ---------------- DELETE ALL ----------------
 
   void showClearAllDlg() {
     Get.dialog(
@@ -328,7 +313,6 @@ class NotificationController extends GetxController {
                       },
                     ),
                   ),
-                  // Spacer(),
                   20.horizontalSpace,
                   Expanded(
                     child: FlatButtonWidget(
@@ -347,7 +331,7 @@ class NotificationController extends GetxController {
           ),
         ),
       ),
-      barrierDismissible: false, // Prevent closing by tapping outside
+      barrierDismissible: false,
     );
   }
 
@@ -390,7 +374,6 @@ class NotificationController extends GetxController {
                       },
                     ),
                   ),
-                  // Spacer(),
                   20.horizontalSpace,
                   Expanded(
                     child: FlatButtonWidget(
@@ -409,13 +392,13 @@ class NotificationController extends GetxController {
           ),
         ),
       ),
-      barrierDismissible: false, // Prevent closing by tapping outside
+      barrierDismissible: false,
     );
   }
 
   Future<void> deleteAllNotifications() async {
     String project = globalVariableController.PROJECT_NAME.value;
-    String user = globalVariableController.NICK_NAME.value;
+    String user = globalVariableController.USER_NAME.value;
 
     Map all = appStorage.retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
     Map unread = appStorage.retrieveValue(AppStorage.NOTIFICATION_UNREAD) ?? {};
@@ -434,11 +417,9 @@ class NotificationController extends GetxController {
     notificationPageRefresh.value = true;
   }
 
-  // ---------------- DELETE SINGLE ----------------
-
   Future<void> deleteNotification(FirebaseMessageModel model) async {
     String project = globalVariableController.PROJECT_NAME.value;
-    String user = globalVariableController.NICK_NAME.value;
+    String user = globalVariableController.USER_NAME.value;
 
     Map all = appStorage.retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
     List userList = (all[project]?[user] ?? []).cast<String>();
@@ -458,7 +439,6 @@ class NotificationController extends GetxController {
     await appStorage.storeValue(AppStorage.NOTIFICATION_LIST, all);
 
     notifications.remove(model);
-
     needRefreshNotification.value = true;
     notificationPageRefresh.value = true;
   }
@@ -466,25 +446,20 @@ class NotificationController extends GetxController {
   String getDateForNotification(FirebaseMessageModel msg) {
     final DateTime ts = msg.timestamp;
     final DateTime now = DateTime.now();
-
     final DateTime today = DateTime(now.year, now.month, now.day);
     final DateTime yesterday = today.subtract(const Duration(days: 1));
     final DateTime lastWeek = today.subtract(const Duration(days: 7));
-
     final DateTime dateOnly = DateTime(ts.year, ts.month, ts.day);
 
     if (dateOnly == today) {
       return _formatTime(ts);
     }
-
     if (dateOnly == yesterday) {
       return _formatTime(ts);
     }
-
     if (dateOnly.isAfter(lastWeek)) {
       return _getWeekday(ts.weekday);
     }
-
     return _formatFullDate(ts);
   }
 
@@ -492,10 +467,8 @@ class NotificationController extends GetxController {
     int hour = time.hour;
     final int minute = time.minute;
     final String ampm = hour >= 12 ? "PM" : "AM";
-
     hour = hour % 12;
     if (hour == 0) hour = 12;
-
     final String minStr = minute.toString().padLeft(2, '0');
     return "$hour:$minStr $ampm";
   }
@@ -520,7 +493,6 @@ class NotificationController extends GetxController {
       "Nov",
       "Dec"
     ];
-
     return "${date.day} ${months[date.month - 1]} ${date.year}";
   }
 
@@ -532,9 +504,7 @@ class NotificationController extends GetxController {
 
   Future<void> doActionByNotificationClick(FirebaseMessageModel msg) async {
     isNotificationScreenLoading.value = true;
-
     var type = msg.type;
-
     switch (type.toLowerCase()) {
       case "task":
         await _doTaskNotificationAction(msg);
@@ -546,21 +516,16 @@ class NotificationController extends GetxController {
         notifyPrint("Unknown notification type: $type");
         break;
     }
-
     isNotificationScreenLoading.value = false;
   }
 
   Future _doTaskNotificationAction(FirebaseMessageModel msg) async {
     notifyPrint(
-      "clicked task-id ${jsonDecode(msg.raw["task_details"])["taskId"]}",
-    );
-
+        "clicked task-id ${jsonDecode(msg.raw["task_details"])["taskId"]}");
     try {
       var taskId = jsonDecode(msg.raw["task_details"])["taskId"];
-
       var taskModel = await getTaskById(taskId);
       isNotificationScreenLoading.value = false;
-
       if (taskModel != null) {
         Get.toNamed(
           AppRoutes.tasDetails,
@@ -579,12 +544,9 @@ class NotificationController extends GetxController {
 
   Future _doLeaveNotificationAction(FirebaseMessageModel msg) async {
     notifyPrint(
-      "clicked task-id ${jsonDecode(msg.raw["leave_details"])["leaveId"]}",
-    );
-
+        "clicked leave-id ${jsonDecode(msg.raw["leave_details"])["leaveId"]}");
     try {
       var recordId = jsonDecode(msg.raw["leave_details"])["leaveId"];
-      // AppSnackBar.showNotification("leave : $recordId", "message");
       var url =
           "${Const.BASE_WEB_URL}/aspx/AxMain.aspx?authKey=AXPERT-${appStorage.retrieveValue(AppStorage.SESSIONID)}&pname=tLeave";
       Get.toNamed(
@@ -608,7 +570,6 @@ class NotificationController extends GetxController {
       "datasource": DataSourceServices.DS_GETTASKDETAILS,
       "sqlParams": {"taskid": id}
     };
-
     var dsResp = await serverConnections.postToServer(
         url: dataSourceUrl, isBearer: true, body: jsonEncode(body));
 
@@ -621,37 +582,30 @@ class NotificationController extends GetxController {
         }
       }
     }
-
     return taskListModel;
   }
 
   Future<void> markNotificationAsOpened(FirebaseMessageModel msg) async {
     String project = globalVariableController.PROJECT_NAME.value;
-    String user = globalVariableController.NICK_NAME.value;
-
+    String user = globalVariableController.USER_NAME.value;
     Map all = appStorage.retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
     List userList = (all[project]?[user] ?? []).cast<String>();
 
     for (int i = 0; i < userList.length; i++) {
       try {
         Map item = jsonDecode(userList[i]);
-
         if (item["notify_title"] == msg.title &&
             item["notify_body"] == msg.body &&
             item["timestamp"] == msg.timestamp.toIso8601String()) {
           item["is_opened"] = true;
-
           userList[i] = jsonEncode(item);
           break;
         }
       } catch (_) {}
     }
-
     all[project]?[user] = userList;
     await appStorage.storeValue(AppStorage.NOTIFICATION_LIST, all);
-
     msg.isOpened = true;
-
     notifications.refresh();
     filteredNotifications.refresh();
     groupedNotifications.refresh();
@@ -659,8 +613,12 @@ class NotificationController extends GetxController {
 
   Future<void> enableDisableNotification() async {
     showNotify.toggle();
-
-    await appStorage.storeValue(
-        AppStorage.isShowNotifyEnabled, showNotify.value);
+    try {
+      await appStorage.storeValue(
+          AppStorage.isShowNotifyEnabled, showNotify.value);
+    } catch (e) {
+      notifyPrint("showNotify error $e");
+    }
+    notifyPrint("showNotify.value : ${showNotify.value}");
   }
 }

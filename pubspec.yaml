@@ -2,7 +2,7 @@ name: axpert_space
 description: A new Flutter project.
 publish_to: "none" # This project is private; remove to publish to pub.dev
 
-version: 1.0.2
+version: 1.0.8
 
 environment:
   sdk: ^3.6.1

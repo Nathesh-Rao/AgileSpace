@@ -85,26 +85,6 @@ class NotificationTile extends GetView<NotificationController> {
 
   Widget _leadingWidget(FirebaseMessageModel msg) {
     if (!msg.isOpened) {
-      // return Badge(
-      //   offset: Offset.zero,
-      //   largeSize: 12.sp,
-      //   backgroundColor: Colors.white,
-      //   label: Icon(
-      //     Icons.circle,
-      //     size: 10.sp,
-      //   ),
-      //   child: CircleAvatar(
-      //     backgroundColor: AppColors.getColorByNotificationType(
-      //       msg.type.toLowerCase(),
-      //     ),
-      //     child: Icon(
-      //       controller.getNotificationIconByTypeAndAction(msg),
-      //       color: Colors.white,
-      //       size: 18.sp,
-      //     ),
-      //   ),
-      // );
-
       return Badge(
         alignment: Alignment.topRight,
         offset: const Offset(5, 0),
@@ -160,20 +140,6 @@ class NotificationTile extends GetView<NotificationController> {
 
     List<Widget> addWidgets = [];
     if (type.toLowerCase() == "task") {
-      // addWidgets.add(TextButton.icon(
-      //     // style: TextButton.styleFrom(
-      //     //     backgroundColor:
-      //     //         AppColors.getColorByNotificationType(type).withAlpha(20)),
-      //     onPressed: () {},
-      //     icon: Icon(
-      //       Icons.arrow_right_alt,
-      //     ),
-      //     iconAlignment: IconAlignment.end,
-      //     label: Text(
-      //       "view task",
-      //       style: AppStyles.actionButtonStyle,
-      //     )));
-
       addWidgets.add(
         StatefulBuilder(builder: (context, setValue) {
           return Column(
@@ -181,14 +147,6 @@ class NotificationTile extends GetView<NotificationController> {
             children: [
               Row(
                 children: [
-                  // Text(
-                  //   "Click to view",
-                  //   style: GoogleFonts.poppins(
-                  //     fontWeight: FontWeight.w500,
-                  //     color: AppColors.primaryActionColorDarkBlue,
-                  //     fontSize: 12.sp,
-                  //   ),
-                  // ),
                   InkWell(
                     onTap: () {
                       setValue(() {
@@ -245,19 +203,6 @@ class NotificationTile extends GetView<NotificationController> {
                 ),
               ),
               50.horizontalSpace,
-              // TextButton.icon(
-              //     // style: TextButton.styleFrom(
-              //     //     backgroundColor:
-              //     //         AppColors.getColorByNotificationType(type).withAlpha(20)),
-              //     onPressed: () {},
-              //     icon: Icon(
-              //       Icons.arrow_right_alt,
-              //     ),
-              //     iconAlignment: IconAlignment.end,
-              //     label: Text(
-              //       "view task",
-              //       style: AppStyles.actionButtonStyle,
-              //     ))
             ],
           ),
         ),

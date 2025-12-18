@@ -18,10 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // await GetStorage.init();
-
   final service = AppNotificationsService();
-
   await service.handleMessage(message, isBackground: true);
 }
 
@@ -31,13 +28,17 @@ class AppNotificationsService {
   final FlutterLocalNotificationsPlugin _local =
       FlutterLocalNotificationsPlugin();
   bool hasPermission = true;
-  String? fcmId;
+  static String? fcmId;
+  static const String channelId = 'high_importance_channel';
+  static const String channelName = 'High Importance Notifications';
 
   // ---------------------------------------------------------------------------
 
   void fcmPrint(String msg) {
     debugPrint("AppNotificationsService : $msg");
   }
+
+  // ---------------------------------------------------------------------------
 
   List<DarwinNotificationCategory> _iosCategories() {
     return [
@@ -102,10 +103,13 @@ class AppNotificationsService {
     ];
   }
 
+  // ---------------------------------------------------------------------------
+
   Future<void> init() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
     if (Platform.isAndroid) {
+      await _createAndroidChannel();
       await _local
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
@@ -142,51 +146,71 @@ class AppNotificationsService {
 
     FirebaseMessaging.onMessage.listen(_onForeground);
     FirebaseMessaging.onMessageOpenedApp.listen(_onOpened);
-    // FirebaseMessaging.onBackgroundMessage(_onBackground);
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     fcmPrint("Notification module initialized");
   }
 
   // ---------------------------------------------------------------------------
+
+  Future<void> _createAndroidChannel() async {
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      channelId,
+      channelName,
+      description: 'Notifications for tasks and alerts',
+      importance: Importance.max,
+      playSound: true,
+      enableVibration: true,
+      showBadge: true,
+    );
+
+    final androidPlugin = _local.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+
+    await androidPlugin?.createNotificationChannel(channel);
+    fcmPrint("Android channel created: $channelId");
+  }
+
+  // ---------------------------------------------------------------------------
+
   void _onForeground(RemoteMessage msg) {
     handleMessage(msg);
   }
+
+  // ---------------------------------------------------------------------------
 
   void _onOpened(RemoteMessage msg) {
     _openNotificationPage();
   }
 
+  // ---------------------------------------------------------------------------
+
   @pragma('vm:entry-point')
   static Future<void> _onBackground(RemoteMessage msg) async {
-    // await GetStorage.init();
     AppNotificationsService().handleMessage(msg, isBackground: true);
   }
+
+  // ---------------------------------------------------------------------------
 
   void _onNotificationTap(NotificationResponse response) {
     final actionId = response.actionId;
 
     switch (actionId) {
       case 'task_accept':
-        // call accept API
         break;
-
       case 'task_reject':
-        // call reject API
         break;
-
       case 'leave_accept':
         break;
-
       case 'leave_reject':
         break;
-
       default:
         _openNotificationPage();
     }
   }
 
   // ---------------------------------------------------------------------------
+
   Future<void> handleMessage(RemoteMessage msg,
       {bool isBackground = false}) async {
     final data = msg.data;
@@ -201,6 +225,7 @@ class AppNotificationsService {
   }
 
   // ---------------------------------------------------------------------------
+
   Future<void> _handleServiceCommand(Map data,
       {bool isBackground = false}) async {
     String type = data['type'].toString().toLowerCase();
@@ -211,6 +236,8 @@ class AppNotificationsService {
       await _handleUserNotificationWithType(data, isBackground);
     }
   }
+
+  // ---------------------------------------------------------------------------
 
   Future<void> _handleLocationServiceCommand(Map data) async {
     String type = data['type'].toString().toLowerCase();
@@ -239,61 +266,66 @@ class AppNotificationsService {
     }
   }
 
+  // ---------------------------------------------------------------------------
+
   Future<void> _handleUserNotification(Map data, bool isBackground) async {
     String projectName = "";
     String userName = "";
+    bool showNotify = true;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
 
     if (isBackground) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
       projectName = prefs.getString("cached_project_name") ?? "";
-      userName = prefs.getString("cached_nick_name") ?? "";
+      userName = prefs.getString("cached_user_name") ?? "";
+      showNotify = prefs.getBool(AppStorage.isShowNotifyEnabled) ?? true;
     } else {
-      projectName = globalVariableController.PROJECT_NAME.value.trim();
-      userName = globalVariableController.NICK_NAME.value.trim();
+      projectName = prefs.getString("cached_project_name") ?? "";
+      userName = prefs.getString("cached_user_name") ?? "";
+      showNotify =
+          await AppStorage().retrieveValue(AppStorage.isShowNotifyEnabled) ??
+              true;
     }
 
     fcmPrint("Context: ${isBackground ? "Background" : "Foreground"}");
-    fcmPrint("Project: $projectName | User: $userName");
 
     late String notiProjectName;
     late FirebaseMessageModel model;
 
     try {
-      // model = FirebaseMessageModel(
-      //   data["notify_title"],
-      //   data["notify_body"],
-      // );
       model = FirebaseMessageModel.fromJson(data);
       var det = jsonDecode(data["project_details"]);
       notiProjectName = det["projectname"].toString();
       String notifyTo = det["notify_to"].toString();
 
-      // Logic Checks
       if (notiProjectName != projectName) return;
       if (!notifyTo.toLowerCase().contains(userName.toLowerCase())) return;
     } catch (e) {
-      fcmPrint(e.toString());
+      fcmPrint("Error parsing notification logic: $e");
       return;
     }
-    bool showNotify =
-        await AppStorage().retrieveValue(AppStorage.isShowNotifyEnabled) ??
-            true;
-    final c = Get.find<NotificationController>();
-    c.showNotify.value = showNotify;
+
     if (hasPermission && showNotify) {
-      await _local.show(
-        model.hashCode,
-        model.title,
-        model.body,
-        NotificationDetails(
-            android: AndroidNotificationDetails('Default', 'Default',
-                icon: 'ic_notify',
-                importance: Importance.max,
-                priority: Priority.high,
-                largeIcon: DrawableResourceAndroidBitmap('ic_launcher')
-                // color: Color(0xff142071),
-                )),
-      );
+      try {
+        await _local.show(
+          model.hashCode,
+          model.title,
+          model.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channelId,
+              channelName,
+              icon: 'ic_notify',
+              importance: Importance.max,
+              priority: Priority.high,
+              largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
+            ),
+          ),
+        );
+      } catch (e) {
+        fcmPrint("Error showing local notification: $e");
+      }
     }
 
     if (isBackground) {
@@ -306,55 +338,59 @@ class AppNotificationsService {
       _updateControllers();
     }
   }
+
+  // ---------------------------------------------------------------------------
 
   Future<void> _handleUserNotificationWithType(
       Map data, bool isBackground) async {
     String projectName = "";
     String userName = "";
+    bool showNotify = true;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
 
     if (isBackground) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
       projectName = prefs.getString("cached_project_name") ?? "";
-      userName = prefs.getString("cached_nick_name") ?? "";
+      userName = prefs.getString("cached_user_name") ?? "";
+      showNotify = prefs.getBool(AppStorage.isShowNotifyEnabled) ?? true;
     } else {
-      projectName = globalVariableController.PROJECT_NAME.value.trim();
-      userName = globalVariableController.NICK_NAME.value.trim();
+      projectName = prefs.getString("cached_project_name") ?? "";
+      userName = prefs.getString("cached_user_name") ?? "";
+      showNotify =
+          await AppStorage().retrieveValue(AppStorage.isShowNotifyEnabled) ??
+              true;
     }
 
     fcmPrint("Context: ${isBackground ? "Background" : "Foreground"}");
-    fcmPrint("Project: $projectName | User: $userName");
 
     late String notiProjectName;
     late FirebaseMessageModel model;
 
     try {
-      // model = FirebaseMessageModel(
-      //   data["notify_title"],
-      //   data["notify_body"],
-      // );
       model = FirebaseMessageModel.fromJson(data);
       var det = jsonDecode(data["project_details"]);
       notiProjectName = det["projectname"].toString();
       String notifyTo = det["notify_to"].toString();
 
-      // Logic Checks
       if (notiProjectName != projectName) return;
       if (!notifyTo.toLowerCase().contains(userName.toLowerCase())) return;
     } catch (e) {
       fcmPrint(e.toString());
       return;
     }
-    bool showNotify =
-        await AppStorage().retrieveValue(AppStorage.isShowNotifyEnabled) ??
-            true;
 
     if (hasPermission && showNotify) {
-      await _local.show(
-        model.hashCode,
-        model.title,
-        model.body,
-        await getNotificationDetailsByType(data, model),
-      );
+      try {
+        await _local.show(
+          model.hashCode,
+          model.title,
+          model.body,
+          await getNotificationDetailsByType(data, model),
+        );
+      } catch (e) {
+        fcmPrint("Error showing notification: $e");
+      }
     }
 
     if (isBackground) {
@@ -369,57 +405,36 @@ class AppNotificationsService {
   }
 
   // ---------------------------------------------------------------------------
+
   Future<void> _saveBackground(Map data) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.reload();
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.reload();
 
-    List<String> list = prefs.getStringList(AppStorage.BG_NOTIFICATIONS) ?? [];
-    // list.add(jsonEncode(data));
-    list.add(jsonEncode({
-      ...data,
-      "timestamp": DateTime.now().toIso8601String(),
-      "is_opened": false
-    }));
+      List<String> list =
+          prefs.getStringList(AppStorage.BG_NOTIFICATIONS) ?? [];
 
-    await prefs.setStringList(AppStorage.BG_NOTIFICATIONS, list);
+      final savedData = {
+        ...data,
+        "timestamp": DateTime.now().toIso8601String(),
+        "is_opened": false
+      };
+
+      list.add(jsonEncode(savedData));
+
+      await prefs.setStringList(AppStorage.BG_NOTIFICATIONS, list);
+      fcmPrint("Saved background notification. Count: ${list.length}");
+    } catch (e) {
+      fcmPrint("Error saving background data: $e");
+    }
   }
 
   // ---------------------------------------------------------------------------
-  // Future<void> _saveForeground(Map data, String project, String user) async {
-  //   AppStorage storage = AppStorage();
-
-  //   Map all = storage.retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
-  //   Map projMap = all[project] ?? {};
-  //   List userList = projMap[user] ?? [];
-
-  //   // userList.insert(0, jsonEncode(data));
-  //   userList.insert(
-  //       0,
-  //       jsonEncode(
-  //           {...data, "timestamp": DateTime(2024, 5, 1).toIso8601String()}));
-  //   projMap[user] = userList;
-  //   all[project] = projMap;
-
-  //   storage.storeValue(AppStorage.NOTIFICATION_LIST, all);
-
-  //   Map unread = storage.retrieveValue(AppStorage.NOTIFICATION_UNREAD) ?? {};
-  //   Map unreadProj = unread[project] ?? {};
-  //   int current = int.tryParse(unreadProj[user] ?? "0") ?? 0;
-  //   unreadProj[user] = "${current + 1}";
-  //   unread[project] = unreadProj;
-
-  //   storage.storeValue(AppStorage.NOTIFICATION_UNREAD, unread);
-  //   try {
-  //     final c = Get.find<NotificationController>();
-  //     c.notifications.insert(0, FirebaseMessageModel.fromJson(data));
-  //     fcmPrint("c.notifications.length ${c.notifications.length}");
-  //   } catch (e) {
-  //     fcmPrint(e.toString());
-  //   }
-  // }
 
   Future<void> _saveForeground(Map data, String project, String user) async {
     AppStorage storage = AppStorage();
+    String projectKey = project.trim();
+    String userKey = user.trim().toLowerCase();
 
     final savedData = {
       ...data,
@@ -428,20 +443,20 @@ class AppNotificationsService {
     };
 
     Map all = storage.retrieveValue(AppStorage.NOTIFICATION_LIST) ?? {};
-    Map projMap = all[project] ?? {};
-    List userList = projMap[user] ?? [];
+    Map projMap = all[projectKey] ?? {};
+    List userList = projMap[userKey] ?? [];
 
     userList.insert(0, jsonEncode(savedData));
-    projMap[user] = userList;
-    all[project] = projMap;
+    projMap[userKey] = userList;
+    all[projectKey] = projMap;
 
     storage.storeValue(AppStorage.NOTIFICATION_LIST, all);
 
     Map unread = storage.retrieveValue(AppStorage.NOTIFICATION_UNREAD) ?? {};
-    Map unreadProj = unread[project] ?? {};
-    int current = int.tryParse(unreadProj[user] ?? "0") ?? 0;
-    unreadProj[user] = "${current + 1}";
-    unread[project] = unreadProj;
+    Map unreadProj = unread[projectKey] ?? {};
+    int current = int.tryParse(unreadProj[userKey] ?? "0") ?? 0;
+    unreadProj[userKey] = "${current + 1}";
+    unread[projectKey] = unreadProj;
 
     storage.storeValue(AppStorage.NOTIFICATION_UNREAD, unread);
 
@@ -449,27 +464,26 @@ class AppNotificationsService {
       final c = Get.find<NotificationController>();
       c.notifications.add(FirebaseMessageModel.fromJson(savedData));
       c.notifications.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+      c.setBadgeCount();
     } catch (e) {
       fcmPrint(e.toString());
     }
   }
 
   // ---------------------------------------------------------------------------
+
   void _updateControllers() {
     try {
       final c = Get.find<NotificationController>();
-
       c.needRefreshNotification.value = true;
       c.notificationPageRefresh.value = true;
-
-      // Recalculate unread count from actual data
       c.setBadgeCount();
-
       fcmPrint("FCM Data: c.badgeCount.value ${c.badgeCount.value}");
     } catch (_) {}
   }
 
   // ---------------------------------------------------------------------------
+
   void _openNotificationPage() {
     try {
       Get.toNamed(AppRoutes.notification);
@@ -479,6 +493,7 @@ class AppNotificationsService {
   }
 
   // ---------------------------------------------------------------------------
+
   Future<void> callApiForMobileNotification() async {
     try {
       String imei = await PlatformDeviceId.getDeviceId ?? "0";
@@ -504,28 +519,41 @@ class AppNotificationsService {
     }
   }
 
+  // ---------------------------------------------------------------------------
+
   static Future<void> cacheUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("cached_project_name",
         globalVariableController.PROJECT_NAME.value.trim());
     await prefs.setString(
-        "cached_nick_name", globalVariableController.NICK_NAME.value.trim());
+        "cached_user_name", globalVariableController.USER_NAME.value.trim());
+
+    bool isEnabled =
+        await AppStorage().retrieveValue(AppStorage.isShowNotifyEnabled) ??
+            true;
+    await prefs.setBool(AppStorage.isShowNotifyEnabled, isEnabled);
   }
+
+  // ---------------------------------------------------------------------------
 
   Future<NotificationDetails> getNotificationDetailsByType(
       Map data, FirebaseMessageModel model) async {
     late NotificationDetails notification;
     String type = data['type'].toString().toLowerCase();
+
+    const androidDetails = AndroidNotificationDetails(
+      channelId,
+      channelName,
+      icon: 'ic_notify',
+      importance: Importance.max,
+      priority: Priority.high,
+      largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
+    );
+
     switch (type) {
       case "default":
         notification = NotificationDetails(
-          android: AndroidNotificationDetails('Default', 'Default',
-              icon: 'ic_notify',
-              importance: Importance.max,
-              priority: Priority.high,
-              largeIcon: DrawableResourceAndroidBitmap('ic_launcher')
-              // color: Color(0xff142071),
-              ),
+          android: androidDetails,
           iOS: DarwinNotificationDetails(
             presentAlert: true,
             presentBadge: true,
@@ -549,14 +577,15 @@ class AppNotificationsService {
             );
 
             notification = NotificationDetails(
-                android: AndroidNotificationDetails('Default', 'Default',
-                    icon: 'ic_notify',
-                    importance: Importance.max,
-                    priority: Priority.high,
-                    largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
-                    styleInformation: styleInfo
-                    // color: Color(0xff142071),
-                    ),
+                android: AndroidNotificationDetails(
+                  channelId,
+                  channelName,
+                  icon: 'ic_notify',
+                  importance: Importance.max,
+                  priority: Priority.high,
+                  largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
+                  styleInformation: styleInfo,
+                ),
                 iOS: DarwinNotificationDetails(
                   presentAlert: true,
                   presentBadge: true,
@@ -565,19 +594,12 @@ class AppNotificationsService {
                     DarwinNotificationAttachment(bigPicturePath),
                   ],
                 ));
+          } else {
+            throw Exception("No image");
           }
         } catch (e) {
-          fcmPrint(e.toString());
           notification = NotificationDetails(
-            android: AndroidNotificationDetails(
-              'Default', 'Default',
-              icon: 'ic_notify',
-              importance: Importance.max,
-              priority: Priority.high,
-              largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
-
-              // color: Color(0xff142071),
-            ),
+            android: androidDetails,
             iOS: DarwinNotificationDetails(
               presentAlert: true,
               presentBadge: true,
@@ -585,19 +607,15 @@ class AppNotificationsService {
             ),
           );
         }
+        break;
 
       case "task":
         List<AndroidNotificationAction> actions = [];
-        // var taskAction = jsonDecode(data["task_details"])["task_action"];
         String categoryId = '';
         var taskAction = jsonDecode(data["task_details"])["task_action"];
 
         if (taskAction == "created") {
           categoryId = 'TASK_CREATED';
-        } else if (taskAction == "updated") {
-          categoryId = 'TASK_UPDATED';
-        }
-        if (taskAction == "created") {
           actions = [
             const AndroidNotificationAction(
               'task_accept',
@@ -611,6 +629,7 @@ class AppNotificationsService {
             ),
           ];
         } else if (taskAction == "updated") {
+          categoryId = 'TASK_UPDATED';
           actions = [
             const AndroidNotificationAction(
               'task_view_changes',
@@ -627,12 +646,12 @@ class AppNotificationsService {
 
         notification = NotificationDetails(
           android: AndroidNotificationDetails(
-            'Default', 'Default',
+            channelId,
+            channelName,
             icon: 'ic_notify',
             importance: Importance.max,
             priority: Priority.high,
             largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
-            // color: Color(0xff142071),
             actions: actions,
           ),
           iOS: DarwinNotificationDetails(
@@ -645,17 +664,11 @@ class AppNotificationsService {
         break;
       case "leave":
         List<AndroidNotificationAction> actions = [];
-        // var leaveAction = jsonDecode(data["leave_details"])["leave_action"];
         String categoryId = '';
         var leaveAction = jsonDecode(data["leave_details"])["leave_action"];
 
         if (leaveAction == "requested") {
           categoryId = 'LEAVE_REQUESTED';
-        } else {
-          categoryId = 'LEAVE_FINAL';
-        }
-
-        if (leaveAction == "requested") {
           actions = [
             const AndroidNotificationAction(
               'leave_accept',
@@ -668,7 +681,8 @@ class AppNotificationsService {
               showsUserInterface: true,
             ),
           ];
-        } else if (leaveAction == "approved" || leaveAction == "rejected") {
+        } else {
+          categoryId = 'LEAVE_FINAL';
           actions = [
             const AndroidNotificationAction(
               'leave_view_changes',
@@ -685,12 +699,12 @@ class AppNotificationsService {
 
         notification = NotificationDetails(
           android: AndroidNotificationDetails(
-            'Default', 'Default',
+            channelId,
+            channelName,
             icon: 'ic_notify',
             importance: Importance.max,
             priority: Priority.high,
             largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
-            // color: Color(0xff142071),
             actions: actions,
           ),
           iOS: DarwinNotificationDetails(
@@ -703,13 +717,7 @@ class AppNotificationsService {
         break;
       default:
         notification = NotificationDetails(
-          android: AndroidNotificationDetails('Default', 'Default',
-              icon: 'ic_notify',
-              importance: Importance.max,
-              priority: Priority.high,
-              largeIcon: DrawableResourceAndroidBitmap('ic_launcher')
-              // color: Color(0xff142071),
-              ),
+          android: androidDetails,
           iOS: DarwinNotificationDetails(
             presentAlert: true,
             presentBadge: true,
@@ -721,6 +729,8 @@ class AppNotificationsService {
 
     return notification;
   }
+
+  // ---------------------------------------------------------------------------
 
   Future<String> _downloadAndSaveFile(
     String url,

@@ -7,6 +7,7 @@ import 'package:axpert_space/modules/notifications/service/notification_service.
 import 'package:axpert_space/modules/notifications/widgets/notification_types_widget.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -46,7 +47,7 @@ class NotificationScreen extends GetView<NotificationController> {
             ),
             20.verticalSpace,
             NotificationTypesWidget(),
-            Text(AppNotificationsService().fcmId.toString()),
+            // Text(AppNotificationsService.fcmId.toString()),
             Expanded(
                 child: isListEmpty
                     ? _notificationEmptyWidget()
