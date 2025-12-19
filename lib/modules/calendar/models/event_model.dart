@@ -5,6 +5,7 @@ class EventModel {
   final String taskSubType;
   final String hrs;
   final String mns;
+  final String recordType;
 
   EventModel({
     required this.eventName,
@@ -13,6 +14,7 @@ class EventModel {
     required this.taskSubType,
     required this.hrs,
     required this.mns,
+    required this.recordType,
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
@@ -21,8 +23,9 @@ class EventModel {
       description: json['description'] ?? '',
       taskType: json['task_type'] ?? '',
       taskSubType: json['task_sybtype'] ?? '',
-      hrs: json['hours'].toInt().toString(),
-      mns: json['minutes'].toInt().toString(),
+      hrs: (json['hours'] is num) ? json['hours'].toInt().toString() : '',
+      mns: (json['minutes'] is num) ? json['minutes'].toInt().toString() : '',
+      recordType: json['record_type'] ?? '',
     );
   }
 
@@ -30,6 +33,7 @@ class EventModel {
     return {
       'eventname': eventName,
       'description': description,
+      'record_type': recordType,
     };
   }
 }

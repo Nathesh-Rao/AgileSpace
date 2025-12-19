@@ -27,17 +27,17 @@ class CalendarController extends GetxController {
   DateTime selectedDate = DateTime.now();
   RxList<Meeting> meetingList = <Meeting>[].obs;
   WebViewController webViewController = Get.find();
-  switchCalendarView() {
+  void switchCalendarView() {
     calendarViewSwitch.toggle();
   }
 
-  getAllData() async {
+  Future<void> getAllData() async {
     // await getTaskByDay();
     await getEventsByDay();
     // getMeetingsFromEvents();
   }
 
-  getEventsByDay() async {
+  Future<void> getEventsByDay() async {
     // eventsList.value = [];
     calendarEventLoading.value = true;
     LogService.writeLog(message: "getEventsByDay()");
@@ -65,7 +65,16 @@ class CalendarController extends GetxController {
         for (var item in dsDataList) {
           try {
             if (item != null) {
-              eventsList.add(EventModel.fromJson(item));
+              var event = EventModel.fromJson(item);
+
+              if (event.recordType.toLowerCase() == "leave") {
+                eventsList.clear();
+                eventsList.add(event);
+                calendarEventLoading.value = false;
+                return;
+              }
+
+              eventsList.add(event);
             }
           } catch (e) {
             debugPrint(" $e");
@@ -136,7 +145,7 @@ class CalendarController extends GetxController {
   //   // }
   // }
 
-  navigateToCreateTask() {
+  void navigateToCreateTask() {
     webViewController.navigateToCreateTask();
   }
 }

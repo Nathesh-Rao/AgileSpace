@@ -18,9 +18,7 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
   Widget build(BuildContext context) {
     return Obx(
       () {
-        var meetingList = controller.meetingList.value;
-
-        var eventList = controller.eventsList.value;
+        var eventList = controller.eventsList;
         return Column(
           children: [
             15.verticalSpace,
@@ -68,6 +66,49 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
     );
   }
 
+  Widget _leaveWidget(EventModel event) {
+    var color = AppColors.primaryActionColorDarkBlue;
+
+    var title =
+        "You were on ${event.description} ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : "on ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}.";
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 10.w),
+      // color: AppColors.baseGray.withAlpha(70),
+      height: 80.h,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.primaryActionColorDarkBlue.withAlpha(20),
+        border: Border(
+          left: BorderSide(color: color, width: 10.w),
+          right: BorderSide(color: color),
+          top: BorderSide(color: color),
+          bottom: BorderSide(color: color),
+        ),
+        borderRadius: BorderRadius.circular(7.r),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.work_off,
+            size: 24.sp,
+            color: AppColors.primaryActionColorDarkBlue,
+          ),
+          8.horizontalSpace,
+          Flexible(
+            child: Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColors.primaryActionColorDarkBlue,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildEvent(EventModel event) {
     var color = AppColors.getRandomColor();
 
@@ -75,6 +116,10 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
       color: Colors.black87,
       fontSize: 14.sp,
     );
+
+    if (event.recordType.toLowerCase() == 'leave') {
+      return _leaveWidget(event);
+    }
 
     return Container(
       margin: EdgeInsets.symmetric(

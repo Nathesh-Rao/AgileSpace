@@ -29,7 +29,7 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
           todayHighlightColor: Colors.purple,
           initialSelectedDate: controller.selectedDate,
           selectionDecoration: BoxDecoration(
-            color: Colors.purple.withOpacity(0.2),
+            color: Colors.purple.withValues(alpha: 0.2),
             shape: BoxShape.circle,
             border: Border.all(color: Colors.purple, width: 2),
           ),
@@ -64,9 +64,7 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
                       children: [
                         15.verticalSpace,
                         controller.eventsList.isNotEmpty
-                            ? _buildSectionTitle(
-                                "Tasks for ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : " - ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}",
-                                CupertinoIcons.circle_grid_hex_fill)
+                            ? _buildSectionTitle()
                             : SizedBox.shrink(),
                         5.verticalSpace,
                         ...List.generate(
@@ -97,7 +95,47 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
     );
   }
 
-  Widget _buildSectionTitle(String title, IconData icon) {
+  Widget _leaveWidget(EventModel event) {
+    var title =
+        "You were on ${event.description} ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : "on ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}.";
+    return Container(
+      // color: AppColors.baseGray.withAlpha(70),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+      decoration: BoxDecoration(
+          color: AppColors.primaryActionColorDarkBlue.withAlpha(20),
+          border: Border(
+              left: BorderSide(
+                  color: AppColors.primaryActionColorDarkBlue, width: 3.w))),
+      child: Row(
+        children: [
+          Icon(
+            Icons.work_off,
+            size: 18.sp,
+            color: AppColors.primaryActionColorDarkBlue,
+          ),
+          8.horizontalSpace,
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.primaryActionColorDarkBlue,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle() {
+    if (controller.eventsList.length == 1 &&
+        controller.eventsList.first.recordType.toLowerCase() == 'leave') {
+      return _leaveWidget(controller.eventsList.first);
+    }
+
+    var title =
+        "Tasks for ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : " - ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}";
+
     return Container(
       // color: AppColors.baseGray.withAlpha(70),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
@@ -109,7 +147,7 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
       child: Row(
         children: [
           Icon(
-            icon,
+            CupertinoIcons.circle_grid_hex_fill,
             size: 18.sp,
             color: AppColors.primaryActionColorDarkBlue,
           ),
@@ -131,6 +169,11 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
     var style = GoogleFonts.poppins(
       color: Colors.black87,
     );
+
+    if (task.recordType.toLowerCase() == 'leave') {
+      return SizedBox.shrink();
+    }
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 3.h),
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.h),
