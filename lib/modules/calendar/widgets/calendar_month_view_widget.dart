@@ -57,37 +57,41 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
                       controller.taskList.isEmpty &&
                       controller.eventsList.isEmpty)
                   ? Center(child: EmptyWidget())
-                  : ListView(
-                      // shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      padding: EdgeInsets.only(left: 10.w),
-                      children: [
-                        15.verticalSpace,
-                        controller.eventsList.isNotEmpty
-                            ? _buildSectionTitle()
-                            : SizedBox.shrink(),
-                        5.verticalSpace,
-                        ...List.generate(
-                            controller.eventsList.length,
-                            (index) => _buildEvent(controller.eventsList[index],
-                                AppColors.getNextColor())),
-                        // _buildSectionTitle("Today", Icons.calendar_today),
+                  : controller.isLeave.value
+                      ? _leaveWidget()
+                      : ListView(
+                          // shrinkWrap: true,
+                          physics: BouncingScrollPhysics(),
+                          padding: EdgeInsets.only(left: 10.w),
+                          children: [
+                            15.verticalSpace,
+                            controller.eventsList.isNotEmpty
+                                ? _buildSectionTitle()
+                                : SizedBox.shrink(),
+                            5.verticalSpace,
+                            ...List.generate(
+                                controller.eventsList.length,
+                                (index) => _buildEvent(
+                                    controller.eventsList[index],
+                                    AppColors.getNextColor())),
+                            // _buildSectionTitle("Today", Icons.calendar_today),
 
-                        // 15.verticalSpace,
-                        // _buildSectionTitle(
-                        //     "Events for ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : " - ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}",
-                        //     CupertinoIcons.dial_fill),
-                        // 5.verticalSpace,
-                        // ...List.generate(
-                        //     controller.taskList.length,
-                        //     (index) => _buildEvent(
-                        //         controller.taskList[index].caption,
-                        //         DateUtilsHelper.getTimeFromDate(controller
-                        //             .taskList[index].fromDate
-                        //             .toString()),
-                        //         AppColors.getNextColor())),
-                      ],
-                    ).skeletonLoading(controller.calendarEventLoading.value),
+                            // 15.verticalSpace,
+                            // _buildSectionTitle(
+                            //     "Events for ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : " - ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}",
+                            //     CupertinoIcons.dial_fill),
+                            // 5.verticalSpace,
+                            // ...List.generate(
+                            //     controller.taskList.length,
+                            //     (index) => _buildEvent(
+                            //         controller.taskList[index].caption,
+                            //         DateUtilsHelper.getTimeFromDate(controller
+                            //             .taskList[index].fromDate
+                            //             .toString()),
+                            //         AppColors.getNextColor())),
+                          ],
+                        ).skeletonLoading(
+                          controller.calendarEventLoading.value),
             ),
           ),
         ),
@@ -95,44 +99,39 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
     );
   }
 
-  Widget _leaveWidget(EventModel event) {
-    var title =
-        "You were on ${event.description} ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : "on ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}.";
-    return Container(
-      // color: AppColors.baseGray.withAlpha(70),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-      decoration: BoxDecoration(
-          color: AppColors.primaryActionColorDarkBlue.withAlpha(20),
-          border: Border(
-              left: BorderSide(
-                  color: AppColors.primaryActionColorDarkBlue, width: 3.w))),
-      child: Row(
-        children: [
-          Icon(
-            Icons.work_off,
-            size: 18.sp,
-            color: AppColors.primaryActionColorDarkBlue,
-          ),
-          8.horizontalSpace,
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w500,
-              color: AppColors.primaryActionColorDarkBlue,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _leaveWidget(EventModel event) {
+  //   var title =
+  //       "You were on ${event.description} ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : "on ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}.";
+  //   return Container(
+  //     // color: AppColors.baseGray.withAlpha(70),
+  //     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+  //     decoration: BoxDecoration(
+  //         color: AppColors.primaryActionColorDarkBlue.withAlpha(20),
+  //         border: Border(
+  //             left: BorderSide(
+  //                 color: AppColors.primaryActionColorDarkBlue, width: 3.w))),
+  //     child: Row(
+  //       children: [
+  //         Icon(
+  //           Icons.work_off,
+  //           size: 18.sp,
+  //           color: AppColors.primaryActionColorDarkBlue,
+  //         ),
+  //         8.horizontalSpace,
+  //         Text(
+  //           title,
+  //           style: GoogleFonts.poppins(
+  //             fontSize: 13.sp,
+  //             fontWeight: FontWeight.w500,
+  //             color: AppColors.primaryActionColorDarkBlue,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildSectionTitle() {
-    if (controller.eventsList.length == 1 &&
-        controller.eventsList.first.recordType.toLowerCase() == 'leave') {
-      return _leaveWidget(controller.eventsList.first);
-    }
-
     var title =
         "Tasks for ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : " - ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}";
 
@@ -230,6 +229,32 @@ class CalendarMonthViewWidget extends GetView<cl.CalendarController> {
           //     fontWeight: FontWeight.w600,
           //   ),
           // ),
+        ],
+      ),
+    );
+  }
+
+  Widget _leaveWidget() {
+    var event = controller.eventsList.first;
+    var title =
+        "You were on ${event.description} ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : "on ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}";
+
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            "assets/images/common/on_leave.png",
+            width: 1.sw / 2.5,
+          ),
+          10.verticalSpace,
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              color: AppColors.primaryTitleTextColorBlueGrey,
+              fontWeight: FontWeight.w500,
+            ),
+          )
         ],
       ),
     );

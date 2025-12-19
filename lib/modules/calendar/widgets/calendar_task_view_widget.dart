@@ -35,7 +35,7 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
               },
             ),
             15.verticalSpace,
-            eventList.isNotEmpty
+            (eventList.isNotEmpty && !controller.isLeave.value)
                 ? Row(
                     children: [
                       10.horizontalSpace,
@@ -50,11 +50,15 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
                 child: AnimatedSwitcherPlus.translationTop(
                     duration: Duration(milliseconds: 400),
                     child: eventList.isNotEmpty
-                        ? ListView.builder(
-                            padding: EdgeInsets.only(top: 10.h),
-                            itemCount: eventList.length,
-                            itemBuilder: (context, index) =>
-                                _buildEvent(eventList[index]))
+                        ? controller.isLeave.value
+                            ? _leaveWidget()
+                            : ListView.builder(
+                                    padding: EdgeInsets.only(top: 10.h),
+                                    itemCount: eventList.length,
+                                    itemBuilder: (context, index) =>
+                                        _buildEvent(eventList[index]))
+                                .skeletonLoading(
+                                    controller.calendarEventLoading.value)
                         : Center(
                             child: EmptyWidget(
                               label: "No Events found",
@@ -66,44 +70,70 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
     );
   }
 
-  Widget _leaveWidget(EventModel event) {
-    var color = AppColors.primaryActionColorDarkBlue;
+  // Widget _leaveWidget(EventModel event) {
+  //   var color = AppColors.primaryActionColorDarkBlue;
 
+  //   var title =
+  //       "You were on ${event.description} ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : "on ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}.";
+  //   return Container(
+  //     margin: EdgeInsets.symmetric(horizontal: 10.w),
+  //     // color: AppColors.baseGray.withAlpha(70),
+  //     height: 80.h,
+  //     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+  //     decoration: BoxDecoration(
+  //       color: AppColors.primaryActionColorDarkBlue.withAlpha(20),
+  //       border: Border(
+  //         left: BorderSide(color: color, width: 10.w),
+  //         right: BorderSide(color: color),
+  //         top: BorderSide(color: color),
+  //         bottom: BorderSide(color: color),
+  //       ),
+  //       borderRadius: BorderRadius.circular(7.r),
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Icon(
+  //           Icons.work_off,
+  //           size: 24.sp,
+  //           color: AppColors.primaryActionColorDarkBlue,
+  //         ),
+  //         8.horizontalSpace,
+  //         Flexible(
+  //           child: Text(
+  //             title,
+  //             style: GoogleFonts.poppins(
+  //               fontSize: 14.sp,
+  //               fontWeight: FontWeight.w500,
+  //               color: AppColors.primaryActionColorDarkBlue,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget _leaveWidget() {
+    var event = controller.eventsList.first;
     var title =
-        "You were on ${event.description} ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : "on ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}.";
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10.w),
-      // color: AppColors.baseGray.withAlpha(70),
-      height: 80.h,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.primaryActionColorDarkBlue.withAlpha(20),
-        border: Border(
-          left: BorderSide(color: color, width: 10.w),
-          right: BorderSide(color: color),
-          top: BorderSide(color: color),
-          bottom: BorderSide(color: color),
-        ),
-        borderRadius: BorderRadius.circular(7.r),
-      ),
-      child: Row(
+        "You were on ${event.description} ${DateUtils.isSameDay(controller.selectedDate, controller.todayDate) ? "Today" : "on ${DateUtilsHelper.getTodayFormattedDateMD(date: controller.selectedDate)}"}";
+
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.work_off,
-            size: 24.sp,
-            color: AppColors.primaryActionColorDarkBlue,
+          Image.asset(
+            "assets/images/common/on_leave.png",
+            width: 1.sw / 2.5,
           ),
-          8.horizontalSpace,
-          Flexible(
-            child: Text(
-              title,
-              style: GoogleFonts.poppins(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.primaryActionColorDarkBlue,
-              ),
+          10.verticalSpace,
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              color: AppColors.primaryTitleTextColorBlueGrey,
+              fontWeight: FontWeight.w500,
             ),
-          ),
+          )
         ],
       ),
     );
@@ -116,10 +146,6 @@ class CalendarTaskViewWidget extends GetView<cl.CalendarController> {
       color: Colors.black87,
       fontSize: 14.sp,
     );
-
-    if (event.recordType.toLowerCase() == 'leave') {
-      return _leaveWidget(event);
-    }
 
     return Container(
       margin: EdgeInsets.symmetric(

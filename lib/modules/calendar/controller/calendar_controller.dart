@@ -17,6 +17,7 @@ import '../../../core/utils/server_connections/server_connections.dart';
 class CalendarController extends GetxController {
   var calendarViewSwitch = false.obs;
   var calendarEventLoading = false.obs;
+  var isLeave = false.obs;
 
   RxList<EventModel> eventsList = <EventModel>[].obs;
   RxList<TaskByDayModel> taskList = <TaskByDayModel>[].obs;
@@ -40,6 +41,7 @@ class CalendarController extends GetxController {
   Future<void> getEventsByDay() async {
     // eventsList.value = [];
     calendarEventLoading.value = true;
+    isLeave.value = false;
     LogService.writeLog(message: "getEventsByDay()");
     var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
     var body = {
@@ -70,6 +72,12 @@ class CalendarController extends GetxController {
               if (event.recordType.toLowerCase() == "leave") {
                 eventsList.clear();
                 eventsList.add(event);
+                isLeave.value = true;
+                calendarEventLoading.value = false;
+                return;
+              } else if (event.recordType.toLowerCase() == "no_timesheet" ||
+                  event.eventName.isEmpty) {
+                eventsList.clear();
                 calendarEventLoading.value = false;
                 return;
               }
