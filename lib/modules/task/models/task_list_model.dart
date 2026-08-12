@@ -32,15 +32,15 @@ class TaskListModel {
   });
 
   factory TaskListModel.fromJson(Map<String, dynamic> json) => TaskListModel(
-        id: json["taskid"] ?? "",
+        id: json["taskid"] ?? json["id"] ?? "",
         status: json["status"] ?? "",
         project: json["project"] ?? "--",
         partner: json["partner"] ?? "--",
         customer: json["customer"] ?? "--",
         attachmentCount: json["attachment_count"] ?? 0,
         messageCount: json["message_count"] ?? 0,
-        caption: json["taskname"] ?? "",
-        description: (json["taskdescription"] ?? '')
+        caption: json["taskname"] ?? json["caption"] ?? "",
+        description: (json["taskdescription"] ?? json["description"] ?? '')
             .replaceAll(RegExp(r'<[^>]*>'), '')
             .trim(),
         dueDate: DateTime.tryParse(json["duedate"] ?? "") ?? DateTime.now(),

@@ -435,14 +435,14 @@ class AttendanceLogHeaderWidget extends GetView<AttendanceController> {
 
     switch (state) {
       case AttendanceState.notPunchedIn:
-        primaryLabel = "Clocck In";
+        primaryLabel = "Clock In";
         bgColor = AppColors.chipCardWidgetColorGreen;
         isVisible = true;
         isPunchedInn = false;
         break;
 
       case AttendanceState.punchedIn:
-        primaryLabel = "Clocck Out";
+        primaryLabel = "Clock Out";
         bgColor = AppColors.baseRed;
         isVisible = true;
         isPunchedInn = true;

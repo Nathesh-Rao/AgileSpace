@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:axpert_space/modules/modules.dart';
 import '../modules/active_list/screens/active_list_details_screen.dart';
 import '../modules/attendance/attendance.dart';
+import '../modules/notifications/screen/webview_screen_for_notification.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -103,6 +104,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.activeListDetails,
       page: () => ActiveListDetailsScreen(),
+      transition: Transition.rightToLeft,
+      curve: Curves.decelerate,
+    ),
+    GetPage(
+      name: AppRoutes.webviewScreenForNotification,
+      page: () => WebviewScreenForNotification(),
       transition: Transition.rightToLeft,
       curve: Curves.decelerate,
     ),

@@ -13,6 +13,7 @@ import '../../../common/log_service/log_services.dart';
 import '../../../common/widgets/flat_button_widget.dart';
 import '../../../core/core.dart';
 import '../../../core/utils/internet_connections/internet_connectivity.dart';
+import '../utils/global_cookie_manager.dart';
 
 class WebViewController extends GetxController {
   InternetConnectivity internetConnectivity = Get.find();
@@ -32,6 +33,7 @@ class WebViewController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    GlobalCookie.clearAll();
     ever(currentIndex, (index) {
       if (onIndexChanged != null) {
         onIndexChanged!(index);

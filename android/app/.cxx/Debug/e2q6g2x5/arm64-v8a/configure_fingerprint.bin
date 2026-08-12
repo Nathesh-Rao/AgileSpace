@@ -2,6 +2,7 @@ C/C++ Structured Log}
 {
 y/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/additional_project_files.txtC
 A
+<<<<<<< HEAD
 ?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	Ÿ‘¡££3 ùÇèÔ¢3z
 x
 v/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/android_gradle_build.json	Ÿ‘¡££3¶ ÈèÔ¢3
@@ -26,3 +27,29 @@ v
 t/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/symbol_folder_index.txt	 ‘¡££3k ŽÈèÔ¢3o
 m
 k/Users/narasimhanatheshrao/Development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt	 ‘¡££3¤ Üúø’í2
+=======
+?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	ãÅéá°3 ùÇèÔ¢3z
+x
+v/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/android_gradle_build.json	ãÅéá°3¶ ÈèÔ¢3
+}
+{/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/android_gradle_build_mini.json	ãÅéá°3£ ŒÈèÔ¢3l
+j
+h/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/build.ninja	ãÅéá°3ÔÞ ÏÇèÔ¢3p
+n
+l/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/build.ninja.txt	ãÅéá°3u
+s
+q/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/build_file_index.txt	ãÅéá°3k ŽÈèÔ¢3v
+t
+r/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/compile_commands.json	ãÅéá°3z
+x
+v/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/compile_commands.json.bin	ãÅéá°3	€
+~
+|/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/metadata_generation_command.txt	ãÅéá°3
+­	 ŽÈèÔ¢3s
+q
+o/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/prefab_config.json	ãÅéá°3( ŽÈèÔ¢3x
+v
+t/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/Debug/e2q6g2x5/arm64-v8a/symbol_folder_index.txt	ãÅéá°3k ŽÈèÔ¢3o
+m
+k/Users/narasimhanatheshrao/Development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt	ãÅéá°3¤ Üúø’í2
+>>>>>>> 46cc3be3481c18a9f5a8f9238ad4d8afd80cbf87

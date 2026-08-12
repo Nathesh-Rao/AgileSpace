@@ -13,17 +13,17 @@ class TaskListPageBuilderWidget extends GetView<TaskController> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadInitialData();
     });
+
     return Expanded(
-      child: PageView.builder(
-        onPageChanged: (index) {
-          controller.taskListPageViewIndex.value = index;
-        },
-        // physics: NeverScrollableScrollPhysics(),
-        controller: controller.taskListPageViewController,
-        itemCount: 3,
-        itemBuilder: (context, index) => _getPage(index),
-      ),
-    );
+        child: PageView.builder(
+      onPageChanged: (index) {
+        controller.taskListPageViewIndex.value = index;
+      },
+      // physics: NeverScrollableScrollPhysics(),
+      controller: controller.taskListPageViewController,
+      itemCount: 3,
+      itemBuilder: (context, index) => _getPage(index),
+    ));
   }
 
   Widget _getPage(int index) {

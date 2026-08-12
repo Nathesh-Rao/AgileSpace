@@ -4,6 +4,7 @@ import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/widgets/flat_button_widget.dart';
 import 'package:axpert_space/core/core.dart';
 import 'package:axpert_space/modules/landing/landing.dart';
+import 'package:axpert_space/modules/web_view/utils/global_cookie_manager.dart';
 import 'package:axpert_space/routes/app_routes.dart';
 import 'package:file_downloader_flutter/file_downloader_flutter.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,8 @@ class _InApplicationWebViewerState extends State<InApplicationWebViewer> {
     } catch (e) {}
     // widget.data = "https://amazon.in"
     debugPrint(widget.data);
-    clearCookie();
+    // commented clearCookie() by amrith
+    // clearCookie();
   }
 
   @override
@@ -83,6 +85,8 @@ class _InApplicationWebViewerState extends State<InApplicationWebViewer> {
   }
 
   InAppWebViewSettings settings = InAppWebViewSettings(
+    //added for sessionmanagement
+    sharedCookiesEnabled: true,
     transparentBackground: true,
     javaScriptEnabled: true,
     // incognito: true,
@@ -240,10 +244,11 @@ class _InApplicationWebViewerState extends State<InApplicationWebViewer> {
                 initialUrlRequest:
                     URLRequest(url: WebUri.uri(Uri.parse(widget.data))),
                 initialSettings: settings,
-                onWebViewCreated: (controller) {
+                onWebViewCreated: (controller) async {
                   // _webViewController = controller;
                   widget.webViewController.inAppWebViewController.value =
                       controller;
+                  // await GlobalCookieManager.syncCookiesTo(widget.data);
                 },
                 onLoadStart: (controller, url) {
                   url.toString().toLowerCase().contains("dcalendar")
@@ -609,6 +614,7 @@ class _NewWindowPageState extends State<NewWindowPage> {
       body: SafeArea(
         child: InAppWebView(
             initialSettings: InAppWebViewSettings(
+              sharedCookiesEnabled: true,
               javaScriptEnabled: true,
             ),
             windowId: widget.windowId,

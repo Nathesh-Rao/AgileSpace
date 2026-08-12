@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:axpert_space/common/common.dart';
 import 'package:axpert_space/common/log_service/log_services.dart';
 import 'package:axpert_space/common/widgets/flat_button_widget.dart';
+import 'package:axpert_space/modules/notifications/service/notification_service.dart';
 import 'package:axpert_space/routes/app_routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +104,7 @@ class AuthController extends GetxController {
     }
   }
 
-  validate() {
+  void validate() {
     if (userNameController.text.trim().isEmpty) {
       errUserName.value = "Invalid username";
     }
@@ -132,19 +133,19 @@ class AuthController extends GetxController {
   var isOTP_auth = false.obs;
   TextEditingController otpFieldController = TextEditingController();
 
-  onOtpLoginButtonClick() {
+  void onOtpLoginButtonClick() {
     print("onOtpLoginButtonClick()");
     if (validateOTPField()) {
       callVerifyOTP();
     }
   }
 
-  onLoad() async {
+  Future<void> onLoad() async {
     currentProjectName.value =
         await appStorage.retrieveValue(AppStorage.PROJECT_NAME) ?? '';
   }
 
-  startLoginProcess() async {
+  Future<void> startLoginProcess() async {
     if (!validateUserName()) return;
 
     showPassword.value = true;
@@ -176,7 +177,7 @@ class AuthController extends GetxController {
     }
   }
 
-  getLoginUserDetailsAndAuthType() async {
+  Future<AuthType> getLoginUserDetailsAndAuthType() async {
     isUserDataLoading.value = true;
     var url = Const.getFullARMUrl(ServerConnections.API_GET_LOGINUSER_DETAILS);
     var body = {
@@ -211,7 +212,7 @@ class AuthController extends GetxController {
     return AuthType.none;
   }
 
-  callSignInAPI({bool isSnackBarActive = false}) async {
+  Future<void> callSignInAPI({bool isSnackBarActive = false}) async {
     if (validateForm()) {
       isLoginLoading.value = true;
       var signInBody = {
@@ -288,7 +289,7 @@ class AuthController extends GetxController {
     });
   }
 
-  callVerifyOTP() async {
+  Future<void> callVerifyOTP() async {
     print("callVerifyOTP");
     if (validateOTPField()) {
       // LoadingScreen.show();
@@ -308,8 +309,10 @@ class AuthController extends GetxController {
           await processSignInDataResponse(json["result"]);
         } else {
           otpErrorText.value = json["result"]["message"].toString();
-           Get.snackbar("Error ", json["result"]["message"],
-              snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.redAccent, colorText: Colors.white);
+          Get.snackbar("Error ", json["result"]["message"],
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.redAccent,
+              colorText: Colors.white);
         }
       }
     }
@@ -318,7 +321,7 @@ class AuthController extends GetxController {
     // LoadingScreen.dismiss();
   }
 
-  processSignInDataResponse(json) async {
+  Future<void> processSignInDataResponse(json) async {
     await appStorage.storeValue(AppStorage.TOKEN, json["token"].toString());
 
     LogService.writeLog(message: "Token : ${json["token"].toString()}");
@@ -330,9 +333,10 @@ class AuthController extends GetxController {
         AppStorage.NICK_NAME, json["nickname"].toString());
 
     globalVariableController.NICK_NAME.value = json["nickname"].toString();
-
     globalVariableController.USER_NAME.value = json["username"].toString();
     globalVariableController.USER_EMAIL.value = json["email_id"].toString();
+    await AppNotificationsService.cacheUserData();
+    await AppNotificationsService().callApiForMobileNotification();
     //Save Data
     if (rememberMe.value) {
       rememberCredentials();
@@ -384,10 +388,7 @@ class AuthController extends GetxController {
     appStorage.storeValue(AppStorage.USER_GROUP, groups);
   }
 
-  _processLoginAndGoToHomePage() async {
-    //mobile Notification
-    await _callApiForMobileNotification();
-    //connect to Axpert
+  Future<void> _processLoginAndGoToHomePage() async {
     await callApiForConnectToAxpert();
     final prefs = await SharedPreferences.getInstance();
 
@@ -397,19 +398,18 @@ class AuthController extends GetxController {
     Get.offAllNamed(AppRoutes.landing);
   }
 
-  _callApiForMobileNotification() async {
-    var imei = await PlatformDeviceId.getDeviceId ?? '0';
-    // LogService.writeLog(message: "[i] IMEI : $imei");
-    var connectBody = {
-      'ARMSessionId': appStorage.retrieveValue(AppStorage.SESSIONID),
-      'firebaseId': fcmId ?? "0",
-      'ImeiNo': imei,
-    };
-    var cUrl = Const.getFullARMUrl(ServerConnections.API_MOBILE_NOTIFICATION);
-    var connectResp = await serverConnections.postToServer(
-        url: cUrl, body: jsonEncode(connectBody), isBearer: true);
-    print("Mobile: " + connectResp);
-  }
+  // _callApiForMobileNotification() async {
+  //   var imei = await PlatformDeviceId.getDeviceId ?? '0';
+  //   // LogService.writeLog(message: "[i] IMEI : $imei");
+  //   var connectBody = {
+  //     'ARMSessionId': appStorage.retrieveValue(AppStorage.SESSIONID),
+  //     'firebaseId': fcmId ?? "0",
+  //     'ImeiNo': imei,
+  //   };
+  //   var cUrl = Const.getFullARMUrl(ServerConnections.API_MOBILE_NOTIFICATION);
+  //   var connectResp = await serverConnections.postToServer(url: cUrl, body: jsonEncode(connectBody), isBearer: true);
+  //   print("Mobile: " + connectResp);
+  // }
 
   Future<void> callApiForConnectToAxpert() async {
     var connectBody = {
@@ -436,7 +436,7 @@ class AuthController extends GetxController {
     }
   }
 
-  callResendOTP() async {
+  Future<void> callResendOTP() async {
     otpErrorText.value = '';
     otpFieldController.clear();
     isOtpLoading.value = true;
@@ -508,9 +508,11 @@ class AuthController extends GetxController {
   }
 
   void onOtpScreenLoad() {
-    startOTPTimer();
-    if (otpErrorText.value.isEmpty && otpFieldController.text.isEmpty) return;
-    otpErrorText.value = otpFieldController.text = '';
+    if (!isTimerActive.value) {
+      startOTPTimer();
+      if (otpErrorText.value.isEmpty && otpFieldController.text.isEmpty) return;
+      otpErrorText.value = otpFieldController.text = '';
+    }
   }
 
   void showDialogDuplicateSession(String message) {

@@ -5,14 +5,27 @@ import 'package:get/get.dart';
 import '../../../core/core.dart';
 import '../widgets/widget.dart';
 
-class AuthOtpScreen extends GetView<AuthController> {
+class AuthOtpScreen extends StatefulWidget {
   const AuthOtpScreen({super.key});
 
   @override
+  _AuthOtpScreenState createState() => _AuthOtpScreenState();
+}
+
+class _AuthOtpScreenState extends State<AuthOtpScreen> {
+  final controller = Get.find<AuthController>();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.onOtpScreenLoad(); // Runs ONE TIME
+  }
+
+  @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    /* WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.onOtpScreenLoad();
-    });
+    });*/
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -22,7 +35,9 @@ class AuthOtpScreen extends GetView<AuthController> {
           height: 1.sh - MediaQuery.of(context).viewPadding.vertical,
           child: Column(
             children: [
-              Obx(() => Visibility(visible: controller.isOtpLoading.value, child: RainbowLoadingWidget())),
+              Obx(() => Visibility(
+                  visible: controller.isOtpLoading.value,
+                  child: RainbowLoadingWidget())),
               // Spacer(),
               20.verticalSpace,
               Column(

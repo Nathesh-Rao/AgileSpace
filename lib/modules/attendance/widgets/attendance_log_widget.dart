@@ -397,7 +397,7 @@ class AttendanceLogWidget extends GetView<AttendanceController> {
           itemCount: 12,
           itemBuilder: (context, index) => GestureDetector(
             onTap: () {
-              controller.updateMonthIndex(index);
+              controller.updateMonthIndex(index, context.isTablet);
             },
             child: Text(
               controller.months[index],

@@ -29,7 +29,9 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
             (controller.attendanceState.value == AttendanceState.punchedOut ||
                     controller.attendanceState.value == AttendanceState.error)
                 ? 60.h
-                : 116.h,
+                : context.isTablet
+                    ? 130.h
+                    : 116.h,
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.r),
@@ -83,22 +85,76 @@ class AttendanceClockInWidget extends GetView<AttendanceController> {
 
   Widget _clockWidget() => Padding(
         padding: EdgeInsets.symmetric(vertical: 5.h),
-        child: AnalogClock(
-          decoration: const BoxDecoration(shape: BoxShape.circle),
-          isLive: true,
-          hourHandColor: AppColors.primaryActionColorDarkBlue,
-          minuteHandColor: AppColors.primaryActionColorDarkBlue,
-          showSecondHand: true,
-          numberColor: AppColors.primaryActionColorDarkBlue,
-          secondHandColor: AppColors.baseRed,
-          showNumbers: true,
-          showAllNumbers: true,
-          textScaleFactor: 1,
-          showTicks: true,
-          showDigitalClock: true,
-          datetime: DateTime.now(),
-        ),
+        child: Builder(builder: (context) {
+          if (context.isTablet) {
+            return _digitalClockWidget();
+          }
+          return AnalogClock(
+            decoration: const BoxDecoration(shape: BoxShape.circle),
+            isLive: true,
+            hourHandColor: AppColors.primaryActionColorDarkBlue,
+            minuteHandColor: AppColors.primaryActionColorDarkBlue,
+            showSecondHand: true,
+            numberColor: AppColors.primaryActionColorDarkBlue,
+            secondHandColor: AppColors.baseRed,
+            showNumbers: true,
+            showAllNumbers: true,
+            textScaleFactor: 1,
+            showTicks: true,
+            showDigitalClock: true,
+            datetime: DateTime.now(),
+          );
+        }),
       );
+
+  Widget _digitalClockWidget() {
+    return StreamBuilder<DateTime>(
+      stream:
+          Stream.periodic(const Duration(seconds: 1), (_) => DateTime.now()),
+      builder: (context, snapshot) {
+        final now = snapshot.data ?? DateTime.now();
+
+        final time =
+            '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+        final hour = now.hour.toString().padLeft(2, '0');
+        final minute = now.minute.toString().padLeft(2, '0');
+        final seconds = now.second.toString().padLeft(2, '0');
+        timeContainerWidget({required Color itemColor, required String label}) {
+          return Expanded(
+              child: Container(
+            decoration: BoxDecoration(
+              color: itemColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: Center(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'Digital7',
+                  fontSize: 56.sp,
+                  // fontWeight: FontWeight.w600,
+                  letterSpacing: 4,
+                  color: itemColor,
+                ),
+              ),
+            ),
+          ));
+        }
+
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 10.w),
+          child: Row(
+            spacing: 10.w,
+            children: [
+              timeContainerWidget(itemColor: AppColors.blue10, label: hour),
+              timeContainerWidget(itemColor: AppColors.blue10, label: minute),
+              timeContainerWidget(itemColor: AppColors.baseRed, label: seconds),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   Widget _statusChip(String text, Color color) => Container(
         decoration: BoxDecoration(

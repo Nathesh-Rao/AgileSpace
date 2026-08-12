@@ -1,4 +1,4 @@
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, strict_top_level_inference, prefer_interpolation_to_compose_strings
 
 import 'dart:convert';
 

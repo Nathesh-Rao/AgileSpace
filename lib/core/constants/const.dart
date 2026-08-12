@@ -13,18 +13,27 @@ class Const {
   // globalVariableController.ARM_URL.value = "https://alpha.agilecloud.biz/arm";
   // globalVariableController.PROJECT_NAME.value = "agilespace";
 
-  // static const String BASE_WEB_URL = "https://alpha.agilecloud.biz/axpert";
-  // static const String CONST_ARM_URL = "https://alpha.agilecloud.biz/arm";
-  // static const String CONST_PROJECTNAME = "agilespace";
+  static const String BASE_WEB_URL = "https://alpha.agilecloud.biz/axpert";
+  static const String CONST_ARM_URL = "https://alpha.agilecloud.biz/arm";
+  static const String CONST_PROJECTNAME = "agilespace";
 
   static String APP_VERSION = '';
   static const String APP_RELEASE_ID = '.01';
+<<<<<<< HEAD
   static const String APP_RELEASE_DATE = '28102025';
   static const String BASE_WEB_URL =
       "https://agileqa.agilecloud.biz/qaaxpert11.4base";
   static const String CONST_ARM_URL =
       "https://agileqa.agilecloud.biz/qaarm11.4base";
   static const String CONST_PROJECTNAME = "agilespaceqanew";
+=======
+  static const String APP_RELEASE_DATE = '18122025';
+  // static const String BASE_WEB_URL =
+  //     "https://agileqa.agilecloud.biz/qaaxpert11.4base";
+  // static const String CONST_ARM_URL =
+  //     "https://agileqa.agilecloud.biz/qaarm11.4base";
+  // static const String CONST_PROJECTNAME = "agilespaceqanew";
+>>>>>>> 46cc3be3481c18a9f5a8f9238ad4d8afd80cbf87
 
   static const String CLOUD_PROJECT = "axpmobileclient";
   static const String CLOUD_URL = "";

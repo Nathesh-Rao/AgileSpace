@@ -17,6 +17,7 @@ import '../../../core/utils/server_connections/server_connections.dart';
 class CalendarController extends GetxController {
   var calendarViewSwitch = false.obs;
   var calendarEventLoading = false.obs;
+  var isLeave = false.obs;
 
   RxList<EventModel> eventsList = <EventModel>[].obs;
   RxList<TaskByDayModel> taskList = <TaskByDayModel>[].obs;
@@ -27,19 +28,20 @@ class CalendarController extends GetxController {
   DateTime selectedDate = DateTime.now();
   RxList<Meeting> meetingList = <Meeting>[].obs;
   WebViewController webViewController = Get.find();
-  switchCalendarView() {
+  void switchCalendarView() {
     calendarViewSwitch.toggle();
   }
 
-  getAllData() async {
+  Future<void> getAllData() async {
     // await getTaskByDay();
     await getEventsByDay();
     // getMeetingsFromEvents();
   }
 
-  getEventsByDay() async {
+  Future<void> getEventsByDay() async {
     // eventsList.value = [];
     calendarEventLoading.value = true;
+    isLeave.value = false;
     LogService.writeLog(message: "getEventsByDay()");
     var dataSourceUrl = Const.getFullARMUrl(ServerConnections.API_DATASOURCE);
     var body = {
@@ -65,7 +67,22 @@ class CalendarController extends GetxController {
         for (var item in dsDataList) {
           try {
             if (item != null) {
-              eventsList.add(EventModel.fromJson(item));
+              var event = EventModel.fromJson(item);
+
+              if (event.recordType.toLowerCase() == "leave") {
+                eventsList.clear();
+                eventsList.add(event);
+                isLeave.value = true;
+                calendarEventLoading.value = false;
+                return;
+              } else if (event.recordType.toLowerCase() == "no_timesheet" ||
+                  event.eventName.isEmpty) {
+                eventsList.clear();
+                calendarEventLoading.value = false;
+                return;
+              }
+
+              eventsList.add(event);
             }
           } catch (e) {
             debugPrint(" $e");
@@ -136,7 +153,7 @@ class CalendarController extends GetxController {
   //   // }
   // }
 
-  navigateToCreateTask() {
+  void navigateToCreateTask() {
     webViewController.navigateToCreateTask();
   }
 }

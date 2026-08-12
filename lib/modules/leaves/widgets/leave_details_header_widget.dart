@@ -60,29 +60,36 @@ class LeaveDetailsHeaderWidget extends GetView<LeaveController> {
               children: [
                 Expanded(
                     flex: 3,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        height: 100.h,
-                        width: 100.h,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            PieChart(
-                              PieChartData(
-                                sectionsSpace: 4,
-                                centerSpaceRadius: 30.h,
-                                sections: List.generate(
-                                    controller.leaveDivisionsValue.length,
-                                    (index) => _pieCrumbs(index)),
+                    child: Padding(
+                      padding: context.isTablet
+                          ? EdgeInsets.only(left: 10.w)
+                          : EdgeInsets.zero,
+                      child: Align(
+                        alignment: context.isTablet
+                            ? Alignment.centerLeft
+                            : Alignment.center,
+                        child: SizedBox(
+                          height: 100.h,
+                          width: 100.h,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              PieChart(
+                                PieChartData(
+                                  sectionsSpace: 4,
+                                  centerSpaceRadius: 30.h,
+                                  sections: List.generate(
+                                      controller.leaveDivisionsValue.length,
+                                      (index) => _pieCrumbs(index)),
+                                ),
                               ),
-                            ),
-                            Text(
-                              DateUtilsHelper.getShortMonthName(
-                                  DateTime.now().toString()),
-                              style: AppStyles.actionButtonStyle,
-                            )
-                          ],
+                              Text(
+                                DateUtilsHelper.getShortMonthName(
+                                    DateTime.now().toString()),
+                                style: AppStyles.actionButtonStyle,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     )),
