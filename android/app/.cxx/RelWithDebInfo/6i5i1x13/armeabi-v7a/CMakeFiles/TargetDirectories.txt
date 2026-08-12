@@ -1,0 +1,2 @@
+/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/RelWithDebInfo/6i5i1x13/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/narasimhanatheshrao/Development/AxpertSpace/android/app/.cxx/RelWithDebInfo/6i5i1x13/armeabi-v7a/CMakeFiles/rebuild_cache.dir
